@@ -15,23 +15,33 @@ HomeRent
 Пользователям (арендаторам):
 
 • регистрироваться и входить в систему;
+
 • просматривать доступные объекты недвижимости;
+
 • бронировать объект на выбранные даты;
+
 • подписывать договор (загрузка скана PDF);
+
 • оплачивать аренду (эмуляция, без реального платежного сервиса);
+
 • получать подтверждения и квитанции на email;
+
 • оставлять заявки на ремонт/поломки.
 
 ## Владельцам объектов (ROLE_OWNER):
 
 • управлять списком собственных объектов;
+
 • видеть запросы арендаторов;
+
 • прикреплять документы к объекту (фото, схемы, PDF).
 
 ## Операторам компании (ROLE_OPERATOR):
 
 • отслеживать активные аренды;
+
 • проверять документы;
+
 • видеть все заявки на поломки.
 
 ## 2. Технологический стек (обязательно)
@@ -45,19 +55,29 @@ Maven
 Зависимости:
 
 • spring-boot-starter-web
+
 • spring-boot-starter-data-jpa
+
 • spring-boot-starter-security
+
 • spring-boot-starter-mail
+
 • spring-boot-starter-validation
+
 • springdoc-openapi-starter-webmvc-ui
+
 • Lombok
+
 • Liquibase
+
 • spring-boot-starter-test
+
 • spring-security-test
 
 БД:
 
 • H2 для dev и test
+
 • PostgreSQL/MySQL — опционально для prod
 
 Минимум 1 шаблон Thymeleaf для email.
@@ -66,27 +86,40 @@ Maven
 
 ### 3.1. User
 • id
+
 • username (уникальный)
+
 • email
+
 • password (BCrypt)
+
 • enabled
+
 • roles : Set
 
 ### 3.2. Role
 • id
+
 • name (ROLE_TENANT, ROLE_OWNER, ROLE_OPERATOR, ROLE_ADMIN)
 
 ### 3.3. Property (объект недвижимости)
 • id
+
 • owner : User (ROLE_OWNER)
 
 ### 3.4. Booking (бронирование)
 • id
+
 • property : Property
+
 • tenant : User
+
 • startDate
+
 • endDate
+
 • status (REQUESTED, APPROVED, REJECTED, ACTIVE, FINISHED)
+
 • totalPrice
 
 ### 3.5. RentalContract (договор аренды)
@@ -94,11 +127,17 @@ Maven
 
 ### 3.6. IssueReport (заявка о поломке)
 • id
+
 • booking : Booking
+
 • reportedBy : User
+
 • description
+
 • photoPath
+
 • createdAt
+
 • status (OPEN, IN_PROGRESS, DONE)
 
 ## 4. База данных и Liquibase
@@ -202,7 +241,9 @@ DELETE /api/admin/properties/{id}
 ### 6.1. Аутентификация
 
 • собственный UserDetailsService
+
 • BCrypt
+
 • @EnableMethodSecurity
 
 ### 6.2. Авторизация
@@ -210,10 +251,15 @@ DELETE /api/admin/properties/{id}
 Правила аналогичны ShareRide:
 
 • public, auth — permitAll
+
 • tenant endpoints → ROLE_TENANT
+
 • owner endpoints → ROLE_OWNER
+
 • operator → ROLE_OPERATOR
+
 • admin → ROLE_ADMIN
+
 • остальные → authenticated
 
 ### 6.3. @PreAuthorize - минимум 2 метода
@@ -221,6 +267,7 @@ DELETE /api/admin/properties/{id}
 Примеры:
 
 • Tenant может видеть только свои бронирования.
+
 • Owner может изменять только свои объекты.
 
 ## 7. Загрузка файлов
@@ -228,6 +275,7 @@ DELETE /api/admin/properties/{id}
 Необходимо:
 
 • загрузка PDF договора
+
 • загрузка фото поломок (MultipartFile)
 
 Пример:
@@ -239,6 +287,7 @@ POST /api/tenant/issues (MultipartFile photo)
 Файлы можно хранить:
 
 • либо в файловой системе /uploads/
+
 • либо в БД (byte[])
 
 ## 8. Email уведомления (Spring Mail + Thymeleaf)
@@ -250,7 +299,9 @@ POST /api/tenant/issues (MultipartFile photo)
 Содержит:
 
 • адрес объекта
+
 • даты аренды
+
 • стоимость
 
 ### 2. Подтверждение загрузки договора
@@ -259,7 +310,9 @@ POST /api/tenant/issues (MultipartFile photo)
 ### 3. Уведомление об окончании аренды (квитанция)
 
 • даты
+
 • итоговая цена
+
 • объект
 
 ## 9. Тестирование
@@ -267,7 +320,9 @@ POST /api/tenant/issues (MultipartFile photo)
 ### 9.1. Unit/Controller Tests (MockMvc)
 
 • публичные эндпоинты → 200
+
 • защищённые без авторизации → 401
+
 • проверка ролей → 403 / 200
 
 ### 9.2. Интеграционные тесты (H2 + Liquibase)
@@ -277,8 +332,11 @@ POST /api/tenant/issues (MultipartFile photo)
 #### 1. Полный цикл аренды:
 
 • арендатор создаёт бронирование
+
 • владелец подтверждает
+
 • арендатор загружает договор
+
 • оператор видит активную аренду
 
 #### 2. Заявка поломки:
@@ -288,13 +346,21 @@ POST /api/tenant/issues (MultipartFile photo)
 ## 10. Swagger / Postman
 
 • Swagger UI должен показывать все группы эндпоинтов
+
 • Postman-коллекция:
+
 ◦ регистрация
+
 ◦ логин
+
 ◦ просмотр объектов
+
 ◦ бронирование
+
 ◦ загрузка договора
+
 ◦ заявки на ремонт
+
 ◦ операции owner/operator/admin
 
 ## 11. Deployment
@@ -308,7 +374,9 @@ POST /api/tenant/issues (MultipartFile photo)
 7. README с инструкциями
 
 • сборка jar
+
 • запуск через профиль prod
+
 • README с инструкцией
 
 Дополнительно:
