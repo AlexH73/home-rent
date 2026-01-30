@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="1.1-insert-reference-data" author="Alexander Hermann">
+        <comment>Inserting basic roles</comment>
+        <insert tableName="roles">
+            <column name="name" value="ROLE_TENANT"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="name" value="ROLE_OWNER"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="name" value="ROLE_OPERATOR"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="name" value="ROLE_ADMIN"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="1.1-2" author="Alexander Hermann">
+        <comment>Creating a test admin</comment>
+        <insert tableName="users">
+            <column name="username" value="admin"/>
+            <column name="email" value="admin@homerent.com"/>
+            <column name="password" value="$2a$10$YourBcryptHashHere"/> <!-- pass: admin123 -->
+            <column name="enabled" valueBoolean="true"/>
+        </insert>
+
+        <!-- Binding the ADMIN role to the admin user -->
+        <insert tableName="users_roles">
+            <column name="user_id" valueComputed="(SELECT id FROM users WHERE username='admin')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name='ROLE_ADMIN')"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
