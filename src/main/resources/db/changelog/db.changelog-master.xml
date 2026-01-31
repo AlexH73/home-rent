@@ -6,8 +6,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
 
-    <include file="db/changelog/1.0-create-tables.xml" relativeToChangelogFile="false"/>
-    <include file="db/changelog/1.1-insert-reference-data.xml" relativeToChangelogFile="false"/>
-    <include file="db/changelog/1.2-test-objects.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/1.0-create-tables.xml"/>
+    <include file="db/changelog/1.1-insert-reference-data.xml"/>
+    <include file="db/changelog/1.2-test-objects.xml"/>
 
 </databaseChangeLog>
