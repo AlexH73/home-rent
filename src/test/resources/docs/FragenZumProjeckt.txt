@@ -1,0 +1,123 @@
+1. Architektur & Systemdesign
+Soll das System als klassischer Monolith umgesetzt werden, oder bevorzugen Sie eine modulare Struktur (z. B. Domain‑Module innerhalb des Monolithen)?
+
+Gibt es Anforderungen an horizontale Skalierbarkeit oder Lastverhalten?
+
+Ist ein Caching‑Mechanismus (z. B. Redis) für häufige Leseoperationen vorgesehen?
+
+2. Sicherheit & Authentifizierung
+Soll für Authentifizierung ein reiner JWT‑Flow verwendet werden, oder ist ein Refresh‑Token‑Mechanismus gewünscht?
+
+Gibt es Anforderungen an zusätzliche Sicherheitsmaßnahmen wie MFA oder IP‑Rate‑Limiting?
+
+Sollen sicherheitsrelevante Ereignisse (z. B. unautorisierte Zugriffe) zentral geloggt werden?
+
+3. Datenmodell & Geschäftslogik
+Können mehrere zukünftige Buchungen für dasselbe Objekt existieren (Warteschlange), oder muss das System Überschneidungen strikt verhindern?
+
+Soll die Preisberechnung (totalPrice) immer linear erfolgen, oder sind Rabatte/Servicegebühren vorgesehen?
+
+Wird eine Historisierung von Statusänderungen (Booking, IssueReport) benötigt?
+
+4. Datei‑Uploads
+Gibt es Vorgaben zum maximalen Upload‑Volumen für PDF‑Verträge und Fotos?
+
+Sollen Dateien ausschließlich im Dateisystem gespeichert werden oder optional in der Datenbank?
+
+Ist eine Validierung/Prüfung der PDF‑Dateien (z. B. Virenscan) erforderlich?
+
+5. Email‑Benachrichtigungen
+Sollen alle Emails sowohl als HTML als auch als Textversion versendet werden?
+
+Müssen Email‑Events in der Datenbank protokolliert werden?
+
+Sind zusätzliche Benachrichtigungen geplant (z. B. Erinnerung vor Mietende)?
+
+6. REST API & Validierung
+Soll das API versioniert werden (z. B. /api/v1)?
+
+Wie soll das System mit überlappenden Buchungsanfragen umgehen — automatische Ablehnung oder manuelle Prüfung durch den Owner?
+
+Gibt es Anforderungen an Rate‑Limiting für öffentliche Endpunkte?
+
+7. Tests & Qualitätssicherung
+Gibt es eine Zielvorgabe für die Testabdeckung (Unit/Integration)?
+
+Sollen Integrations‑Tests auch Email‑Versand simulieren (MockMailSender)?
+
+Sind Performance‑ oder Lasttests Teil des Projekts?
+
+8. Deployment & Infrastruktur
+Soll ein Multi‑Stage Dockerfile verwendet werden?
+
+Wird ein docker‑compose Setup für lokale Entwicklung erwartet?
+
+Gibt es Anforderungen an Logging‑Infrastruktur (z. B. ELK‑Stack)?
+
+9. Dokumentation
+Soll zusätzlich eine Architekturübersicht (z. B. C4‑Modell) erstellt werden?
+
+Wird eine ER‑Diagramm‑Darstellung der Datenbank erwartet?
+
+******
+
+1. Архитектура и системный дизайн
+Предполагается классический монолит или модульная структура внутри монолита?
+
+Есть ли требования к горизонтальному масштабированию или нагрузочному тестированию?
+
+Планируется ли использование кэша (например, Redis) для оптимизации частых запросов?
+
+2. Безопасность и аутентификация
+Предпочтительный механизм аутентификации: простой JWT или JWT + Refresh Token?
+
+Требуется ли двухфакторная аутентификация или дополнительные меры защиты (rate limiting, IP‑фильтрация)?
+
+Нужно ли централизованное логирование попыток несанкционированного доступа?
+
+3. Модель данных и бизнес‑логика
+Допускаются ли несколько будущих бронирований одного объекта (очередь), или пересечения дат должны блокироваться?
+
+Формула расчёта totalPrice всегда линейная или возможны скидки/доплаты?
+
+Требуется ли хранить историю изменения статусов (Booking, IssueReport)?
+
+4. Загрузка файлов
+Каков максимальный размер загружаемых PDF и фотографий?
+
+Где предпочтительно хранить файлы: файловая система, облако или БД?
+
+Нужна ли проверка PDF‑файлов (например, антивирусная)?
+
+5. Email‑уведомления
+Должны ли письма отправляться в HTML и текстовом варианте?
+
+Нужно ли логировать факты отправки писем в БД?
+
+Планируются ли дополнительные уведомления (например, напоминание о скором завершении аренды)?
+
+6. REST API и валидация
+Требуется ли версионирование API (например, /api/v1)?
+
+Как система должна реагировать на пересекающиеся бронирования — автоматический отказ или ручная проверка владельцем?
+
+Нужны ли ограничения по количеству запросов к публичным эндпоинтам?
+
+7. Тестирование и качество
+Есть ли целевой процент покрытия тестами (Unit/Integration)?
+
+Должны ли интеграционные тесты проверять отправку email через MockMailSender?
+
+Требуются ли нагрузочные или стресс‑тесты?
+
+8. Деплоймент и инфраструктура
+Нужен ли многоэтапный Dockerfile (multi‑stage build)?
+
+Требуется ли docker‑compose для локального запуска?
+
+Есть ли требования к логированию (например, ELK‑стек)?
+
+9. Документация
+Нужна ли архитектурная схема (например, C4‑модель)?
+
+Требуется ли ER‑диаграмма базы данных?
