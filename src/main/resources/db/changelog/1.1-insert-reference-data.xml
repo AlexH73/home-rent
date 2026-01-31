@@ -3,7 +3,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
 
     <changeSet id="1.1-insert-reference-data" author="Alexander Hermann">
         <comment>Inserting basic roles</comment>
