@@ -5,8 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
 
-    <changeSet id="1.2-test-objects" author="Alexander Hermann">
-        <comment>Создание тестовых пользователей</comment>
+    <changeSet id="1.2-test-objects" author="Alexander Hermann" context="test">
+        <comment>Creating test properties</comment>
 
         <!-- Test tenant -->
         <insert tableName="users">
