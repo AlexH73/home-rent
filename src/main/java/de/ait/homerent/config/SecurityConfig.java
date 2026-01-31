@@ -30,9 +30,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // Allow frames for H2 Console
+                // Allow frames for H2 Console while keeping clickjacking protection
                 .headers(headers -> headers
-                        .frameOptions(frame -> frame.disable())
+                        .frameOptions(frame -> frame.sameOrigin())
                 )
 
                 // Enable default form login
