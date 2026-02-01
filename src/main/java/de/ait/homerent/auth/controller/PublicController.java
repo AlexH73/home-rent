@@ -1,6 +1,11 @@
 package de.ait.homerent.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,16 +22,79 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/public")
-@Tag(name = "Public API")
+@Tag(
+        name = "Public API Endpoints",
+        description = """
+        ### Endpoints available without authentication
+        
+        These API methods provide general service information and are accessible to all users.
+        No authentication is required for these endpoints.
+        """
+)
 public class PublicController {
 
     @GetMapping("/info")
-    @Operation(summary = "Get service information", description = "Returns basic information about HomeRent service")
+    @Operation(
+            summary = "Get service information",
+            description = """
+            ### Returns basic information about the HomeRent platform
+            
+            Use this endpoint to:
+            - Check service availability
+            - Get API version information
+            - Verify service functionality before integration
+            
+            **Note:** This endpoint does not require authentication.
+            """,
+            tags = {"Public API Endpoints"}
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful request",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Map.class),
+                            examples = @ExampleObject(
+                                    name = "Success response example",
+                                    value = """
+                        {
+                          "service": "HomeRent",
+                          "version": "1.0.0",
+                          "description": "Home rental service system",
+                          "status": "active"
+                        }
+                        """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Error response example",
+                                    value = """
+                        {
+                          "timestamp": "2024-01-15T10:30:00.000Z",
+                          "status": 500,
+                          "error": "Internal Server Error",
+                          "message": "An unexpected error occurred",
+                          "path": "/api/public/info"
+                        }
+                        """
+                            )
+                    )
+            )
+    })
     public Map<String, String> getServiceInfo() {
         return Map.of(
                 "service", "HomeRent",
                 "version", "1.0.0",
-                "description", "Home rental service system"
+                "description", "Home rental service system",
+                "status", "active",
+                "timestamp", String.valueOf(System.currentTimeMillis())
         );
     }
 }
