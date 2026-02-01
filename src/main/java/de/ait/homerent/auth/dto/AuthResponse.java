@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
+
 /**
  * ----------------------------------------------------------------------------
  * Author  : Alexander Hermann
@@ -19,18 +20,37 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Authentication response")
+@Schema(description = "Authentication response containing user information")
 public class AuthResponse {
 
-    @Schema(description = "Message", example = "Login successful")
+    @Schema(
+            description = "Response message",
+            example = "Registration successful"
+    )
     private String message;
 
-    @Schema(description = "Username", example = "john_doe")
+    @Schema(
+            description = "Authenticated user's username",
+            example = "john_doe"
+    )
     private String username;
 
-    @Schema(description = "Email address", example = "john@example.com")
+    @Schema(
+            description = "Authenticated user's email address",
+            example = "john@example.com"
+    )
     private String email;
 
-    @Schema(description = "User roles")
+    @Schema(
+            description = "Roles assigned to the user",
+            example = """
+                    [
+                      {
+                        "id": 1,
+                        "name": "ROLE_TENANT"
+                      }
+                    ]
+                    """
+    )
     private Set<Role> roles;
 }
