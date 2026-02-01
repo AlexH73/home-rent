@@ -7,7 +7,7 @@
 [![Liquibase](https://img.shields.io/badge/Liquibase-4.0%2B-blue?logo=liquibase)](https://www.liquibase.org/)
 [![H2 Database](https://img.shields.io/badge/H2%20Database-2.0%2B-blue)](https://www.h2database.com/)
 [![Swagger UI](https://img.shields.io/badge/Swagger%20UI-2.5.0-green?logo=swagger)](https://swagger.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 ![Status](https://img.shields.io/badge/Status-🚧%20Under%20Active%20Development-important)
 
@@ -76,7 +76,7 @@ src/main/java/de/ait/homerent
 src/test/java/de/ait/homerent
 ```
 
-### 🏠 Core Package Structure (Exactly as in ARCHITECTURE.md)
+### 🏠 Core Package Structure
 ```
 homerent/
 │
