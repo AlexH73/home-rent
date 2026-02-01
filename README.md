@@ -102,7 +102,8 @@ homerent/
 │   │   │       │
 │   │   │       ├── auth/
 │   │   │       │   ├── controller/
-│   │   │       │   │   └── AuthController.java          // public endpoints
+│   │   │       │   │   ├── AuthController.java
+│   │   │       │   │   └── PublicController.java          // public endpoints
 │   │   │       │   ├── dto/
 │   │   │       │   │   ├── LoginRequest.java
 │   │   │       │   │   ├── RegisterRequest.java
@@ -112,6 +113,7 @@ homerent/
 │   │   │       │
 │   │   │       ├── user/
 │   │   │       │   ├── model/
+│   │   │       │   │   ├── RoleName.java
 │   │   │       │   │   ├── User.java
 │   │   │       │   │   └── Role.java
 │   │   │       │   ├── repository/
