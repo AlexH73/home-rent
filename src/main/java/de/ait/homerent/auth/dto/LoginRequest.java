@@ -18,14 +18,24 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Login request data")
+@Schema(description = "User login credentials")
 public class LoginRequest {
 
     @NotBlank(message = "Username is required")
-    @Schema(description = "Username", example = "john_doe")
+    @Schema(
+            description = "User's username",
+            example = "john_doe",
+            minLength = 3,
+            maxLength = 50
+    )
     private String username;
 
     @NotBlank(message = "Password is required")
-    @Schema(description = "Password", example = "password123")
+    @Schema(
+            description = "User's password",
+            example = "password123",
+            minLength = 6,
+            maxLength = 100
+    )
     private String password;
 }
