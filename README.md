@@ -8,7 +8,7 @@
 [![H2 Database](https://img.shields.io/badge/H2%20Database-2.0%2B-blue)](https://www.h2database.com/)
 [![Swagger UI](https://img.shields.io/badge/Swagger%20UI-2.5.0-green?logo=swagger)](https://swagger.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./src/main/java/de/ait/homerent/main/resources/docks/CONTRIBUTING.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./src/main/resources/docks/CONTRIBUTING.md)
 ![Status](https://img.shields.io/badge/Status-🚧%20Under%20Active%20Development-important)
 
 **HomeRent** is a comprehensive backend service for managing residential property rentals, supporting both long-term and short-term leases. The system provides role-based access for tenants, property owners, operators, and administrators, following a clean, modular architecture.
