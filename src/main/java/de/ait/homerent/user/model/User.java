@@ -6,6 +6,14 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * ----------------------------------------------------------------------------
+ * Author  : Dmitri Nedioglo
+ * Created : 01.02.26
+ * Project : home-rent
+ * ----------------------------------------------------------------------------
+ */
+
 @Entity
 @Table(name = "users")
 public class User {
