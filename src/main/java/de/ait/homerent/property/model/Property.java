@@ -1,5 +1,6 @@
 package de.ait.homerent.property.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.ait.homerent.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -62,8 +63,9 @@ public class Property {
     @Column(nullable = false)
     private PropertyStatus status;
 
-    // One-to-Many relationship: Property → PropertyPhoto
-    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    // One-to-Many relationship: Property -> PropertyPhoto
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<PropertyPhoto> photos;
 
     // Creation Date
