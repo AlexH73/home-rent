@@ -1,11 +1,14 @@
 package de.ait.homerent.property.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDate;
 
 /**
  * ----------------------------------------------------------------------------
@@ -29,14 +32,18 @@ public class PropertyPhoto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    @Column(name = "photo_data", nullable = false)
-    private byte[] photoData;
+    @Column(name = "file_path", nullable = false)
+    private String filePath;
 
     @Column(name = "file_name")
     private String fileName;
 
+    @Column(nullable = false)
+    private LocalDate uploadedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id", nullable = false)
+    @JsonBackReference
     private Property property;
+
 }
