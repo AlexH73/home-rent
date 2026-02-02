@@ -1,6 +1,13 @@
 package de.ait.homerent.user.model;
 
 import jakarta.persistence.*;
+/**
+ * ----------------------------------------------------------------------------
+ * Author  : Dmitri Nedioglo
+ * Created : 01.02.26
+ * Project : home-rent
+ * ----------------------------------------------------------------------------
+ */
 
 @Entity
 @Table(name = "roles")
