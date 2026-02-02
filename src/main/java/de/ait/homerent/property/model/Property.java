@@ -1,6 +1,6 @@
 package de.ait.homerent.property.model;
 
-import de.ait.homerent.property.enums.PropertyStatus;
+import de.ait.homerent.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -29,7 +29,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "photos")
 
 public class Property {
 
@@ -37,7 +37,7 @@ public class Property {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Владелец (User с ролью ROLE_OWNER)
+    // User with the ROLE_OWNER role
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
@@ -62,16 +62,16 @@ public class Property {
     @Column(nullable = false)
     private PropertyStatus status;
 
-    // Связь с фото PropertyPhoto (1 Property- много фото)
+    // One-to-Many relationship: Property → PropertyPhoto
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PropertyPhoto> photos;
 
-    // Дата создания
+    // Creation Date
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // Дополнительно: период доступности
+    // Additional: Availability Period
     @Column(nullable = false)
     private LocalDate availableFrom;
 
