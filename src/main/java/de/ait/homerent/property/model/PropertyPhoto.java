@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * ----------------------------------------------------------------------------
@@ -39,7 +40,7 @@ public class PropertyPhoto {
     private String fileName;
 
     @Column(nullable = false)
-    private LocalDate uploadedAt;
+    private LocalDateTime uploadedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id", nullable = false)
