@@ -3,10 +3,13 @@ package de.ait.homerent.user.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
+
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Builder
 @Table(name = "users")
 public class User {
 
@@ -32,7 +35,7 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_roles",
+            name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
@@ -41,7 +44,8 @@ public class User {
     public User() {
     }
 
-    public User(String username, String email, String password, boolean enabled, Set<Role> roles) {
+    public User(Long id, String username, String email, String password, boolean enabled, Set<Role> roles) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
