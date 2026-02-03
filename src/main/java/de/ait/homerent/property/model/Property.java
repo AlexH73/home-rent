@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,9 +56,8 @@ public class Property {
     @NotBlank(message = "Description must not be empty")
     private String description;
 
-    @Column(name = "price_per_day")
-    @Min(value = 1, message = "Price per day must be greater than 0")
-    private int pricePerDay;
+    @Column(name = "price_per_day", nullable = false, precision = 10, scale = 2)
+    private BigDecimal pricePerDay;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
