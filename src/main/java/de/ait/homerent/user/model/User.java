@@ -3,7 +3,7 @@ package de.ait.homerent.user.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.*; // Оставляем этот импорт (из твоей ветки)
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,10 +38,11 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_roles",
+            name = "users_roles", // Обрати внимание на имя таблицы, проверь согласованность с командой
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
+    
 }
