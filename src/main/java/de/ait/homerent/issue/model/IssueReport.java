@@ -31,9 +31,11 @@ public class IssueReport {
     private Long id;
 
     // Booking related to the issue
+    /*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
+    */
 
     // Reported by (tenant)
     @ManyToOne(fetch = FetchType.LAZY)
