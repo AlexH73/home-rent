@@ -9,6 +9,9 @@
     <include file="db/changelog/1.0-create-tables.xml"/>
     <include file="db/changelog/1.1-insert-reference-data.xml"/>
     <include file="db/changelog/1.2-test-objects.xml"/>
+    <include file="db/changelog/1.3-fix-properties.xml"/>
+    <include file="db/changelog/1.4-modify-column.xml"/>
+    <include file="db/changelog/1.5-create-table.xml"/>
     <include file="db/changelog/1.6-create-issue-reports-table.xml"/>
 
 </databaseChangeLog>
