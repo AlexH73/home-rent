@@ -1,8 +1,10 @@
 package de.ait.homerent.property.repository;
 
-import de.ait.homerent.property.enums.PropertyStatus;
+import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.property.model.Property;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,16 +18,22 @@ import java.util.List;
  */
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
-    // Все объекты конкретного владельца
+    // All objects of a specific owner
     List<Property> findByOwnerId(Long ownerId);
 
-    // Только доступные
+    // All properties with the specified status
     List<Property> findByStatus(PropertyStatus status);
 
-    // Доступные в период
-    List<Property> findByStatusAndAvailableBetween(
-            PropertyStatus status,
-            LocalDate availableFrom,
-            LocalDate availableTo
+    // Available during the period
+    @Query("""
+                SELECT p FROM Property p
+                WHERE p.status = :status
+                  AND p.availableFrom <= :start
+                  AND p.availableTo >= :end
+            """)
+    List<Property> findAvailableInPeriod(
+            @Param("status") PropertyStatus status,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
     );
 }

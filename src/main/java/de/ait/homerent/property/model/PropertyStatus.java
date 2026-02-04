@@ -1,4 +1,4 @@
-package de.ait.homerent.property.enums;
+package de.ait.homerent.property.model;
 
 /**
  * ----------------------------------------------------------------------------
