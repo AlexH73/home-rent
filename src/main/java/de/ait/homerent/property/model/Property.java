@@ -1,6 +1,7 @@
 package de.ait.homerent.property.model;
 
-import de.ait.homerent.property.enums.PropertyStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import de.ait.homerent.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "photos")
 
 public class Property {
 
@@ -37,7 +39,7 @@ public class Property {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Владелец (User с ролью ROLE_OWNER)
+    // User with the ROLE_OWNER role
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
@@ -54,24 +56,24 @@ public class Property {
     @NotBlank(message = "Description must not be empty")
     private String description;
 
-    @Column(name = "price_per_day")
-    @Min(value = 1, message = "Price per day must be greater than 0")
-    private int pricePerDay;
+    @Column(name = "price_per_day", nullable = false, precision = 10, scale = 2)
+    private BigDecimal pricePerDay;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PropertyStatus status;
 
-    // Связь с фото PropertyPhoto (1 Property- много фото)
-    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    // One-to-Many relationship: Property -> PropertyPhoto
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<PropertyPhoto> photos;
 
-    // Дата создания
+    // Creation Date
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // Дополнительно: период доступности
+    // Additional: Availability Period
     @Column(nullable = false)
     private LocalDate availableFrom;
 
