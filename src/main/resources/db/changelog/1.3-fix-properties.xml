@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <!-- Adding missing fields to the properties table -->
+    <changeSet id="1.3-fix-properties" author="Tetiana Anufriieva">
+        <comment>Add missing fields to the properties table to match Property entity</comment>
+        <addColumn tableName="properties">
+            <column name="title" type="VARCHAR(255)" defaultValue="Unknown">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="NEW">
+                <constraints nullable="false"/>
+            </column>
+            <column name="available_from" type="DATE" defaultValueDate="2026-01-01">
+                <constraints nullable="false"/>
+            </column>
+            <column name="available_to" type="DATE" defaultValueDate="2026-12-31">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
