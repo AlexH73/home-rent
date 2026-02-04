@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface IssueReportRepository extends JpaRepository<IssueReport, Long> {
 
-    List<IssueReport> findByStatus (IssueStatus status);
+    List<IssueReport> findByStatus(IssueStatus status);
 
     //List<IssueReport> findByBookingId(Long bookingId);
 
