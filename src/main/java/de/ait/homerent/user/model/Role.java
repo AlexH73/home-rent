@@ -1,7 +1,17 @@
 package de.ait.homerent.user.model;
 
 import jakarta.persistence.*;
+<<<<<<< feature/task-18-contract
+/**
+ * ----------------------------------------------------------------------------
+ * Author  : Dmitri Nedioglo
+ * Created : 01.02.26
+ * Project : home-rent
+ * ----------------------------------------------------------------------------
+ */
+=======
 import lombok.*;
+>>>>>>> dev
 
 @Entity
 @Table(name = "roles")
