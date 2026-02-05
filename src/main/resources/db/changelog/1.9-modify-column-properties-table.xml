@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+    <changeSet id="1.9-modify-column-properties-table" author="Tetiana Anufriieva">
+        <comment>Change price_per_day from DECIMAL to INTEGER</comment>
+
+        <modifyDataType
+                tableName="properties"
+                columnName="price_per_day"
+                newDataType="INTEGER"/>
+    </changeSet>
+
+</databaseChangeLog>
