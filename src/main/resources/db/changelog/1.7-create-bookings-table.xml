@@ -18,11 +18,11 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="start_date" type="DATE">
+            <column name="start_date" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="end_date" type="DATE">
+            <column name="end_date" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
 
@@ -30,7 +30,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="total_price" type="DOUBLE">
+            <column name="total_price" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
         </createTable>
