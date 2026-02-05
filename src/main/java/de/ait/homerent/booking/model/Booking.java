@@ -3,7 +3,10 @@ import de.ait.homerent.property.model.Property;
 import de.ait.homerent.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+
 /**
  * ----------------------------------------------------------------------------
  * Author  : Dmitri Nedioglo
@@ -32,14 +35,20 @@ public class Booking {
     @JoinColumn(name = "tenant_id", nullable = false)
     private User tenant;
 
-    @Column(nullable = false)
-    private LocalDate startDate;
-    @Column(nullable = false)
-    private LocalDate endDate;
+    @CreationTimestamp
+    @Column(name = "start_date", nullable = false)
+    private LocalDateTime startDate;
+
+    @CreationTimestamp
+    @Column(name = "end_date", nullable = false)
+    private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NonNull
     private BookingStatus status;
-    @Column(nullable = false)
-    private Double totalPrice;
+
+
+    @Column(name = "total_price", nullable = false)
+    private Integer totalPrice;
 }
