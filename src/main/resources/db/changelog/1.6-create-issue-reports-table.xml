@@ -11,6 +11,10 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
+            <column name="booking_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
             <column name="reported_by" type="BIGINT">
                 <constraints nullable="false"/>
             </column>

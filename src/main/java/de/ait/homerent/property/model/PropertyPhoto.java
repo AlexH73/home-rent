@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -39,7 +38,7 @@ public class PropertyPhoto {
     @Column(name = "file_name")
     private String fileName;
 
-    @Column(nullable = false)
+    @Column(name = "uploaded_at", nullable = false)
     private LocalDateTime uploadedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

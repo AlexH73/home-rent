@@ -1,5 +1,6 @@
 package de.ait.homerent.issue.model;
 
+import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -31,11 +32,9 @@ public class IssueReport {
     private Long id;
 
     // Booking related to the issue
-    /*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
-    private Booking booking;
-    */
+    private Booking bookingId;
 
     // Reported by (tenant)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,11 +49,12 @@ public class IssueReport {
     private String photoPath;
 
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NonNull
     private IssueStatus status;
 
 }

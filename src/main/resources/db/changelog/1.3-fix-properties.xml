@@ -15,10 +15,10 @@
             <column name="status" type="VARCHAR(20)" defaultValue="NEW">
                 <constraints nullable="false"/>
             </column>
-            <column name="available_from" type="DATE" defaultValueDate="2026-01-01">
+            <column name="available_from" type="TIMESTAMP" defaultValueDate="2026-01-01T02:08:00">
                 <constraints nullable="false"/>
             </column>
-            <column name="available_to" type="DATE" defaultValueDate="2026-12-31">
+            <column name="available_to" type="TIMESTAMP" defaultValueDate="2026-12-31T23:59:00">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
