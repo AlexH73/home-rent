@@ -8,12 +8,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Builder
 @Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -44,4 +44,5 @@ public class User {
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
+
 }
