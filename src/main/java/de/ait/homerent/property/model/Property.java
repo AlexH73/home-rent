@@ -56,8 +56,8 @@ public class Property {
     @NotBlank(message = "Description must not be empty")
     private String description;
 
-    @Column(name = "price_per_day", nullable = false, precision = 10, scale = 2)
-    private BigDecimal pricePerDay;
+    @Column(name = "price_per_day", nullable = false)
+    private Integer pricePerDay;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -70,14 +70,14 @@ public class Property {
 
     // Creation Date
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     // Additional: Availability Period
-    @Column(nullable = false)
+    @Column(name = "available_from", nullable = false)
     private LocalDate availableFrom;
 
-    @Column(nullable = false)
+    @Column(name = "available_to", nullable = false)
     private LocalDate availableTo;
 
 }
