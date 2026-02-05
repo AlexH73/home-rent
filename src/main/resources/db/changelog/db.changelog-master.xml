@@ -13,5 +13,9 @@
     <include file="db/changelog/1.4-modify-column.xml"/>
     <include file="db/changelog/1.5-create-table.xml"/>
     <include file="db/changelog/1.6-create-issue-reports-table.xml"/>
+    <include file="db/changelog/1.7-create-bookings-table.xml"/>
+    <include file="db/changelog/1.8-create-rental-contracts-table.xml"/>
+    <include file="db/changelog/1.9-modify-column-properties-table.xml"/>
+
 
 </databaseChangeLog>
