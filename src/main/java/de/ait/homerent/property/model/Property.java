@@ -3,17 +3,15 @@ package de.ait.homerent.property.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.ait.homerent.user.model.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -61,6 +59,7 @@ public class Property {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NonNull
     private PropertyStatus status;
 
     // One-to-Many relationship: Property -> PropertyPhoto
@@ -75,9 +74,9 @@ public class Property {
 
     // Additional: Availability Period
     @Column(name = "available_from", nullable = false)
-    private LocalDate availableFrom;
+    private LocalDateTime availableFrom;
 
     @Column(name = "available_to", nullable = false)
-    private LocalDate availableTo;
+    private LocalDateTime availableTo;
 
 }
