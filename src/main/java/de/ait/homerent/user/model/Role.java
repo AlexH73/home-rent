@@ -1,7 +1,8 @@
 package de.ait.homerent.user.model;
 
 import jakarta.persistence.*;
-<<<<<<< feature/task-18-contract
+import lombok.*;
+
 /**
  * ----------------------------------------------------------------------------
  * Author  : Dmitri Nedioglo
@@ -9,10 +10,6 @@ import jakarta.persistence.*;
  * Project : home-rent
  * ----------------------------------------------------------------------------
  */
-=======
-import lombok.*;
->>>>>>> dev
-
 @Entity
 @Table(name = "roles")
 @Getter
@@ -28,5 +25,6 @@ public class Role {
 
     @Enumerated(EnumType.STRING)
     @Column(unique = true, nullable = false)
+    @NonNull
     private RoleName name;
 }
