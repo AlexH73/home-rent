@@ -9,13 +9,16 @@ import de.ait.homerent.user.repository.UserRepository;
 import de.ait.homerent.user.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 /**
  * ----------------------------------------------------------------------------
  * Author  : Dmitri Nedioglo
@@ -32,7 +35,9 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     public List<UserDto> findAll() {
+        log.info("Fetching all users from database");
         return userRepository.findAll().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -53,16 +58,28 @@ public class UserService {
 
     @Transactional
     public void updateRoles(Long id, List<String> roleNames) {
+        log.info("Updating roles for user ID: {}", id);
+
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found with id: " + id));
 
         Set<Role> roles = roleNames.stream()
-                .map(name -> roleRepository.findByName(RoleName.valueOf(name.toUpperCase()))
-                        .orElseThrow(() -> new IllegalArgumentException("Role not found: " + name)))
+                .map(name -> {
+                    try {
+                        RoleName roleNameEnum = RoleName.valueOf(name.toUpperCase());
+                        return roleRepository.findByName(roleNameEnum)
+                                .orElseThrow(() -> new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND, "Role not found in DB: " + name));
+                    } catch (IllegalArgumentException e) {
+                        throw new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST, "Invalid role name: " + name);
+                    }
+                })
                 .collect(Collectors.toSet());
 
         user.setRoles(roles);
-        log.info("Roles updated for user: {}", user.getEmail());
+        log.info("Roles updated successfully for user: {}", user.getEmail());
     }
 
     private UserDto mapToDto(User user) {
