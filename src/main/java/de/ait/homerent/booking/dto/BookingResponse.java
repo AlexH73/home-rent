@@ -1,6 +1,6 @@
 package de.ait.homerent.booking.dto;
 
-
+import de.ait.homerent.booking.model.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,5 +26,5 @@ public class BookingResponse {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Integer totalPrice;
-    private String status;
+    private BookingStatus status;
 }

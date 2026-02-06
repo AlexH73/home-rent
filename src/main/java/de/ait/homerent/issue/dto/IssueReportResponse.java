@@ -1,5 +1,6 @@
 package de.ait.homerent.issue.dto;
 
+import de.ait.homerent.issue.model.IssueStatus;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -18,7 +19,7 @@ public class IssueReportResponse {
     private Long id;
     private Long bookingId;
     private String description;
-    private String status;
+    private IssueStatus status;
     private String photoPath;
     private LocalDateTime createdAt;
 }
