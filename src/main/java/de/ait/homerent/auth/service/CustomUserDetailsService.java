@@ -1,4 +1,4 @@
-package de.ait.homerent.security;
+package de.ait.homerent.auth.service;
 
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
