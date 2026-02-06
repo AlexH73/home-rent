@@ -16,6 +16,6 @@
     <include file="db/changelog/1.7-create-bookings-table.xml"/>
     <include file="db/changelog/1.8-create-rental-contracts-table.xml"/>
     <include file="db/changelog/1.9-modify-column-properties-table.xml"/>
-
+    <include file="db/changelog/1.10-modify-issue-reports-add-fk.xml"/>
 
 </databaseChangeLog>
