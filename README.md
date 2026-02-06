@@ -109,7 +109,8 @@ homerent/
 │   │   │       │   │   ├── RegisterRequest.java
 │   │   │       │   │   └── AuthResponse.java
 │   │   │       │   └── service/
-│   │   │       │       └── AuthService.java
+│   │   │       │       ├── AuthService.java
+│   │   │       │       └── CustomUserDetailsService.java
 │   │   │       │
 │   │   │       ├── user/
 │   │   │       │   ├── model/
@@ -127,8 +128,10 @@ homerent/
 │   │   │       ├── property/
 │   │   │       │   ├── model/
 │   │   │       │   │   ├── Property.java
+│   │   │       │   │   ├── PropertyPhoto.java
 │   │   │       │   │   └── PropertyStatus.java
 │   │   │       │   ├── repository/
+│   │   │       │   │   ├── PropertyPhotoRepository.java
 │   │   │       │   │   └── PropertyRepository.java
 │   │   │       │   ├── service/
 │   │   │       │   │   └── PropertyService.java
@@ -185,8 +188,8 @@ homerent/
 │   │   │       │   ├── AccessDeniedException.java
 │   │   │       │   └── BadRequestException.java
 │   │   │       │
-│   │   │       └── util/
-│   │   │           └── PriceCalculator.java
+│   │   │       └── utils/
+│   │   │           └── FilePathUtils.java
 │   │   │
 │   │   └── resources/
 │   │       ├── application.properties
