@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+    <changeSet id="1.10-modify-issue-reports-add-fk" author="Tetiana Anufriieva">
+        <!-- FK to bookings -->
+        <addForeignKeyConstraint
+                baseTableName="issue_reports"
+                baseColumnNames="booking_id"
+                constraintName="fk_issue_reports_booking_id"
+                referencedTableName="bookings"
+                referencedColumnNames="id"/>
+
+        <!-- Default for created_at -->
+        <addDefaultValue
+                tableName="issue_reports"
+                columnName="created_at"
+                defaultValueComputed="CURRENT_TIMESTAMP"/>
+
+    </changeSet>
+
+</databaseChangeLog>
