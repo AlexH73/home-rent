@@ -57,7 +57,7 @@ public class IssueService {
     private IssueReportResponse mapToResponse(IssueReport issue) {
         IssueReportResponse response = new IssueReportResponse();
         response.setId(issue.getId());
-        response.setBookingId(issue.getBookingId() != null ? issue.getBookingId().getId() : null);
+        response.setBookingId(issue.getBooking() != null ? issue.getBooking().getId() : null);
         response.setDescription(issue.getDescription());
         response.setStatus(issue.getStatus());
         response.setPhotoPath(issue.getPhotoPath());
