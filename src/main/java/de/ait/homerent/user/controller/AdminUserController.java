@@ -29,12 +29,39 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/users")
 @RequiredArgsConstructor
-@Tag(name = "Admin User Management", description = "Operations for managing users and roles (Admin access only)")
+@Tag(
+        name = "Admin User Management",
+        description = """
+        Administrative endpoints for managing application users.
+        
+        Provides functionality to:
+        • retrieve all registered users
+        • manually create users
+        • assign and update user roles
+        
+        Access is restricted to users with ADMIN role.
+        """
+)
+
 public class AdminUserController {
 
     private final UserService userService;
 
-    @Operation(summary = "Get all users", description = "Retrieves a list of all registered users with their associated roles")
+    @Operation(
+            summary = "Retrieve all users",
+            description = """
+        Returns a list of all registered users in the system.
+        
+        The response includes:
+        • user identifier
+        • username
+        • email address
+        • enabled/disabled status
+        • assigned roles
+        
+        Only accessible to administrators.
+        """
+    )
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDto>> getAllUsers() {
@@ -42,7 +69,19 @@ public class AdminUserController {
         return ResponseEntity.ok(userService.findAll());
     }
 
-    @Operation(summary = "Create user", description = "Allows an administrator to manually create a new user")
+    @Operation(
+            summary = "Create a new user",
+            description = """
+        Allows an administrator to manually create a new user account.
+        
+        The user will be:
+        • created with provided username, email, and password
+        • password will be securely encoded
+        • account will be enabled by default
+        
+        Roles may be assigned later using the role assignment endpoint.
+        """
+    )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserCreateRequest request) {
@@ -50,7 +89,21 @@ public class AdminUserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
     }
 
-    @Operation(summary = "Assign roles", description = "Updates the list of roles for a specific user by ID")
+    @Operation(
+            summary = "Assign roles to user",
+            description = """
+        Updates the set of roles assigned to a specific user.
+        
+        • Replaces all existing roles with the provided list
+        • Role names must match existing system roles
+        • Invalid role names will result in a validation error
+        
+        Example roles:
+        ROLE_TENANT, ROLE_OWNER, ROLE_OPERATOR, ROLE_ADMIN
+        
+        Accessible only to administrators.
+        """
+    )
     @PostMapping("/{id}/roles")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> assignRoles(
