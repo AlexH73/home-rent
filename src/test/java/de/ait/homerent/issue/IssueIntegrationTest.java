@@ -51,7 +51,6 @@ class IssueIntegrationTest {
 
         IssueReport report = createReport(user, "Water leak in bathroom");
         IssueReport saved = issueReportRepository.save(report);
-
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getCreatedAt()).isNotNull();
         assertThat(saved.getStatus()).isEqualTo(IssueStatus.OPEN);

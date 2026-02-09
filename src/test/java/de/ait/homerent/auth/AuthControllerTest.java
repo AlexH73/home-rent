@@ -162,7 +162,6 @@ class AuthControllerTest {
     }
 
     // LOGIN TESTS
-
     @Nested
     @DisplayName("POST /api/auth/login")
     class LoginTests {
