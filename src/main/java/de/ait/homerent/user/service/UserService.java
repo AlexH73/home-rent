@@ -1,7 +1,6 @@
 package de.ait.homerent.user.service;
 
 import de.ait.homerent.user.dto.UserCreateRequest;
-import de.ait.homerent.user.dto.UserDto;
 import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.model.Role;
@@ -36,7 +35,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public List<UserDto> findAll() {
+    public List<UserCreateRequest> findAll() {
         log.info("Fetching all users from database");
         return userRepository.findAll().stream()
                 .map(this::mapToDto)
@@ -44,7 +43,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto save(UserCreateRequest request) {
+    public UserCreateRequest save(UserCreateRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new ResponseStatusException(
@@ -104,8 +103,8 @@ public class UserService {
         log.info("Roles updated successfully for user: {}", user.getEmail());
     }
 
-    private UserDto mapToDto(User user) {
-        UserDto dto = new UserDto();
+    private UserCreateRequest mapToDto(User user) {
+        UserCreateRequest dto = new UserCreateRequest();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
