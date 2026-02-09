@@ -1,5 +1,6 @@
 package de.ait.homerent.user.controller;
 
+import de.ait.homerent.user.dto.UpdateRolesRequest;
 import de.ait.homerent.user.dto.UserCreateRequest;
 import de.ait.homerent.user.dto.UserDto;
 import de.ait.homerent.user.service.UserService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -27,7 +29,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/users")
 @RequiredArgsConstructor
-@Validated
 @Tag(name = "Admin User Management", description = "Operations for managing users and roles (Admin access only)")
 public class AdminUserController {
 
@@ -54,10 +55,11 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> assignRoles(
             @PathVariable Long id,
-            @RequestBody @NotEmpty(message = "Role list cannot be empty") List<String> roles) {
+            @Valid @RequestBody UpdateRolesRequest request
+    ) {
 
-        log.info("Admin changing roles for user id {} to {}", id, roles);
-        userService.updateRoles(id, roles);
+        log.info("Admin changing roles for user id {} to {}", id, request.getRoles());
+        userService.updateRoles(id, request.getRoles());
         return ResponseEntity.ok().build();
     }
 }
