@@ -1,5 +1,6 @@
 package de.ait.homerent.booking.dto;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class BookingCreateRequest {
     private Long propertyId;
     
     @NotNull(message = "Start date must not be null")
+    @FutureOrPresent(message = "Start date cannot be in the past")
     private LocalDateTime startDate;
     
     @NotNull(message = "End date must not be null")
