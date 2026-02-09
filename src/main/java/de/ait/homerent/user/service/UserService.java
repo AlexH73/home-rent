@@ -45,14 +45,36 @@ public class UserService {
 
     @Transactional
     public UserDto save(UserCreateRequest request) {
+
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Username already exists"
+            );
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Email already exists"
+            );
+        }
+
+        Role defaultRole = roleRepository.findByName(RoleName.ROLE_TENANT)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Default role ROLE_TENANT not found in database"
+                ));
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEnabled(true);
+        user.setRoles(Set.of(defaultRole));
 
         User savedUser = userRepository.save(user);
-        log.info("New user created by admin: {}", savedUser.getEmail());
+        log.info("New user created by admin with default role {}: {}",
+                defaultRole, savedUser.getEmail());
         return mapToDto(savedUser);
     }
 
