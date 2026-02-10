@@ -34,9 +34,6 @@ public class PropertyCreateRequest {
     @Min(value = 0, message = "Price per day must be at least 0")
     private Integer pricePerDay;
 
-    @NotNull(message = "Status must not be null")
-    private PropertyStatus status;
-
     @NotNull(message = "Available from date must not be null")
     private LocalDateTime availableFrom;
 

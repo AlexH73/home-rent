@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
  * ----------------------------------------------------------------------------
  * Author  : Dmitri Nedioglo
@@ -21,8 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCreateRequest {
-    Long id;
-
     @NotBlank(message = "Username is mandatory")
     private String username;
 
@@ -32,8 +28,4 @@ public class UserCreateRequest {
 
     @NotBlank(message = "Password is mandatory")
     private String password;
-
-    private boolean enabled;
-
-    private List<String> roles;
 }

@@ -2,15 +2,18 @@ package de.ait.homerent.user.controller;
 
 import de.ait.homerent.user.dto.UpdateRolesRequest;
 import de.ait.homerent.user.dto.UserCreateRequest;
+import de.ait.homerent.user.dto.UserDto;
 import de.ait.homerent.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -61,7 +64,7 @@ public class AdminUserController {
     )
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserCreateRequest>> getAllUsers() {
+    public ResponseEntity<List<UserDto>> getAllUsers() {
         log.info("Admin requested all users list");
         return ResponseEntity.ok(userService.findAll());
     }
@@ -81,7 +84,7 @@ public class AdminUserController {
     )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserCreateRequest> createUser(@Valid @RequestBody UserCreateRequest request) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserCreateRequest request) {
         log.info("Admin creating new user: {}", request.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
     }

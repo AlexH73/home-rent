@@ -1,8 +1,11 @@
 package de.ait.homerent.property.service;
 
 import de.ait.homerent.property.dto.PropertyCreateRequest;
+import de.ait.homerent.property.dto.PropertyDto;
 import de.ait.homerent.property.model.Property;
+import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.property.repository.PropertyRepository;
+import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,15 +33,35 @@ public class PropertyService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<Property> findAll() {
+    public List<PropertyDto> findAll() {
         log.info("Admin requested all properties");
-        return propertyRepository.findAll();
+        return propertyRepository.findAll()
+                .stream()
+                .map(this::mapToDto)
+                .toList();
     }
 
     @Transactional
-    public Property save(PropertyCreateRequest request) {
+    public PropertyDto save(PropertyCreateRequest request) {
         User owner = userRepository.findById(request.getOwnerId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Owner not found with id: " + request.getOwnerId()));
+
+        boolean isOwner = owner.getRoles().stream()
+                .anyMatch(role -> role.getName() == RoleName.ROLE_OWNER);
+
+        if (!isOwner) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "User is not an OWNER"
+            );
+        }
+
+        if (request.getAvailableFrom().isAfter(request.getAvailableTo())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "availableFrom must be before availableTo"
+            );
+        }
 
         Property property = new Property();
         property.setOwner(owner);
@@ -46,13 +69,13 @@ public class PropertyService {
         property.setAddress(request.getAddress());
         property.setDescription(request.getDescription());
         property.setPricePerDay(request.getPricePerDay());
-        property.setStatus(request.getStatus());
+        property.setStatus(PropertyStatus.AVAILABLE);
         property.setAvailableFrom(request.getAvailableFrom());
         property.setAvailableTo(request.getAvailableTo());
 
         Property savedProperty = propertyRepository.save(property);
         log.info("Admin created new property with id: {}", savedProperty.getId());
-        return savedProperty;
+        return mapToDto(savedProperty);
     }
 
     @Transactional
@@ -64,5 +87,20 @@ public class PropertyService {
 
         propertyRepository.deleteById(id);
         log.info("Property with id {} was successfully deleted by admin", id);
+    }
+
+    private PropertyDto mapToDto(Property property) {
+        PropertyDto dto = new PropertyDto();
+        dto.setId(property.getId());
+        dto.setOwnerId(property.getOwner().getId());
+        dto.setTitle(property.getTitle());
+        dto.setAddress(property.getAddress());
+        dto.setDescription(property.getDescription());
+        dto.setPricePerDay(property.getPricePerDay());
+        dto.setStatus(property.getStatus());
+        dto.setAvailableFrom(property.getAvailableFrom());
+        dto.setAvailableTo(property.getAvailableTo());
+        dto.setCreatedAt(property.getCreatedAt());
+        return dto;
     }
 }

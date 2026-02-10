@@ -1,7 +1,7 @@
 package de.ait.homerent.property.controller;
 
 import de.ait.homerent.property.dto.PropertyCreateRequest;
-import de.ait.homerent.property.model.Property;
+import de.ait.homerent.property.dto.PropertyDto;
 import de.ait.homerent.property.service.PropertyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +26,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/properties")
 @RequiredArgsConstructor
-@Tag(name = "Admin Property Management", description = "Operations for managing property listings (Admin access only)")
+@Tag(
+        name = "Admin Property Management",
+        description = """
+                Administrative endpoints for managing property listings.
+                
+                Allows administrators to:
+                • view all properties
+                • create property listings on behalf of owners
+                • permanently delete properties
+                
+                Access restricted to users with ADMIN role.
+                """
+)
 public class AdminPropertyController {
 
     private final PropertyService propertyService;
@@ -34,15 +46,26 @@ public class AdminPropertyController {
     @Operation(summary = "Get all properties", description = "Retrieves a full list of all properties in the system")
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Property>> getAllProperties() {
+    public ResponseEntity<List<PropertyDto>> getAllProperties() {
         log.info("Admin requested all properties list");
         return ResponseEntity.ok(propertyService.findAll());
     }
 
-    @Operation(summary = "Create property", description = "Allows an administrator to manually create a new property listing")
+    @Operation(
+            summary = "Create property listing",
+            description = """
+                    Creates a new property listing and assigns it to a specific owner.
+                    
+                    • The owner must exist and have ROLE_OWNER
+                    • Property status is set automatically to AVAILABLE
+                    • Availability dates must form a valid period
+                    
+                    This operation is restricted to administrators.
+                    """
+    )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Property> createProperty(@Valid @RequestBody PropertyCreateRequest request) {
+    public ResponseEntity<PropertyDto> createProperty(@Valid @RequestBody PropertyCreateRequest request) {
         log.info("Admin creating new property: {}", request.getTitle());
         return ResponseEntity.status(HttpStatus.CREATED).body(propertyService.save(request));
     }
