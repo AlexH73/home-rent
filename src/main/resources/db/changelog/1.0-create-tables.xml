@@ -3,19 +3,34 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
 
-    <changeSet id="1.0-create-tables" author="Alexander Hermann" context="test">
-        <comment>Create table users</comment>
+    <!-- Roles table -->
+    <changeSet id="1.0-1-create-roles" author="Tetiana Anufriieva">
+        <createTable tableName="roles">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Users table -->
+    <changeSet id="1.0-2-create-users" author="Tetiana Anufriieva">
         <createTable tableName="users">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="username" type="VARCHAR(50)">
+            <column name="username" type="VARCHAR(100)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="email" type="VARCHAR(100)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -32,59 +47,57 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="1.0-2" author="Alexander Hermann">
-        <comment>Create table roles</comment>
-        <createTable tableName="roles">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
+    <!-- Users-Roles table -->
+    <changeSet id="1.0-3-create-users-roles" author="Tetiana Anufriieva">
+        <createTable tableName="users_roles">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
             </column>
-            <column name="name" type="VARCHAR(50)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="role_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addPrimaryKey tableName="users_roles" columnNames="user_id, role_id" constraintName="pk_users_roles"/>
+        <addForeignKeyConstraint baseTableName="users_roles"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_users_roles_user"/>
+        <addForeignKeyConstraint baseTableName="users_roles"
+                                 baseColumnNames="role_id"
+                                 referencedTableName="roles"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_users_roles_role"/>
     </changeSet>
 
-    <changeSet id="1.0-3" author="Alexander Hermann">
-        <comment>Creating a users_roles relationship table</comment>
-        <createTable tableName="users_roles">
-            <column name="user_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_user_role_user"
-                             references="users(id)" deleteCascade="true"/>
-            </column>
-            <column name="role_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_user_role_role"
-                             references="roles(id)" deleteCascade="true"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey tableName="users_roles" columnNames="user_id, role_id"
-                       constraintName="pk_users_roles"/>
-    </changeSet>
-
-    <changeSet id="1.0-4" author="Alexander Hermann">
-        <comment>Creating a properties table</comment>
+    <!-- Properties table -->
+    <changeSet id="1.0-4-create-properties" author="Tetiana Anufriieva">
         <createTable tableName="properties">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="owner_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_property_owner"
-                             references="users(id)"/>
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
             </column>
             <column name="address" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="city" type="VARCHAR(100)">
+            <column name="description" type="VARCHAR(1000)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="TEXT"/>
-            <column name="price_per_day" type="DECIMAL(10, 2)">
+            <column name="price_per_day" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_available" type="BOOLEAN" defaultValueBoolean="true">
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="available_from" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="available_to" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
@@ -94,6 +107,138 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addForeignKeyConstraint baseTableName="properties"
+                                 baseColumnNames="owner_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_properties_owner"/>
+    </changeSet>
+
+    <!-- Bookings table -->
+    <changeSet id="1.0-5-create-bookings" author="Tetiana Anufriieva">
+        <createTable tableName="bookings">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="property_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tenant_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_price" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="bookings"
+                                 baseColumnNames="property_id"
+                                 referencedTableName="properties"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_bookings_property"/>
+        <addForeignKeyConstraint baseTableName="bookings"
+                                 baseColumnNames="tenant_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_bookings_tenant"/>
+    </changeSet>
+
+    <!-- Rental Contracts table -->
+    <changeSet id="1.0-6-create-rental-contracts" author="Tetiana Anufriieva">
+        <createTable tableName="rental_contracts">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="booking_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_path" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="uploaded_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="rental_contracts"
+                                 baseColumnNames="booking_id"
+                                 referencedTableName="bookings"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_rental_contracts_booking_id"/>
+    </changeSet>
+
+    <!-- Issue Reports table -->
+    <changeSet id="1.0-7-create-issue-reports" author="Tetiana Anufriieva">
+        <createTable tableName="issue_reports">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="booking_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reported_by" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="photo_path" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="issue_reports"
+                                 baseColumnNames="booking_id"
+                                 referencedTableName="bookings"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_issue_reports_booking"/>
+        <addForeignKeyConstraint baseTableName="issue_reports"
+                                 baseColumnNames="reported_by"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_issue_reports_user"/>
+    </changeSet>
+
+    <!-- Property Photos table -->
+    <changeSet id="1.0-8-create-property-photos" author="Tetiana Anufriieva">
+        <createTable tableName="property_photos">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="file_path" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_name" type="VARCHAR(255)"/>
+            <column name="uploaded_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="property_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="property_photos"
+                                 baseColumnNames="property_id"
+                                 referencedTableName="properties"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_property_photos_property"/>
     </changeSet>
 
 </databaseChangeLog>
