@@ -164,7 +164,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="booking_id" type="BIGINT">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="file_path" type="VARCHAR(255)">
                 <constraints nullable="false"/>
