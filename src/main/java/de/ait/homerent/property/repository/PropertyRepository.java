@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -33,7 +33,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             """)
     List<Property> findAvailableInPeriod(
             @Param("status") PropertyStatus status,
-            @Param("start") LocalDate start,
-            @Param("end") LocalDate end
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
     );
 }

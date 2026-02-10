@@ -32,7 +32,7 @@ public class User {
     @NotBlank(message = "Username must not be empty")
     private String username;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     @Email(message = "Email should be valid")
     @NotBlank(message = "Email must not be empty")
     private String email;

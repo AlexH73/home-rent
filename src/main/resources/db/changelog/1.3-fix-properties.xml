@@ -12,7 +12,7 @@
             <column name="title" type="VARCHAR(255)" defaultValue="Unknown">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="VARCHAR(20)" defaultValue="NEW">
+            <column name="status" type="VARCHAR(20)" defaultValue="AVAILABLE">
                 <constraints nullable="false"/>
             </column>
             <column name="available_from" type="TIMESTAMP" defaultValueDate="2026-01-01T02:08:00">
