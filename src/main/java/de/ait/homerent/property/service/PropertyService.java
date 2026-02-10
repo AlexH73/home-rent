@@ -35,8 +35,13 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public List<PropertyDto> findAll() {
         log.info("Admin requested all properties");
-        return propertyRepository.findAll()
-                .stream()
+
+        List<Property> properties = propertyRepository.findAll();
+        if (properties.isEmpty()) {
+            log.info("No properties found in the database");
+        }
+
+        return properties.stream()
                 .map(this::mapToDto)
                 .toList();
     }
@@ -47,11 +52,12 @@ public class PropertyService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Owner not found with id: " + request.getOwnerId()));
 
         boolean isOwner = owner.getRoles().stream()
-                .anyMatch(role -> role.getName() == RoleName.ROLE_OWNER);
+                .map(role -> role.getName())
+                .anyMatch(RoleName.ROLE_OWNER::equals);
 
         if (!isOwner) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                    HttpStatus.FORBIDDEN,
                     "User is not an OWNER"
             );
         }
