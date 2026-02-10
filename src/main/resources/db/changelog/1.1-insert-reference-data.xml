@@ -26,7 +26,7 @@
         <insert tableName="users">
             <column name="username" value="admin"/>
             <column name="email" value="admin@homerent.com"/>
-            <column name="password" value="$2a$10$YourBcryptHashHere"/> <!-- pass: admin123 -->
+            <column name="password" value="$2a$10$KrsyItcbl9Cz6lxajpv0W.fTqKHpS2B.2MyiSFdScDc9xKzkEXAIa"/> <!-- pass: password123 -->
             <column name="enabled" valueBoolean="true"/>
         </insert>
 

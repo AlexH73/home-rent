@@ -12,7 +12,7 @@
         <insert tableName="users">
             <column name="username" value="tenant1"/>
             <column name="email" value="tenant1@example.com"/>
-            <column name="password" value="$2a$10$YourBcryptHashHere"/> <!-- pass: tenant123 -->
+            <column name="password" value="$2a$10$hncWRJqGmShPnGVbX2PKW.n6/YZz6uFyw.u88KJtT02dg/aNNf/h."/> <!-- pass: tenant123 -->
             <column name="enabled" valueBoolean="true"/>
         </insert>
 
@@ -20,7 +20,7 @@
         <insert tableName="users">
             <column name="username" value="owner1"/>
             <column name="email" value="owner1@example.com"/>
-            <column name="password" value="$2a$10$YourBcryptHashHere"/> <!-- pass: owner123 -->
+            <column name="password" value="$2a$10$d5RRmK/jePmmGi7rlFCAAe2rKbJodHRwb2ho1UptgqqZqaQDMvcsu"/> <!-- pass: owner123 -->
             <column name="enabled" valueBoolean="true"/>
         </insert>
 
