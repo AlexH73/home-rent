@@ -74,7 +74,7 @@ public class AdminPropertyController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteProperty(@PathVariable Long id) {
-        log.info("Admin deleting property id: {}", id);
+        log.info("Property with id {} successfully deleted", id);
         propertyService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
