@@ -153,11 +153,16 @@
 
     </dependencies>
 
-
+    <!-- =========================
+         Build Plugins
+         ========================= -->
     <build>
         <plugins>
 
-            <!-- Lombok Annotation Processing -->
+            <!-- =========================
+                 Maven Compiler Plugin
+                 Lombok Annotation Processing
+                 ========================= -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -171,7 +176,10 @@
                 </configuration>
             </plugin>
 
-            <!-- Spring Boot Plugin (executable JAR) -->
+            <!-- =========================
+                 Spring Boot Maven Plugin
+                 Executable JAR Builder
+                 ========================= -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -185,7 +193,10 @@
                 </configuration>
             </plugin>
 
-            <!-- JaCoCo Code Coverage -->
+            <!-- =========================
+                 JaCoCo
+                 Code Coverage Analysis
+                 ========================= -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -193,7 +204,9 @@
 
                 <executions>
 
-                    <!-- Agent aktivieren -->
+                    <!-- =========================
+                         Prepare Agent
+                         ========================= -->
                     <execution>
                         <id>prepare-agent</id>
                         <goals>
@@ -201,7 +214,9 @@
                         </goals>
                     </execution>
 
-                    <!-- Report erzeugen -->
+                    <!-- =========================
+                         Generate Report
+                         ========================= -->
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
@@ -210,7 +225,9 @@
                         </goals>
                     </execution>
 
-                    <!-- Coverage prüfen -->
+                    <!-- =========================
+                         Coverage Check (50% Lines)
+                         ========================= -->
                     <execution>
                         <id>check</id>
                         <phase>verify</phase>
