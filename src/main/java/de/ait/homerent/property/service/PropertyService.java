@@ -95,6 +95,22 @@ public class PropertyService {
         log.info("Property with id {} was successfully deleted by admin", id);
     }
 
+    @Transactional(readOnly = true)
+    public List<PropertyDto> findAvailable() {
+        log.info("Tenant requested available properties");
+        return propertyRepository.findByStatus(PropertyStatus.AVAILABLE).stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public PropertyDto findById(Long id) {
+        log.info("Requesting property with id: {}", id);
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
+        return mapToDto(property);
+    }
+
     private PropertyDto mapToDto(Property property) {
         PropertyDto dto = new PropertyDto();
         dto.setId(property.getId());
