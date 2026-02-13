@@ -5,16 +5,22 @@ import de.ait.homerent.booking.dto.BookingResponse;
 import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
+import de.ait.homerent.contract.model.RentalContract;
+import de.ait.homerent.contract.repository.RentalContractRepository;
 import de.ait.homerent.property.repository.PropertyRepository;
+import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
+import de.ait.homerent.utils.FilePathUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +40,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
+    private final RentalContractRepository rentalContractRepository;
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getActiveBookings() {
@@ -41,6 +48,54 @@ public class BookingService {
         return bookingRepository.findByStatus(BookingStatus.ACTIVE).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookingResponse> findMyBookings(User tenant) {
+        log.info("Fetching bookings for tenant: {}", tenant.getUsername());
+        return bookingRepository.findByTenantId(tenant.getId()).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public BookingResponse getBookingById(Long id, User tenant) {
+        log.info("Fetching booking with ID: {} for user: {}", id, tenant.getUsername());
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
+
+        if (!booking.getTenant().getId().equals(tenant.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only view your own bookings");
+        }
+
+        return mapToResponse(booking);
+    }
+
+    @Transactional
+    public void uploadContract(Long bookingId, MultipartFile file, User tenant) {
+        log.info("Uploading contract for booking ID: {} by user: {}", bookingId, tenant.getUsername());
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
+
+        if (!booking.getTenant().getId().equals(tenant.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only upload contracts for your own bookings");
+        }
+
+        String fileName = file.getOriginalFilename();
+        if (fileName == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is required");
+        }
+
+        String filePath = FilePathUtils.generateFilePath(bookingId, "contract", LocalDate.now(), fileName);
+
+        RentalContract contract = rentalContractRepository.findByBookingId(bookingId)
+                .orElse(new RentalContract());
+
+        contract.setBooking(booking);
+        contract.setFilePath(filePath);
+        rentalContractRepository.save(contract);
+
+        log.info("Contract uploaded successfully to: {}", filePath);
     }
 
     @Transactional

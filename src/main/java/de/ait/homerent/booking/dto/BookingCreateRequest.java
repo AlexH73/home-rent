@@ -1,5 +1,7 @@
 package de.ait.homerent.booking.dto;
 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +21,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingCreateRequest {
+    @NotNull
     private Long propertyId;
+    @NotNull
     private Long tenantId;
+    @NotNull
+    @FutureOrPresent
     private LocalDateTime startDate;
+    @NotNull
+    @FutureOrPresent
     private LocalDateTime endDate;
 }
