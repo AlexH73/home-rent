@@ -1,9 +1,14 @@
 package de.ait.homerent.issue.service;
 
+import de.ait.homerent.booking.model.Booking;
+import de.ait.homerent.booking.repository.BookingRepository;
+import de.ait.homerent.issue.dto.IssueCreateRequest;
 import de.ait.homerent.issue.dto.IssueReportResponse;
 import de.ait.homerent.issue.model.IssueReport;
 import de.ait.homerent.issue.model.IssueStatus;
 import de.ait.homerent.issue.repository.IssueReportRepository;
+import de.ait.homerent.user.model.User;
+import de.ait.homerent.utils.FilePathUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +33,37 @@ import java.util.stream.Collectors;
 public class IssueService {
 
     private final IssueReportRepository issueReportRepository;
+    private final BookingRepository bookingRepository;
+
+    @Transactional
+    public IssueReportResponse createIssue(IssueCreateRequest request, User tenant) {
+        log.info("Creating issue report for booking ID: {} by user: {}", request.getBookingId(), tenant.getUsername());
+
+        Booking booking = bookingRepository.findById(request.getBookingId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
+
+        if (!booking.getTenant().getId().equals(tenant.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only report issues for your own bookings");
+        }
+
+        String photoPath = "no-photo";
+        if (request.getPhoto() != null && !request.getPhoto().isEmpty()) {
+            String fileName = request.getPhoto().getOriginalFilename();
+            photoPath = FilePathUtils.generateFilePath(booking.getId(), "issue", LocalDate.now(), fileName);
+        }
+
+        IssueReport issue = new IssueReport();
+        issue.setBooking(booking);
+        issue.setReportedBy(tenant);
+        issue.setDescription(request.getDescription());
+        issue.setPhotoPath(photoPath);
+        issue.setStatus(IssueStatus.OPEN);
+
+        IssueReport savedIssue = issueReportRepository.save(issue);
+        log.info("Issue report created with ID: {}", savedIssue.getId());
+
+        return mapToResponse(savedIssue);
+    }
 
     @Transactional(readOnly = true)
     public List<IssueReportResponse> findAll() {
