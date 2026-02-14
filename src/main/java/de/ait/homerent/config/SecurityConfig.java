@@ -6,11 +6,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -64,19 +66,14 @@ public class SecurityConfig {
                             .requestMatchers("/api/auth/**").permitAll()
                             .requestMatchers("/api/public/**").permitAll()
                             .requestMatchers("/h2-console/**").permitAll()
-                            .requestMatchers("/swagger-ui/**").permitAll()
-                            .requestMatchers("/v3/api-docs/**").permitAll()
-                            .requestMatchers("/swagger-ui.html").permitAll()
                             .anyRequest().authenticated();
                     log.info("Authorization rules configured");
                 })
                 .headers(headers -> {
                     log.info("Configuring headers - allowing frames from same origin");
-                    headers.frameOptions(frame -> frame.sameOrigin());
+                    headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin);
                 })
-                .httpBasic(basic ->
-                    log.info("Configuring HTTP Basic authentication")
-                );
+                .httpBasic(Customizer.withDefaults());
 
         log.info("SecurityFilterChain configuration complete");
         return http.build();
