@@ -1,5 +1,6 @@
 package de.ait.homerent.booking.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 public class RentalFinishedEmailRequest {
 
     @NotBlank
+    @Email
     private String email;
 
     @NotBlank
@@ -37,6 +39,7 @@ public class RentalFinishedEmailRequest {
     private LocalDate endDate;
 
     @Positive
+    @NotNull
     private Integer totalPrice;
 }
 
