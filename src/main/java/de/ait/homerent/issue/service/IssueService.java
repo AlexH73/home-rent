@@ -74,7 +74,7 @@ public class IssueService {
     }
 
     @Transactional
-    public void updateStatus(Long id, String status) {
+    public void updateStatus(Long id, IssueStatus status) {
         log.info("Updating status for issue ID: {} to {}", id, status);
 
         IssueReport issue = issueReportRepository.findById(id)
@@ -82,7 +82,7 @@ public class IssueService {
                         HttpStatus.NOT_FOUND, "Issue not found with id: " + id));
 
         try {
-            issue.setStatus(IssueStatus.valueOf(status.toUpperCase()));
+            issue.setStatus(status);
             issueReportRepository.save(issue);
         } catch (IllegalArgumentException e) {
             log.error("Invalid status provided: {}", status);
