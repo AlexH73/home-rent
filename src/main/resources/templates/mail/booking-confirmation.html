@@ -37,15 +37,13 @@
                         <!-- Confirm button -->
                         <div style="margin-top:18px;" th:if="${confirmUrl}">
                             <a th:href="${confirmUrl}"
-                               style="display:inline-block; padding:12px 18px; background:#2563eb; color:#ffffff; text-decoration:none; border-radius:10px; font-weight:bold; font-size:14px; transition: all 0.3s ease; cursor:pointer;"
-                               onmouseover="this.style.background='#1e40af'; this.style.transform='scale(1.05)';"
-                               onmouseout="this.style.background='#2563eb'; this.style.transform='scale(1)';">
+                               style="display:inline-block; padding:12px 18px; background:#2563eb; color:#ffffff; text-decoration:none; border-radius:10px; font-weight:bold; font-size:14px; transition: all 0.3s ease; cursor:pointer;">
                                 Confirm Booking
                             </a>
                         </div>
 
                         <p style="margin:18px 0 0 0; font-size:12px; color:#6b7280;" th:if="${confirmUrl}">
-                            If the button does not work, use this link: <span th:text="${confirmUrl}">https://example.com</span>
+                            If the button does not work, use this link: <a th:href="${confirmUrl}" th:text="${confirmUrl}">https://example.com</a>
                         </p>
                     </td>
                 </tr>

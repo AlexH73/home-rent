@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 
 public class EmailService {
 
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
 
     public EmailService(TemplateEngine templateEngine, JavaMailSender javaMailSender) {
@@ -38,10 +38,6 @@ public class EmailService {
 
     @Value("${app.mail.from}")
     private String from;
-
-    @Value("${app.public.base-url}")
-    private String baseUrl;
-
 
     // ------------------------ Booking Approved ------------------------
     public void sendBookingApproved(BookingEmailRequest request) {
@@ -53,7 +49,7 @@ public class EmailService {
         context.setVariable("totalPrice", request.getTotalPrice());
         context.setVariable("confirmUrl", request.getConfirmUrl());
 
-        sendEmail(request.getEmail(), "Booking Confirmation", "booking-confirmation", context);
+        sendEmail(request.getEmail(), "Booking Confirmation", "mail/booking-confirmation", context);
     }
 
     // ------------------------ Rental Finished ------------------------
@@ -65,7 +61,7 @@ public class EmailService {
         context.setVariable("endDate", request.getEndDate());
         context.setVariable("totalPrice", request.getTotalPrice());
 
-        sendEmail(request.getEmail(), "Rental Finished", "rental-finished", context);
+        sendEmail(request.getEmail(), "Rental Finished", "mail/rental-finished", context);
     }
 
     // ------------------------ Contract Uploaded ------------------------
@@ -75,7 +71,7 @@ public class EmailService {
         context.setVariable("propertyAddress", request.getPropertyAddress());
         context.setVariable("contractFileName", request.getContractFileName());
 
-        sendEmail(request.getEmail(), "Contract Uploaded", "contract-uploaded", context);
+        sendEmail(request.getEmail(), "Contract Uploaded", "mail/contract-uploaded", context);
     }
 
     // ------------------------ Helper method ------------------------

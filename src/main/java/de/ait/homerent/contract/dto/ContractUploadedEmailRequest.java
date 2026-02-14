@@ -1,5 +1,6 @@
 package de.ait.homerent.contract.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import lombok.Setter;
 public class ContractUploadedEmailRequest {
 
     @NotBlank
+    @Email
     private String email;
 
     @NotBlank
@@ -25,5 +27,5 @@ public class ContractUploadedEmailRequest {
     private String propertyAddress;
 
     @NotBlank
-    private String contractFileName; // имя загруженного PDF или filePath
+    private String contractFileName;
 }
