@@ -29,7 +29,7 @@ public class BookingSecurity {
 
         if (bookingId == null) {
             log.warn("Booking id is null – cannot check ownership, returning false");
-            return false; // Не можем проверить, доступ запрещён
+            return false;
         }
 
         if (authentication == null || !authentication.isAuthenticated()) {

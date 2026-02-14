@@ -69,8 +69,8 @@ public class TenantBookingController {
         bookingService.uploadContract(id, file, user);
     }
 
-    private User getUser(Principal principal) {
-        return userRepository.findByUsername(principal.getName())
+    private User getUser(Authentication authentication) {
+        return userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }
