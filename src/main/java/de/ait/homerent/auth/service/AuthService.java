@@ -46,12 +46,12 @@ public class AuthService {
         // Check if user exists
         if (userRepository.existsByUsername(request.getUsername())) {
             log.warn("Registration failed: username {} already exists", request.getUsername());
-            throw new RuntimeException("User with this username already exists");
+            throw new IllegalArgumentException("User with this username already exists");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
             log.warn("Registration failed: email {} already exists", request.getEmail());
-            throw new RuntimeException("User with this email already exists");
+            throw new IllegalArgumentException("User with this email already exists");
         }
 
         // Create new user
@@ -119,7 +119,7 @@ public class AuthService {
 
         } catch (org.springframework.security.core.AuthenticationException e) {
             log.warn("Authentication failed for user: {} - {}", request.getUsername(), e.getMessage());
-            throw new RuntimeException("Invalid username or password");
+            throw new IllegalArgumentException("Invalid username or password");
         }
     }
 }
