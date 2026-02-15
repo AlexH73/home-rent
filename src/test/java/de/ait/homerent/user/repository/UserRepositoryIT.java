@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
@@ -40,9 +39,6 @@ class UserRepositoryIT {
 
     @Autowired
     private TestEntityManager entityManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("Should save user with existing roles")
