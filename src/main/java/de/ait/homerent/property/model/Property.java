@@ -29,7 +29,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "photos")
+@ToString(exclude = {"photos", "owner"})
 
 public class Property {
 
