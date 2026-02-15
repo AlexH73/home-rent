@@ -1,4 +1,4 @@
-package de.ait.homerent.controller;
+package de.ait.homerent.auth.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
