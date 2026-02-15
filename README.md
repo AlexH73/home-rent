@@ -120,6 +120,10 @@ homerent/
 │   │   │       │   ├── repository/
 │   │   │       │   │   ├── UserRepository.java
 │   │   │       │   │   └── RoleRepository.java
+│   │   │       │   ├── dto/
+│   │   │       │   │   ├── UpdateRolesRequest.java
+│   │   │       │   │   ├── UserCreateRequest.java
+│   │   │       │   │   └── UserDto.java
 │   │   │       │   ├── service/
 │   │   │       │   │   └── UserService.java
 │   │   │       │   └── controller/
@@ -133,6 +137,9 @@ homerent/
 │   │   │       │   ├── repository/
 │   │   │       │   │   ├── PropertyPhotoRepository.java
 │   │   │       │   │   └── PropertyRepository.java
+│   │   │       │   ├── dto/
+│   │   │       │   │   ├── PropertyCreateRequest.java
+│   │   │       │   │   └── PropertyDto.java
 │   │   │       │   ├── service/
 │   │   │       │   │   └── PropertyService.java
 │   │   │       │   └── controller/
@@ -148,7 +155,9 @@ homerent/
 │   │   │       │   │   └── BookingRepository.java
 │   │   │       │   ├── dto/
 │   │   │       │   │   ├── BookingCreateRequest.java
-│   │   │       │   │   └── BookingResponse.java
+│   │   │       │   │   ├── BookingEmailRequest.java
+│   │   │       │   │   ├── BookingResponse.java
+│   │   │       │   │   └── RentalFinishedEmailRequest.java
 │   │   │       │   ├── service/
 │   │   │       │   │   └── BookingService.java
 │   │   │       │   └── controller/
@@ -161,7 +170,10 @@ homerent/
 │   │   │       │   │   └── RentalContract.java
 │   │   │       │   ├── repository/
 │   │   │       │   │   └── RentalContractRepository.java
+│   │   │       │   ├── dto/
+│   │   │       │   │   └── ContractUploadedEmailRequest.java
 │   │   │       │   └── service/
+│   │   │       │       ├── FileStorageService.java
 │   │   │       │       └── RentalContractService.java
 │   │   │       │
 │   │   │       ├── issue/
@@ -169,7 +181,10 @@ homerent/
 │   │   │       │   │   ├── IssueReport.java
 │   │   │       │   │   └── IssueStatus.java
 │   │   │       │   ├── repository/
-│   │   │       │   │   └── IssueReportRepository.java
+│   │   │       │   │   └── IssueReportRepository.java 
+│   │   │       │   ├── dto/
+│   │   │       │   │   ├── IssueCreateRequest.java
+│   │   │       │   │   └── IssueReportResponse.java
 │   │   │       │   ├── service/
 │   │   │       │   │   └── IssueService.java
 │   │   │       │   └── controller/

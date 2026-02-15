@@ -120,7 +120,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
         <!-- =========================
              Spring Boot Test
              JUnit, Mockito, MockMvc
@@ -133,7 +132,6 @@
 
         <!-- =========================
              Spring Security Test
-             @WithMockUser, security tests
              ========================= -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -156,13 +154,14 @@
     </dependencies>
 
     <!-- =========================
-         Build configuration
+         Build Plugins
          ========================= -->
     <build>
         <plugins>
 
             <!-- =========================
-                 Lombok annotation processing
+                 Maven Compiler Plugin
+                 Lombok Annotation Processing
                  ========================= -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -178,8 +177,8 @@
             </plugin>
 
             <!-- =========================
-                 Spring Boot plugin
-                 Builds executable jar
+                 Spring Boot Maven Plugin
+                 Executable JAR Builder
                  ========================= -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -192,6 +191,66 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+
+            <!-- =========================
+                 JaCoCo
+                 Code Coverage Analysis
+                 ========================= -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.10</version>
+
+                <executions>
+
+                    <!-- =========================
+                         Prepare Agent
+                         ========================= -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- =========================
+                         Generate Report
+                         ========================= -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- =========================
+                         Coverage Check (50% Lines)
+                         ========================= -->
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>CLASS</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.50</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+
+                </executions>
             </plugin>
 
         </plugins>

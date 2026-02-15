@@ -35,11 +35,9 @@ public class Booking {
     @JoinColumn(name = "tenant_id", nullable = false)
     private User tenant;
 
-    @CreationTimestamp
     @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
 
-    @CreationTimestamp
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
 

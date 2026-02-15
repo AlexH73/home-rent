@@ -35,7 +35,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         log.info("Configuring WebSecurityCustomizer - ignoring Swagger paths");
-        return (web) -> web.ignoring()
+        return web -> web.ignoring()
                 .requestMatchers(
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
@@ -74,9 +74,9 @@ public class SecurityConfig {
                     log.info("Configuring headers - allowing frames from same origin");
                     headers.frameOptions(frame -> frame.sameOrigin());
                 })
-                .httpBasic(basic -> {
-                    log.info("Configuring HTTP Basic authentication");
-                });
+                .httpBasic(basic ->
+                    log.info("Configuring HTTP Basic authentication")
+                );
 
         log.info("SecurityFilterChain configuration complete");
         return http.build();
