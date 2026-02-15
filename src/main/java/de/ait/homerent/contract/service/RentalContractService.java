@@ -61,12 +61,16 @@ public class RentalContractService {
     private void sendContractUploadedEmail(Booking booking, String originalFileName) {
         try {
             ContractUploadedEmailRequest emailRequest = new ContractUploadedEmailRequest();
-            emailRequest.setEmail(booking.getTenant().getEmail());
-            emailRequest.setUsername(booking.getTenant().getUsername());
-            emailRequest.setPropertyAddress(booking.getProperty().getAddress());
+            if (booking.getTenant() != null) {
+                emailRequest.setEmail(booking.getTenant().getEmail());
+                emailRequest.setUsername(booking.getTenant().getUsername());
+            }
+            if (booking.getProperty() != null) {
+                emailRequest.setPropertyAddress(booking.getProperty().getAddress());
+            }
             emailRequest.setContractFileName(originalFileName);
 
-            emailService.sendContractUploaded(emailRequest);
+            emailService.sendContractUploaded(emailRequest); //
 
         } catch (Exception e) {
             log.error("Failed to send contract uploaded email for booking {}", booking.getId(), e);

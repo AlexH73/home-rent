@@ -39,7 +39,8 @@ public class FileStorageService {
 
             // generating a unique file name
             String originalFilename = file.getOriginalFilename();
-            String storedFilename = UUID.randomUUID() + "_" + originalFilename;
+            String sanitizedFilename = originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+            String storedFilename = UUID.randomUUID() + "_" + sanitizedFilename;
             Path targetPath = targetDir.resolve(storedFilename);
 
             // copying the file
