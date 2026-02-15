@@ -78,8 +78,12 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only upload contracts for your own bookings");
         }
 
+        if (file == null || file.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File must not be empty");
+        }
+
         String fileName = file.getOriginalFilename();
-        if (fileName == null) {
+        if (fileName == null || fileName.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is required");
         }
 
