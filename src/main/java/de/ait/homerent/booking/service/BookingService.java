@@ -7,11 +7,13 @@ import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.contract.service.RentalContractService;
 import de.ait.homerent.property.repository.PropertyRepository;
+import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -135,5 +137,60 @@ public class BookingService {
         response.setTotalPrice(booking.getTotalPrice());
         response.setStatus(booking.getStatus());
         return response;
+    }
+
+    // Get bookings pending confirmation
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('OWNER')")
+    public List<Booking> getPendingBookings(String username) {
+        User owner = getCurrentOwner(username);
+        return bookingRepository.findByPropertyOwnerIdAndStatus(owner.getId(), BookingStatus.REQUESTED);
+    }
+
+    // Confirm the booking
+    @Transactional
+    @PreAuthorize("hasRole('OWNER')")
+    public Booking approveBooking(String username, Long bookingId) {
+        User owner = getCurrentOwner(username);
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
+
+        if (!booking.getProperty().getOwner().getId().equals(owner.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can approve only your bookings");
+        }
+
+        booking.setStatus(BookingStatus.APPROVED);
+        return bookingRepository.save(booking);
+    }
+
+    // Reject the booking
+    @Transactional
+    @PreAuthorize("hasRole('OWNER')")
+    public Booking rejectBooking(String username, Long bookingId) {
+        User owner = getCurrentOwner(username);
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
+
+        if (!booking.getProperty().getOwner().getId().equals(owner.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can reject only your bookings");
+        }
+
+        booking.setStatus(BookingStatus.REJECTED);
+        return bookingRepository.save(booking);
+    }
+
+    // Helper method to retrieve the current owner
+    private User getCurrentOwner(String username) {
+        User owner = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        boolean isOwner = owner.getRoles().stream()
+                .anyMatch(role -> role.getName() == RoleName.ROLE_OWNER);
+
+        if (!isOwner) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not an OWNER");
+        }
+
+        return owner;
     }
 }

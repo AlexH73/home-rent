@@ -11,6 +11,7 @@ import de.ait.homerent.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -124,5 +125,53 @@ public class PropertyService {
         dto.setAvailableTo(property.getAvailableTo());
         dto.setCreatedAt(property.getCreatedAt());
         return dto;
+    }
+
+    // Get all properties of the current owner
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('OWNER')")
+    public List<Property> getMyProperties(String username) {
+        User owner = getCurrentOwner(username);
+        return propertyRepository.findByOwnerId(owner.getId());
+    }
+
+    // Create a new property
+    @Transactional
+    @PreAuthorize("hasRole('OWNER')")
+    public Property createProperty(String username, Property property) {
+        User owner = getCurrentOwner(username);
+        property.setOwner(owner);
+        return propertyRepository.save(property);
+    }
+
+    // Delete a property
+    @Transactional
+    @PreAuthorize("hasRole('OWNER')")
+    public boolean deleteProperty(String username, Long propertyId) {
+        User owner = getCurrentOwner(username);
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
+
+        if (!property.getOwner().getId().equals(owner.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can delete only your properties");
+        }
+
+        propertyRepository.delete(property);
+        return true;
+    }
+
+    // Helper method to get the current owner
+    private User getCurrentOwner(String username) {
+        User owner = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        boolean isOwner = owner.getRoles().stream()
+                .anyMatch(role -> role.getName() == RoleName.ROLE_OWNER);
+
+        if (!isOwner) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not an OWNER");
+        }
+
+        return owner;
     }
 }
