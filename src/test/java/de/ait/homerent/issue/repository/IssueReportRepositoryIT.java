@@ -123,7 +123,7 @@ class IssueReportRepositoryIT {
         issue.setDescription("Leaking faucet");
         issue.setPhotoPath("issues/2026-02-15/faucet.jpg");
         issue.setStatus(IssueStatus.OPEN);
-        // createdAt will be installed automatically.
+        // createdAt will be initialized automatically.
 
         // when
         IssueReport saved = issueReportRepository.save(issue);
@@ -139,7 +139,7 @@ class IssueReportRepositoryIT {
         assertThat(loaded.getDescription()).isEqualTo("Leaking faucet");
         assertThat(loaded.getPhotoPath()).isEqualTo("issues/2026-02-15/faucet.jpg");
         assertThat(loaded.getStatus()).isEqualTo(IssueStatus.OPEN);
-        assertThat(loaded.getCreatedAt()).isNotNull(); // проверяем автоустановку даты
+        assertThat(loaded.getCreatedAt()).isNotNull();
         assertThat(loaded.getBooking().getId()).isEqualTo(testBooking.getId());
         assertThat(loaded.getReportedBy().getId()).isEqualTo(testTenant.getId());
     }
@@ -269,7 +269,7 @@ class IssueReportRepositoryIT {
         issue.setBooking(testBooking);
         issue.setReportedBy(testTenant);
         issue.setDescription("Valid description");
-        issue.setPhotoPath(null); // нарушает NOT NULL в БД
+        issue.setPhotoPath(null);
         issue.setStatus(IssueStatus.OPEN);
 
         assertThrows(DataIntegrityViolationException.class, () -> {
