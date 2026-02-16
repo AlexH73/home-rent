@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const downloadLink = document.createElement('a');
             downloadLink.href = '/v3/api-docs';
             downloadLink.className = 'download-link';
-            downloadLink.textContent = '📄 Скачать OpenAPI JSON';
+            downloadLink.textContent = '📄 Download OpenAPI JSON';
             downloadLink.style.display = 'inline-block';
             downloadLink.style.marginTop = '10px';
             downloadLink.style.padding = '8px 16px';
