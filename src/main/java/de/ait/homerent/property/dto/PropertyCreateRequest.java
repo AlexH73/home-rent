@@ -1,12 +1,14 @@
 package de.ait.homerent.property.dto;
 
 import de.ait.homerent.property.model.PropertyStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ----------------------------------------------------------------------------
@@ -39,4 +41,7 @@ public class PropertyCreateRequest {
 
     @NotNull(message = "Available to date must not be null")
     private LocalDateTime availableTo;
+
+    @Schema(description = "List of photo URLs (optional field)", required = false)
+    private List<String> photoUrls;
 }
