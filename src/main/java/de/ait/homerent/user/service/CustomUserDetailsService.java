@@ -1,10 +1,11 @@
-package de.ait.homerent.auth.service;
+package de.ait.homerent.user.service;
 
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import static org.springframework.security.core.userdetails.User.builder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -47,7 +48,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .toList();
 
-        return org.springframework.security.core.userdetails.User.builder()
+        return builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .disabled(!user.isEnabled())
