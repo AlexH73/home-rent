@@ -1,5 +1,6 @@
 package de.ait.homerent.property.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import de.ait.homerent.property.model.PropertyStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import java.util.List;
 public class PropertyDto {
 
     private Long id;
-    private Long ownerId;
+    //private Long ownerId;
     private String title;
     private String address;
     private String description;
@@ -28,6 +29,7 @@ public class PropertyDto {
     private PropertyStatus status;
     private LocalDateTime availableFrom;
     private LocalDateTime availableTo;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @Schema(description = "List of photo URLs (optional field)", required = false)
