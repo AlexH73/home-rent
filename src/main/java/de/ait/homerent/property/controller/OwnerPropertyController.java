@@ -4,7 +4,9 @@ import de.ait.homerent.property.dto.PropertyCreateRequest;
 import de.ait.homerent.property.dto.PropertyDto;
 import de.ait.homerent.property.service.PropertyService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +37,16 @@ import java.util.List;
 @RequestMapping("/api/owner")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "Owner Properties", description = "Endpoints for managing properties of the current owner")
 public class OwnerPropertyController {
 
     private final PropertyService propertyService;
 
     @GetMapping("/properties")
+    @Operation(
+            summary = "Get owner's properties",
+            description = "Fetch all properties that belong to the currently authenticated owner"
+    )
     public List<PropertyDto> getMyProperties(Authentication authentication) {
         String username = authentication.getName();
         log.info("Fetching properties for owner: {}", username);
@@ -47,6 +54,10 @@ public class OwnerPropertyController {
     }
 
     @PostMapping(value = "/properties", consumes = {"multipart/form-data"})
+    @Operation(
+            summary = "Create a new property",
+            description = "Create a new property for the currently authenticated owner with optional photos"
+    )
     public PropertyDto createProperty(
             Authentication authentication,
             @Valid @RequestPart("property") PropertyCreateRequest request,
@@ -60,6 +71,10 @@ public class OwnerPropertyController {
     }
 
     @DeleteMapping("/properties/{id}")
+    @Operation(
+            summary = "Delete a property",
+            description = "Delete a property by ID for the currently authenticated owner"
+    )
     public ResponseEntity<Void> deleteProperty(Authentication authentication,
                                                @PathVariable Long id) {
         String username = authentication.getName();

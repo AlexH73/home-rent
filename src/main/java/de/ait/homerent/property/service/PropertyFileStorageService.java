@@ -25,7 +25,7 @@ import java.util.UUID;
 public class PropertyFileStorageService {
 
     @Value("${app.upload.properties-dir}")
-    private String propertiesDir; // например: storage/properties
+    private String propertiesDir;
 
     @Value("${app.upload.property-max-size}")
     private Long maxFileSize;

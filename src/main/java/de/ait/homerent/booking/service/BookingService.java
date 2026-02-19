@@ -140,18 +140,24 @@ public class BookingService {
     }
 
     // Get bookings pending confirmation
-    @Transactional(readOnly = true)
+    @Transactional
     @PreAuthorize("hasRole('OWNER')")
-    public List<Booking> getPendingBookings(String username) {
+    public List<BookingResponse> getPendingBookings(String username) {
         User owner = getCurrentOwner(username);
-        return bookingRepository.findByPropertyOwnerIdAndStatus(owner.getId(), BookingStatus.REQUESTED);
+
+        return bookingRepository
+                .findByPropertyOwnerIdAndStatus(owner.getId(), BookingStatus.REQUESTED)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     // Confirm the booking
     @Transactional
     @PreAuthorize("hasRole('OWNER')")
-    public Booking approveBooking(String username, Long bookingId) {
+    public BookingResponse approveBooking(String username, Long bookingId) {
         User owner = getCurrentOwner(username);
+
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
 
@@ -159,15 +165,25 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can approve only your bookings");
         }
 
+        if (booking.getStatus() != BookingStatus.REQUESTED) {
+            log.warn("Attempt to approve booking with id {} failed. Current status: {}", bookingId, booking.getStatus());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Booking cannot be approved because its status is " + booking.getStatus());
+        }
+
         booking.setStatus(BookingStatus.APPROVED);
-        return bookingRepository.save(booking);
+
+        // TODO: add email notification sending
+
+        return mapToResponse(bookingRepository.save(booking));
     }
 
     // Reject the booking
     @Transactional
     @PreAuthorize("hasRole('OWNER')")
-    public Booking rejectBooking(String username, Long bookingId) {
+    public BookingResponse rejectBooking(String username, Long bookingId) {
         User owner = getCurrentOwner(username);
+
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
 
@@ -175,8 +191,14 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can reject only your bookings");
         }
 
+        if (booking.getStatus() != BookingStatus.REQUESTED) {
+            log.warn("Attempt to reject booking with id {} failed. Current status: {}", bookingId, booking.getStatus());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Booking cannot be rejected because its status is " + booking.getStatus());
+        }
+
         booking.setStatus(BookingStatus.REJECTED);
-        return bookingRepository.save(booking);
+        return mapToResponse(bookingRepository.save(booking));
     }
 
     // Helper method to retrieve the current owner

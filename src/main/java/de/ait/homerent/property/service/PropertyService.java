@@ -120,7 +120,7 @@ public class PropertyService {
     private PropertyDto mapToDto(Property property) {
         PropertyDto dto = new PropertyDto();
         dto.setId(property.getId());
-        dto.setOwnerId(property.getOwner().getId());
+       // dto.setOwnerId(property.getOwner().getId());
         dto.setTitle(property.getTitle());
         dto.setAddress(property.getAddress());
         dto.setDescription(property.getDescription());
@@ -182,6 +182,7 @@ public class PropertyService {
 
                 PropertyPhoto photo = new PropertyPhoto();
                 photo.setFilePath(path);
+                photo.setFileName(file.getOriginalFilename());
                 photo.setProperty(savedProperty);
                 photo.setUploadedAt(LocalDateTime.now());
 
