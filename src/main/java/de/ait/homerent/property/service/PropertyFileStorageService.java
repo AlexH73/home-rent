@@ -53,12 +53,40 @@ public class PropertyFileStorageService {
     }
 
     private void validateFile(MultipartFile file) {
+
         if (file == null || file.isEmpty()) {
+            log.warn("Rejected property image upload: file={}, reason={}",
+                    file != null ? file.getOriginalFilename() : "null",
+                    "file is empty");
             throw new IllegalArgumentException("File is empty");
         }
 
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isBlank()) {
+            log.warn("Rejected property image upload: reason=filename is empty");
+            throw new IllegalArgumentException("File name is empty");
+        }
+
         if (file.getSize() > maxFileSize) {
-            throw new IllegalArgumentException("File too large: " + file.getOriginalFilename());
+            log.warn("Rejected property image upload: file={}, size={}, maxAllowed={}",
+                    originalFilename, file.getSize(), maxFileSize);
+            throw new IllegalArgumentException("File too large");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || contentType.isBlank()) {
+            log.warn("Rejected property image upload: file={}, reason=content type is empty",
+                    originalFilename);
+            throw new IllegalArgumentException("File content type is empty");
+        }
+
+        boolean allowed = contentType.equals("image/jpeg")
+                || contentType.equals("image/png");
+
+        if (!allowed) {
+            log.warn("Rejected property image upload: file={}, contentType={}, reason=not allowed",
+                    originalFilename, contentType);
+            throw new IllegalArgumentException("Only JPEG and PNG images are allowed");
         }
     }
 }

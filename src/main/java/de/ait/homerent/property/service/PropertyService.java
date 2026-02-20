@@ -174,7 +174,7 @@ public class PropertyService {
 
         Property savedProperty = propertyRepository.save(property);
 
-        // ------------------ сохраняем файлы ------------------
+        // ------------------ save files ------------------
         if (files != null && !files.isEmpty()) {
             List<PropertyPhoto> photos = new ArrayList<>();
             for (MultipartFile file : files) {
@@ -189,7 +189,7 @@ public class PropertyService {
                 photos.add(photo);
             }
             savedProperty.setPhotos(photos);
-            propertyRepository.save(savedProperty); // обновляем с файлами
+            propertyRepository.save(savedProperty); // update with files
         }
 
         return mapToDto(savedProperty);
