@@ -1,11 +1,16 @@
 package de.ait.homerent.booking.service;
 
 import de.ait.homerent.booking.dto.BookingCreateRequest;
+import de.ait.homerent.booking.dto.BookingEmailRequest;
 import de.ait.homerent.booking.dto.BookingResponse;
+import de.ait.homerent.booking.dto.RentalFinishedEmailRequest;
 import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.contract.service.RentalContractService;
+import de.ait.homerent.mail.EmailService;
+import de.ait.homerent.property.model.Property;
+import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.property.repository.PropertyRepository;
 import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
@@ -40,6 +45,7 @@ public class BookingService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final RentalContractService rentalContractService;
+    private final EmailService emailService;
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getActiveBookings() {
@@ -172,8 +178,23 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.APPROVED);
+        Property property = booking.getProperty();
+        property.setStatus(PropertyStatus.BOOKED);
+        propertyRepository.save(property);
+        bookingRepository.save(booking);
 
-        // TODO: add email notification sending
+        //Email sending
+        BookingEmailRequest emailRequest = new BookingEmailRequest();
+        emailRequest.setEmail(booking.getTenant().getEmail());
+        emailRequest.setUsername(booking.getTenant().getUsername());
+        emailRequest.setPropertyAddress(booking.getProperty().getAddress());
+        emailRequest.setStartDate(booking.getStartDate().toLocalDate());
+        emailRequest.setEndDate(booking.getEndDate().toLocalDate());
+        emailRequest.setTotalPrice(booking.getTotalPrice());
+        // Temporary placeholder link for booking confirmation, replace with the real frontend URL
+        emailRequest.setConfirmUrl("https://your-app.com/bookings/" + booking.getId() + "/confirm");
+
+        emailService.sendBookingApproved(emailRequest);
 
         return mapToResponse(bookingRepository.save(booking));
     }
@@ -198,6 +219,9 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.REJECTED);
+        Property property = booking.getProperty();
+        property.setStatus(PropertyStatus.AVAILABLE);
+        propertyRepository.save(property);
         return mapToResponse(bookingRepository.save(booking));
     }
 
@@ -214,5 +238,33 @@ public class BookingService {
         }
 
         return owner;
+    }
+
+    @Transactional
+    public void finishBooking(Booking booking) {
+        //Changing the booking status
+        booking.setStatus(BookingStatus.FINISHED);
+        bookingRepository.save(booking);
+
+        //Freeing the object
+        Property property = booking.getProperty();
+        property.setStatus(PropertyStatus.AVAILABLE);
+        propertyRepository.save(property);
+
+        //Preparing and sending email
+        RentalFinishedEmailRequest emailRequest = new RentalFinishedEmailRequest();
+        emailRequest.setEmail(booking.getTenant().getEmail());
+        emailRequest.setUsername(booking.getTenant().getUsername());
+        emailRequest.setPropertyAddress(booking.getProperty().getAddress());
+        emailRequest.setStartDate(booking.getStartDate().toLocalDate());
+        emailRequest.setEndDate(booking.getEndDate().toLocalDate());
+        emailRequest.setTotalPrice(booking.getTotalPrice());
+
+        try {
+            emailService.sendRentalFinished(emailRequest);
+            log.info("Booking ID {} marked as FINISHED and email sent to {}", booking.getId(), booking.getTenant().getEmail());
+        } catch (Exception e) {
+            log.error("Failed to send FINISHED email for booking ID {}", booking.getId(), e);
+        }
     }
 }
