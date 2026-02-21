@@ -1,4 +1,6 @@
 /target
+.env
+**/.env
 
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -20,7 +22,6 @@
 *.iws
 *.iml
 *.ipr
-/.DS_Store
 
 ### NetBeans ###
 /nbproject/private/
@@ -32,5 +33,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### macOS system files ###
+.DS_Store
+**/.DS_Store
+
 ### VS Code ###
 .vscode/
+/src/main/resources/.env
