@@ -337,13 +337,13 @@
                 },
                 {
                   "key": "description",
-                  "value": "Сломался кран на кухне",
+                  "value": "The faucet in the kitchen is broken",
                   "type": "text"
                 },
                 {
                   "key": "photo",
                   "type": "file",
-                  "value": null
+                  "src": "/C:/Users/Asus/Downloads/maxresdefault.jpg"
                 }
               ]
             },
