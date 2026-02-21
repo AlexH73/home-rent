@@ -132,3 +132,10 @@
 .swagger-ui .responses-inner h4 {
     color: #2d3748;
 }
+
+.info .description{
+    background-image: url("../images/home-background.png");
+    background-position: right;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
