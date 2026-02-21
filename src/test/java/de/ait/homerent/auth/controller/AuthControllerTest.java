@@ -23,10 +23,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
+@ActiveProfiles({"test", "test-security"})
 @Import(TestSecurityConfig.class)
-@ActiveProfiles("test-security")
 class AuthControllerTest {
-
 
     private static final Logger log = LoggerFactory.getLogger(AuthControllerTest.class);
 
@@ -40,7 +39,6 @@ class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     // REGISTER TESTS
-
 
     @Test
     void register_success() throws Exception {
@@ -88,7 +86,6 @@ class AuthControllerTest {
 
     // LOGIN TESTS
 
-
     @Test
     void login_success() throws Exception {
         log.info("Running test: login_success");
@@ -131,4 +128,5 @@ class AuthControllerTest {
         log.info("Test login_validationError completed");
     }
 }
+
 
