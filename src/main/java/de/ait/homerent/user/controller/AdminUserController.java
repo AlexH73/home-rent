@@ -1,5 +1,6 @@
 package de.ait.homerent.user.controller;
 
+import de.ait.homerent.user.dto.ErrorResponseDto;
 import de.ait.homerent.user.dto.UpdateRolesRequest;
 import de.ait.homerent.user.dto.UpdateUserStatusRequest;
 import de.ait.homerent.user.dto.UserCreateRequest;
@@ -46,8 +47,8 @@ public class AdminUserController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of users",
                     content = @Content(schema = @Schema(implementation = UserDto.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role")
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role", content = @Content())
     })
     public ResponseEntity<List<UserDto>> getAllUsers() {
         log.info("Admin requested all users list");
@@ -60,10 +61,10 @@ public class AdminUserController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "User created successfully",
                     content = @Content(schema = @Schema(implementation = UserDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role"),
-            @ApiResponse(responseCode = "409", description = "Username or email already exists")
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role", content = @Content()),
+            @ApiResponse(responseCode = "409", description = "Username or email already exists", content = @Content())
     })
     public ResponseEntity<UserDto> createUser(
             @Valid @RequestBody
@@ -78,10 +79,10 @@ public class AdminUserController {
     @Operation(summary = "Assign roles to user", description = "Replaces all existing roles of a user with the provided list. Role names must be valid (ROLE_TENANT, ROLE_OWNER, ROLE_OPERATOR, ROLE_ADMIN).")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Roles updated successfully", content = @Content(schema = @Schema(implementation = UserDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid role name or empty list"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role"),
-            @ApiResponse(responseCode = "404", description = "User or role not found")
+            @ApiResponse(responseCode = "400", description = "Invalid role name or empty list", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "User or role not found", content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public ResponseEntity<UserDto> assignRoles(
             @Parameter(description = "User ID", example = "1", required = true) @PathVariable Long id,
@@ -97,10 +98,10 @@ public class AdminUserController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Status updated successfully",
                     content = @Content(schema = @Schema(implementation = UserDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid request"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role"),
-            @ApiResponse(responseCode = "404", description = "User not found")
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public ResponseEntity<UserDto> updateUserStatus(
             @Parameter(description = "User ID", example = "1", required = true) @PathVariable Long id,
