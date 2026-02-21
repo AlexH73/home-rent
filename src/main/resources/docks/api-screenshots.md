@@ -26,18 +26,18 @@
 ## Postman коллекция
 
 ### Структура коллекции
-![Postman Collection](../screenshots/postman/postman-collection-overview.png)
+![Postman Collection](./screenshots/postman/postman-collection-overview.png)
 *Коллекция разбита на папки по ролям: Auth, Public, Tenant, Owner, Operator, Admin.*
 
 [Download Postman Collection](./attachments/HomeRent_API_postman_collection.json)
 
 ### Пример запроса авторизации
-![Postman Login](../screenshots/postman/postman-login.png)
-*Запрос POST /api/auth/login с телом и полученным токеном.*
+![Postman Login](./screenshots/postman/postman-login.png)
+*Запрос POST /api/auth/login с телом и полученным ответом.*
 
 ### Создание бронирования (Tenant)
-![Postman Create Booking](../screenshots/postman/postman-create-booking.png)
-*Заголовки с токеном, тело запроса и успешный ответ.*
+![Postman Create Booking](./screenshots/postman/postman-create-booking.png)
+*Заголовок, тело запроса и успешный ответ.*
 
 ### Подтверждение бронирования (Owner)
 ![Postman Approve Booking](../screenshots/postman/postman-approve-booking.png)
