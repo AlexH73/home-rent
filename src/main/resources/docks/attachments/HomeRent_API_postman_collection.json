@@ -363,7 +363,7 @@
           "response": []
         }
       ],
-      "description": "Эндпоинты для арендатора (ROLE_TENANT). Используйте Basic Auth tenant1/tenant123."
+      "description": "Endpoints for the tenant (ROLE_TENANT). Use Basic Auth tenant1/tenant123."
     },
     {
       "name": "Owner",
@@ -594,7 +594,7 @@
           "response": []
         }
       ],
-      "description": "Эндпоинты для владельца (ROLE_OWNER). Используйте Basic Auth owner1/owner123."
+      "description": "Endpoints for the owner (ROLE_OWNER). Use Basic Auth owner1/owner123."
     },
     {
       "name": "Operator",
@@ -717,7 +717,7 @@
           "response": []
         }
       ],
-      "description": "Эндпоинты для оператора (ROLE_OPERATOR). Используйте Basic Auth operator1/operator123."
+      "description": "Endpoints for the operator (ROLE_OPERATOR). Use Basic Auth operator1/operator123."
     },
     {
       "name": "Admin",
@@ -919,7 +919,7 @@
           "response": []
         }
       ],
-      "description": "Эндпоинты для администратора (ROLE_ADMIN). Используйте Basic Auth admin/password123."
+      "description": "Endpoints for the administrator (ROLE_ADMIN). Use Basic Auth admin/password123."
     },
     {
       "name": "Negative Scenarios",
@@ -1061,7 +1061,7 @@
           "response": []
         }
       ],
-      "description": "Негативные тесты: проверка ошибок авторизации и валидации."
+      "description": "Negative tests: checking for authorization and validation errors."
     }
   ],
   "variable": [
