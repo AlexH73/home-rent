@@ -1,6 +1,7 @@
 package de.ait.homerent.booking.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import de.ait.homerent.utils.LocalDateTimeDeserializer;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,10 +29,10 @@ public class BookingCreateRequest {
     private Long tenantId;
     @NotNull
     @FutureOrPresent
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime startDate;
     @NotNull
     @FutureOrPresent
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime endDate;
 }
