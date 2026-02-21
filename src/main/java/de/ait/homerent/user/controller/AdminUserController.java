@@ -5,7 +5,6 @@ import de.ait.homerent.user.dto.UpdateRolesRequest;
 import de.ait.homerent.user.dto.UpdateUserStatusRequest;
 import de.ait.homerent.user.dto.UserCreateRequest;
 import de.ait.homerent.user.dto.UserDto;
-import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
