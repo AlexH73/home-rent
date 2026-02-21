@@ -139,3 +139,7 @@
     background-repeat: no-repeat;
     background-size: contain;
 }
+
+.swagger-ui a.nostyle, .swagger-ui a.nostyle:visited {
+    margin-right: 50px;
+}
