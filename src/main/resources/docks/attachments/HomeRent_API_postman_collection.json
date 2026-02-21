@@ -23,7 +23,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"newtenant\",\n  \"email\": \"new@example.com\",\n  \"password\": \"password\",\n  \"role\": \"ROLE_TENANT\"\n}"
+              "raw": "{\n  \"username\": \"newtenant\",\n  \"email\": \"new@example.com\",\n  \"password\": \"password\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
@@ -207,7 +207,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"propertyId\": 1,\n  \"tenantId\": 1,\n  \"startDate\": \"2026-06-01\",\n  \"endDate\": \"2027-06-10\"\n}"
+              "raw": "{\n  \"propertyId\": 1,\n  \"startDate\": \"2026-06-01\",\n  \"endDate\": \"2027-06-10\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/tenant/bookings",
@@ -697,10 +697,10 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+              "raw": ""
             },
             "url": {
-              "raw": "{{baseUrl}}/api/operator/issues/1/status",
+              "raw": "{{baseUrl}}/api/operator/issues/1/status?status=IN_PROGRESS",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -710,6 +710,13 @@
                 "issues",
                 "1",
                 "status"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "IN_PROGRESS",
+                  "type": "text"
+                }
               ]
             },
             "description": "Ожидаемый результат: 200 OK, обновлённая заявка."
@@ -831,7 +838,7 @@
               "raw": "{\n  \"roles\": [\"ROLE_ADMIN\", \"ROLE_OWNER\"]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/users/1/roles",
+              "raw": "{{baseUrl}}/api/admin/users/3/roles",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -839,11 +846,56 @@
                 "api",
                 "admin",
                 "users",
-                "1",
+                "3",
                 "roles"
               ]
             },
             "description": "Ожидаемый результат: 200 OK, обновлённый пользователь."
+          },
+          "response": []
+        },
+        {
+          "name": "Update user enabled status",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/3/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "3",
+                "status"
+              ]
+            }
           },
           "response": []
         },
