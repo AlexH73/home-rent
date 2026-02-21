@@ -31,13 +31,13 @@ public class AuthResponse {
 
     @Schema(
             description = "Authenticated user's username",
-            example = "john_doe"
+            example = "olga_smith"
     )
     private String username;
 
     @Schema(
             description = "Authenticated user's email address",
-            example = "john@example.com"
+            example = "olgasmith@example.com"
     )
     private String email;
 

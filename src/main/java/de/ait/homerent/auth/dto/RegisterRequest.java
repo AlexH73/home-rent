@@ -26,7 +26,7 @@ public class RegisterRequest {
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     @Schema(
             description = "Unique username for the new account",
-            example = "john_doe",
+            example = "olga_smith",
             minLength = 3,
             maxLength = 50
     )
@@ -36,7 +36,7 @@ public class RegisterRequest {
     @Email(message = "Invalid email format")
     @Schema(
             description = "Valid email address for the new account",
-            example = "john@example.com",
+            example = "olga_smith@example.com",
             pattern = "^[A-Za-z0-9+_.-]+@(.+)$"
     )
     private String email;
@@ -45,7 +45,7 @@ public class RegisterRequest {
     @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
     @Schema(
             description = "Password for the new account (will be encrypted)",
-            example = "password123",
+            example = "olgasmith123",
             minLength = 6,
             maxLength = 100
     )

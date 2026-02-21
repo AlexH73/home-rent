@@ -4,6 +4,11 @@ import de.ait.homerent.property.dto.PropertyCreateRequest;
 import de.ait.homerent.property.dto.PropertyDto;
 import de.ait.homerent.property.service.PropertyService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,55 +31,57 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/properties")
 @RequiredArgsConstructor
-@Tag(
-        name = "Admin Property Management",
-        description = """
-                Administrative endpoints for managing property listings.
-                
-                Allows administrators to:
-                • view all properties
-                • create property listings on behalf of owners
-                • permanently delete properties
-                
-                Access restricted to users with ADMIN role.
-                """
-)
+@Tag(name = "Admin Property Management", description = "Administrative endpoints for managing properties and users")
 public class AdminPropertyController {
 
     private final PropertyService propertyService;
 
-    @Operation(summary = "Get all properties", description = "Retrieves a full list of all properties in the system")
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all properties", description = "Retrieves a full list of all properties in the system")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List of properties",
+                    content = @Content(schema = @Schema(implementation = PropertyDto.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role")
+    })
     public ResponseEntity<List<PropertyDto>> getAllProperties() {
         log.info("Admin requested all properties list");
         return ResponseEntity.ok(propertyService.findAll());
     }
 
-    @Operation(
-            summary = "Create property listing",
-            description = """
-                    Creates a new property listing and assigns it to a specific owner.
-                    
-                    • The owner must exist and have ROLE_OWNER
-                    • Property status is set automatically to AVAILABLE
-                    • Availability dates must form a valid period
-                    
-                    This operation is restricted to administrators.
-                    """
-    )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PropertyDto> createProperty(@Valid @RequestBody PropertyCreateRequest request) {
+    @Operation(summary = "Create property listing", description = "Creates a new property listing and assigns it to a specific owner.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Property created successfully",
+                    content = @Content(schema = @Schema(implementation = PropertyDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data (dates, owner not found, etc.)"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "Owner not found")
+    })
+    public ResponseEntity<PropertyDto> createProperty(
+            @Valid @RequestBody
+            @Parameter(description = "Property details", required = true)
+            PropertyCreateRequest request) {
         log.info("Admin creating new property: {}", request.getTitle());
         return ResponseEntity.status(HttpStatus.CREATED).body(propertyService.save(request));
     }
 
-    @Operation(summary = "Delete property", description = "Permanently removes a property listing from the system by its ID")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteProperty(@PathVariable Long id) {
-        log.info("Property with id {} successfully deleted", id);
+    @Operation(summary = "Delete property", description = "Permanently removes a property listing from the system by its ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Property deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "Property not found")
+    })
+    public ResponseEntity<Void> deleteProperty(
+            @Parameter(description = "Property ID", example = "1", required = true)
+            @PathVariable Long id) {
+        log.info("Admin deleting property with id: {}", id);
         propertyService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
