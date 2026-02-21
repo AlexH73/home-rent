@@ -1,8 +1,10 @@
 package de.ait.homerent.user.controller;
 
 import de.ait.homerent.user.dto.UpdateRolesRequest;
+import de.ait.homerent.user.dto.UpdateUserStatusRequest;
 import de.ait.homerent.user.dto.UserCreateRequest;
 import de.ait.homerent.user.dto.UserDto;
+import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -75,20 +77,36 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Assign roles to user", description = "Replaces all existing roles of a user with the provided list. Role names must be valid (ROLE_TENANT, ROLE_OWNER, ROLE_OPERATOR, ROLE_ADMIN).")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Roles updated successfully"),
+            @ApiResponse(responseCode = "200", description = "Roles updated successfully", content = @Content(schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid role name or empty list"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role"),
             @ApiResponse(responseCode = "404", description = "User or role not found")
     })
-    public ResponseEntity<Void> assignRoles(
-            @Parameter(description = "User ID", example = "1", required = true)
-            @PathVariable Long id,
-            @Valid @RequestBody
-            @Parameter(description = "List of role names", required = true)
-            UpdateRolesRequest request) {
+    public ResponseEntity<UserDto> assignRoles(
+            @Parameter(description = "User ID", example = "1", required = true) @PathVariable Long id,
+            @Valid @RequestBody @Parameter(description = "List of role names", required = true) UpdateRolesRequest request) {
         log.info("Admin changing roles for user id {} to {}", id, request.getRoles());
-        userService.updateRoles(id, request.getRoles());
-        return ResponseEntity.ok().build();
+        UserDto updatedUser = userService.updateRoles(id, request.getRoles());
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update user enabled status", description = "Allows admin to enable or disable a user account.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status updated successfully",
+                    content = @Content(schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden – requires ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public ResponseEntity<UserDto> updateUserStatus(
+            @Parameter(description = "User ID", example = "1", required = true) @PathVariable Long id,
+            @Valid @RequestBody UpdateUserStatusRequest request) {
+        log.info("Admin updating enabled status for user id {} to {}", id, request.getEnabled());
+        UserDto updatedUser = userService.updateEnabledStatus(id, request.getEnabled());
+        return ResponseEntity.ok(updatedUser);
     }
 }
