@@ -32,14 +32,7 @@ import java.util.List;
 @Tag(
         name = "Admin User Management",
         description = """
-        Administrative endpoints for managing application users.
-        
-        Provides functionality to:
-        • retrieve all registered users
-        • manually create users
-        • assign and update user roles
-        
-        Access is restricted to users with ADMIN role.
+        Administrative endpoints for managing application users
         """
 )
 

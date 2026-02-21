@@ -30,13 +30,6 @@ import java.util.List;
         name = "Admin Property Management",
         description = """
                 Administrative endpoints for managing property listings.
-                
-                Allows administrators to:
-                • view all properties
-                • create property listings on behalf of owners
-                • permanently delete properties
-                
-                Access restricted to users with ADMIN role.
                 """
 )
 public class AdminPropertyController {
