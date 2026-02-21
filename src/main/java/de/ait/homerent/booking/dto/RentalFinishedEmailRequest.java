@@ -1,6 +1,7 @@
 package de.ait.homerent.booking.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import de.ait.homerent.utils.LocalDateTimeDeserializer;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.NotBlank;
@@ -34,11 +35,11 @@ public class RentalFinishedEmailRequest {
     private String propertyAddress;
 
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDate startDate;
 
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDate endDate;
 
     @Positive
