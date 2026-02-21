@@ -1,5 +1,6 @@
 package de.ait.homerent.config;
 
+import de.ait.homerent.auth.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
