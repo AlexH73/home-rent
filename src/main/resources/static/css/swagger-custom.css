@@ -1,0 +1,134 @@
+
+.swagger-ui {
+    background-color: #f8fafc;
+}
+
+
+.swagger-ui .topbar {
+    background-color: #0b011a;
+    padding: 15px 0;
+    box-shadow: 0 4px 6px rgb(0 0 0 / 44%);
+}
+
+
+.swagger-ui .topbar .topbar-wrapper svg {
+    display: none;
+}
+
+.swagger-ui .topbar .topbar-wrapper::before {
+    content: "";
+    display: inline-block;
+    width: 150px;
+    height: 60px;
+    background-image: url('/static/images/logo-swagger.png'); /* белая версия лого */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.swagger-ui .topbar .download-url-wrapper .download-url-button {
+    background: #3760db;
+}
+
+.swagger-ui .topbar .download-url-wrapper input[type=text] {
+    border: 2px solid #3760db;
+}
+
+
+.home-link {
+    margin-left: 20px;
+    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.home-link:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+
+.swagger-ui .info h2.title {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 2.5rem;
+}
+
+.swagger-ui .info p {
+    font-size: 1.1rem;
+    color: #4a5568;
+}
+
+
+.swagger-ui .opblock-tag {
+    background: #edf2f7;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-left: 4px solid #667eea;
+    font-weight: 500;
+}
+
+
+.swagger-ui .opblock.opblock-get {
+    background: #e6f7ff;
+    border-color: #1890ff;
+}
+
+.swagger-ui .opblock.opblock-post {
+    background: #f6ffed;
+    border-color: #52c41a;
+}
+
+.swagger-ui .opblock.opblock-put {
+    background: #fff7e6;
+    border-color: #fa8c16;
+}
+
+.swagger-ui .opblock.opblock-delete {
+    background: #fff1f0;
+    border-color: #f5222d;
+}
+
+
+.swagger-ui .btn.try-out__btn {
+    background: #667eea;
+    color: white;
+    border-radius: 20px;
+    padding: 8px 16px;
+    border: none;
+    transition: transform 0.2s;
+}
+
+.swagger-ui .btn.try-out__btn:hover {
+    background: #5a67d8;
+    transform: scale(1.02);
+}
+
+
+.swagger-ui .dialog-ux .modal-ux {
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+
+.swagger-ui input[type=text] {
+    border-radius: 6px;
+    border: 1px solid #cbd5e0;
+    padding: 8px 12px;
+}
+
+.swagger-ui input[type=text]:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+
+.swagger-ui .responses-inner h4 {
+    color: #2d3748;
+}

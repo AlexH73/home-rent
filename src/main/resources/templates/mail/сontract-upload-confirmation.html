@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Contract Uploaded</title>
+</head>
+<body style="margin:0; padding:0; background:#f5f5f5; font-family: Arial, sans-serif; font-size:14px;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5; padding:20px 0;">
+    <tr>
+        <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:12px; overflow:hidden; font-size:14px;">
+                <tr>
+                    <td style="background:#111827; color:#ffffff; padding:20px; font-size:14px;">
+                        <div style="font-size:18px; font-weight:bold;">HomeRent</div>
+                        <div style="font-size:12px; opacity:0.85; margin-top:6px;">Contract Uploaded</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:24px; color:#111827; font-size:14px;">
+                        <p>Hello, <b th:text="${username}">Guest</b>!</p>
+                        <p>Your rental contract for <b th:text="${propertyAddress}">Property</b> has been successfully uploaded.</p>
+                        <p>File: <b th:text="${contractFileName}">contract.pdf</b></p>
+                        <p style="font-size:12px; color:#6b7280;">This email was generated automatically by HomeRent.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:18px 24px; background:#f9fafb; color:#6b7280; font-size:12px;">Contact: support@homerent.example<br/>If you did not upload this contract, please contact support.</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
