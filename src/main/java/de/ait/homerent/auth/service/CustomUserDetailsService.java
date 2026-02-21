@@ -1,4 +1,4 @@
-package de.ait.homerent.user.service;
+package de.ait.homerent.auth.service;
 
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
@@ -52,6 +52,23 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .disabled(!user.isEnabled())
+
+                // Indicates whether the user account is enabled or disabled.
+                // Disabled accounts cannot authenticate.
+                .disabled(!user.isEnabled())
+
+                // Indicates whether the user account has expired.
+                // Expired accounts cannot authenticate.
+                .accountExpired(false)
+
+                // Indicates whether the user account is locked.
+                // Locked accounts cannot authenticate (e.g., after multiple failed login attempts).
+                .accountLocked(false)
+
+                // Indicates whether the user credentials (password) have expired.
+                // Users with expired credentials must reset their password before logging in.
+                .credentialsExpired(false)
+
                 .authorities(authorities)
                 .build();
     }
