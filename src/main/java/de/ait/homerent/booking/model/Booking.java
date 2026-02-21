@@ -5,7 +5,6 @@ import de.ait.homerent.property.model.Property;
 import de.ait.homerent.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;

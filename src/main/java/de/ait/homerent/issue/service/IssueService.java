@@ -9,7 +9,6 @@ import de.ait.homerent.issue.model.IssueReport;
 import de.ait.homerent.issue.model.IssueStatus;
 import de.ait.homerent.issue.repository.IssueReportRepository;
 import de.ait.homerent.user.model.User;
-import de.ait.homerent.utils.FilePathUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
