@@ -1,7 +1,6 @@
 package de.ait.homerent.booking.controller;
 
 import de.ait.homerent.booking.dto.BookingResponse;
-import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.booking.service.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

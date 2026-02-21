@@ -109,9 +109,6 @@ public class BookingService {
         Property property = propertyRepository.findById(request.getPropertyId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
 
-        var tenant = userRepository.findById(request.getTenantId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tenant not found"));
-
         int totalPrice = calculateTotalPrice(request.getStartDate(), request.getEndDate(), property.getPricePerDay());
 
         Booking booking = Booking.builder()
