@@ -2,6 +2,7 @@ package de.ait.homerent.issue.service;
 
 import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.booking.repository.BookingRepository;
+import de.ait.homerent.contract.service.FileStorageService;
 import de.ait.homerent.issue.dto.IssueCreateRequest;
 import de.ait.homerent.issue.dto.IssueReportResponse;
 import de.ait.homerent.issue.model.IssueReport;
@@ -34,6 +35,7 @@ public class IssueService {
 
     private final IssueReportRepository issueReportRepository;
     private final BookingRepository bookingRepository;
+    private final FileStorageService fileStorageService;
 
     @Transactional
     public IssueReportResponse createIssue(IssueCreateRequest request, User tenant) {
@@ -48,8 +50,7 @@ public class IssueService {
 
         String photoPath = "no-photo";
         if (request.getPhoto() != null && !request.getPhoto().isEmpty()) {
-            String fileName = request.getPhoto().getOriginalFilename();
-            photoPath = FilePathUtils.generateFilePath(booking.getId(), "issue", LocalDate.now(), fileName);
+            photoPath = fileStorageService.storeIssuePhoto(booking.getId(), request.getPhoto());
         }
 
         IssueReport issue = new IssueReport();
