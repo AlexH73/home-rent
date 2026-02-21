@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -46,29 +47,30 @@ public class TenantBookingController {
     @GetMapping("/my")
     @PreAuthorize("hasRole('TENANT')")
     @Operation(summary = "Get my bookings", description = "Returns a list of bookings made by the current tenant")
-    public List<BookingResponse> getMyBookings(Principal principal) {
-        User user = getUser(principal);
+    public List<BookingResponse> getMyBookings(Authentication authentication) {
+        User user = getUser(authentication);
         return bookingService.findMyBookings(user);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('TENANT')")
+    @PreAuthorize("hasRole('TENANT') and @bookingSecurity.isOwner(#id, authentication)")
     @Operation(summary = "Get booking details", description = "Returns details of a specific booking owned by the current tenant")
-    public BookingResponse getBookingById(@PathVariable Long id, Principal principal) {
-        User user = getUser(principal);
+    public BookingResponse getBookingById(@PathVariable Long id, Authentication authentication) {
+        User user = getUser(authentication);
         return bookingService.getBookingById(id, user);
     }
 
     @PostMapping("/{id}/upload-contract")
-    @PreAuthorize("hasRole('TENANT')")
+    @PreAuthorize("hasRole('TENANT') and @bookingSecurity.isOwner(#id, authentication)")
     @Operation(summary = "Upload contract", description = "Allows the tenant to upload a signed rental contract for a specific booking")
-    public void uploadContract(@PathVariable Long id, @RequestParam("file") MultipartFile file, Principal principal) {
-        User user = getUser(principal);
+    public void uploadContract(@PathVariable Long id, @RequestParam("file") MultipartFile file,
+                               Authentication authentication) {
+        User user = getUser(authentication);
         bookingService.uploadContract(id, file, user);
     }
 
-    private User getUser(Principal principal) {
-        return userRepository.findByUsername(principal.getName())
+    private User getUser(Authentication authentication) {
+        return userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }

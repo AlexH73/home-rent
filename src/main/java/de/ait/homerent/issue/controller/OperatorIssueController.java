@@ -1,6 +1,7 @@
 package de.ait.homerent.issue.controller;
 
 import de.ait.homerent.issue.dto.IssueReportResponse;
+import de.ait.homerent.issue.model.IssueStatus;
 import de.ait.homerent.issue.service.IssueService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,7 +46,7 @@ public class OperatorIssueController {
     )
     @PostMapping("/{id}/status")
     @PreAuthorize("hasRole('OPERATOR')")
-    public ResponseEntity<Void> updateIssueStatus(@PathVariable Long id, @RequestParam String status) {
+    public ResponseEntity<Void> updateIssueStatus(@PathVariable Long id, @RequestParam IssueStatus status) {
         log.info("Operator updating status for issue {} to {}", id, status);
         issueService.updateStatus(id, status);
         return ResponseEntity.ok().build();
