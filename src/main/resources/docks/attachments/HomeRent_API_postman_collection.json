@@ -2,6 +2,7 @@
   "info": {
     "_postman_id": "b049365e-71a1-49db-9aed-8e47348b4fa0",
     "name": "HomeRent API",
+    "description": "\n## HomeRent - Home Rental Platform\n### Overview\nBackend service for a home rental platform. The system allows:\n-   User registration and account management\n-   Property listing for rent\n-   Booking accommodations for selected dates\n-   Rental contract management\n-   Maintenance request tracking and management\n### User Roles:\n-   **ROLE\\_TENANT** - Tenant/Renter\n-   **ROLE\\_OWNER** - Property Owner\n-   **ROLE\\_OPERATOR** - Platform Operator\n-   **ROLE\\_ADMIN** - System Administrator",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "51363806",
     "_collection_link": "https://go.postman.co/collection/51363806-b049365e-71a1-49db-9aed-8e47348b4fa0?source=collection_link"
@@ -35,7 +36,7 @@
                 "register"
               ]
             },
-            "description": "Ожидаемый результат: 201 Created, тело содержит id, username, email, роли."
+            "description": "Expected result: 201 Created, the body contains id, username, email, roles."
           },
           "response": []
         },
@@ -58,9 +59,37 @@
             "description": "Ожидаемый результат: 200 OK, информация о сервисе."
           },
           "response": []
+        },
+        {
+          "name": "Login user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newtenant\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
         }
       ],
-      "description": "Публичные эндпоинты (без авторизации)"
+      "description": "Public endpoints (without authorization)"
     },
     {
       "name": "Tenant",
@@ -511,7 +540,7 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/owner/bookings/1/approve",
+              "raw": "{{baseUrl}}/api/owner/bookings/6/approve",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -519,7 +548,7 @@
                 "api",
                 "owner",
                 "bookings",
-                "1",
+                "6",
                 "approve"
               ]
             },
