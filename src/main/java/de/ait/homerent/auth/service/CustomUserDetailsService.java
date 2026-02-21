@@ -5,6 +5,7 @@ import de.ait.homerent.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import static org.springframework.security.core.userdetails.User.builder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -47,10 +48,27 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .toList();
 
-        return org.springframework.security.core.userdetails.User.builder()
+        return builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .disabled(!user.isEnabled())
+
+                // Indicates whether the user account is enabled or disabled.
+                // Disabled accounts cannot authenticate.
+                .disabled(!user.isEnabled())
+
+                // Indicates whether the user account has expired.
+                // Expired accounts cannot authenticate.
+                .accountExpired(false)
+
+                // Indicates whether the user account is locked.
+                // Locked accounts cannot authenticate (e.g., after multiple failed login attempts).
+                .accountLocked(false)
+
+                // Indicates whether the user credentials (password) have expired.
+                // Users with expired credentials must reset their password before logging in.
+                .credentialsExpired(false)
+
                 .authorities(authorities)
                 .build();
     }
