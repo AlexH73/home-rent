@@ -111,6 +111,26 @@ public class PropertyService {
         return mapToDto(property);
     }
 
+    @Transactional
+    public PropertyDto updateProperty(Long id, PropertyDto dto) {
+        log.info("Updating property with id: {}", id);
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
+
+        // Updating only allowed fields (example)
+        property.setTitle(dto.getTitle());
+        property.setAddress(dto.getAddress());
+        property.setDescription(dto.getDescription());
+        property.setPricePerDay(dto.getPricePerDay());
+        property.setStatus(dto.getStatus());
+        property.setAvailableFrom(dto.getAvailableFrom());
+        property.setAvailableTo(dto.getAvailableTo());
+
+        Property updated = propertyRepository.save(property);
+        log.info("Property updated successfully with id: {}", updated.getId());
+        return mapToDto(updated);
+    }
+
     private PropertyDto mapToDto(Property property) {
         PropertyDto dto = new PropertyDto();
         dto.setId(property.getId());

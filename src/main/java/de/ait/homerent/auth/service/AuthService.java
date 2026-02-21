@@ -10,13 +10,16 @@ import de.ait.homerent.user.repository.RoleRepository;
 import de.ait.homerent.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,12 +49,12 @@ public class AuthService {
         // Check if user exists
         if (userRepository.existsByUsername(request.getUsername())) {
             log.warn("Registration failed: username {} already exists", request.getUsername());
-            throw new IllegalArgumentException("User with this username already exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this username already exists");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
             log.warn("Registration failed: email {} already exists", request.getEmail());
-            throw new IllegalArgumentException("User with this email already exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this email already exists");
         }
 
         // Create new user
@@ -117,9 +120,9 @@ public class AuthService {
                     .roles(user.getRoles())
                     .build();
 
-        } catch (org.springframework.security.core.AuthenticationException e) {
+        } catch (AuthenticationException e) {
             log.warn("Authentication failed for user: {} - {}", request.getUsername(), e.getMessage());
-            throw new IllegalArgumentException("Invalid username or password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
     }
 }

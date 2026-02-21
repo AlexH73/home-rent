@@ -30,15 +30,9 @@ import org.springframework.web.bind.annotation.*;
 @Tag(
         name = "Authentication & Authorization",
         description = """
-        ### User account management
         
-        These endpoints allow:
-        - Registering new users
-        - Authenticating in the system
-        - Getting information about the current user
+        Endpoints handle user registration and login processes.
         
-        **Important:** During registration, users automatically receive the **ROLE_TENANT** role.
-        All authentication endpoints are public and do not require authentication.
         """
 )
 public class AuthController {
@@ -78,8 +72,8 @@ public class AuthController {
                                     value = """
                         {
                           "message": "Registration successful",
-                          "username": "john_doe",
-                          "email": "john@example.com",
+                          "username": "olga_smith",
+                          "email": "olgasmith@example.com",
                           "roles": [
                             {
                               "id": 1,
@@ -178,8 +172,8 @@ public class AuthController {
                                     value = """
                         {
                           "message": "Login successful",
-                          "username": "john_doe",
-                          "email": "john@example.com",
+                          "username": "olga_smith",
+                          "email": "olgasmith@example.com",
                           "roles": [
                             {
                               "id": 1,
