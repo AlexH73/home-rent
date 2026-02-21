@@ -22,7 +22,10 @@ import java.util.List;
  * Project : home-rent
  * ----------------------------------------------------------------------------
  */
-@Tag(name = "Operator Booking Management")
+@Tag(name = "Operator Booking Management",
+        description = """
+        Endpoints for managing bookings by operators.
+        """)
 @RestController
 @RequestMapping("/api/operator/bookings")
 @RequiredArgsConstructor

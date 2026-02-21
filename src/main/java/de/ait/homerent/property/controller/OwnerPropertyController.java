@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/owner/properties")
 @RequiredArgsConstructor
-@Tag(name = "Owner Property Management")
+@Tag(name = "Owner Property Management",
+        description = """
+        Endpoints for property management by owners.
+        """)
 public class OwnerPropertyController {
 
     private final PropertyService propertyService;
