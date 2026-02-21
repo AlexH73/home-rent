@@ -1,6 +1,6 @@
 package de.ait.homerent.property.dto;
 
-import de.ait.homerent.property.model.PropertyStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,8 +35,10 @@ public class PropertyCreateRequest {
     private Integer pricePerDay;
 
     @NotNull(message = "Available from date must not be null")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime availableFrom;
 
     @NotNull(message = "Available to date must not be null")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime availableTo;
 }
