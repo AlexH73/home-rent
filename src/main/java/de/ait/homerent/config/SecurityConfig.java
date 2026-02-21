@@ -92,7 +92,8 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/static/**"
                         ).permitAll()
                         .requestMatchers("/api/tenant/**").hasAnyRole("TENANT", "ADMIN")
                         .requestMatchers("/api/owner/**").hasAnyRole("OWNER", "ADMIN")
