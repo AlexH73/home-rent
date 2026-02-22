@@ -2,6 +2,7 @@ package de.ait.homerent.booking.controller;
 
 import de.ait.homerent.booking.dto.BookingResponse;
 import de.ait.homerent.booking.service.BookingService;
+import de.ait.homerent.user.dto.ErrorResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

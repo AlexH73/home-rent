@@ -87,7 +87,6 @@ public class PropertyService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Property not found with id: " + id));
         deletePropertyFiles(property);
-
         propertyRepository.delete(property);
         log.info("Property with id {} was successfully deleted by admin", id);
     }
@@ -136,7 +135,6 @@ public class PropertyService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('OWNER')")
     public PropertyDto updateProperty(Long id, PropertyDto dto) {
         log.info("Updating property with id: {}", id);
         Property property = propertyRepository.findById(id)
@@ -208,26 +206,6 @@ public class PropertyService {
                 propertyFileStorageService.deleteFile(photo.getFilePath());
             }
         }
-    }
-
-    @Transactional
-    public PropertyDto updateProperty(Long id, PropertyDto dto) {
-        log.info("Updating property with id: {}", id);
-        Property property = propertyRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
-
-        // Updating only allowed fields (example)
-        property.setTitle(dto.getTitle());
-        property.setAddress(dto.getAddress());
-        property.setDescription(dto.getDescription());
-        property.setPricePerDay(dto.getPricePerDay());
-        property.setStatus(dto.getStatus());
-        property.setAvailableFrom(dto.getAvailableFrom());
-        property.setAvailableTo(dto.getAvailableTo());
-
-        Property updated = propertyRepository.save(property);
-        log.info("Property updated successfully with id: {}", updated.getId());
-        return mapToDto(updated);
     }
 
     private PropertyDto mapToDto(Property property) {
