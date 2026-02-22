@@ -17,6 +17,7 @@ import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,9 @@ public class BookingService {
     private final UserRepository userRepository;
     private final RentalContractService rentalContractService;
     private final EmailService emailService;
+
+    @Value("${app.frontend.base-url:https://your-app.com}")
+    private String frontendBaseUrl;
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getActiveBookings() {
@@ -180,10 +184,7 @@ public class BookingService {
         booking.setStatus(BookingStatus.APPROVED);
         Property property = booking.getProperty();
         property.setStatus(PropertyStatus.BOOKED);
-        propertyRepository.save(property);
-        bookingRepository.save(booking);
 
-        //Email sending
         BookingEmailRequest emailRequest = new BookingEmailRequest();
         emailRequest.setEmail(booking.getTenant().getEmail());
         emailRequest.setUsername(booking.getTenant().getUsername());
@@ -191,12 +192,11 @@ public class BookingService {
         emailRequest.setStartDate(booking.getStartDate().toLocalDate());
         emailRequest.setEndDate(booking.getEndDate().toLocalDate());
         emailRequest.setTotalPrice(booking.getTotalPrice());
-        // Temporary placeholder link for booking confirmation, replace with the real frontend URL
-        emailRequest.setConfirmUrl("https://your-app.com/bookings/" + booking.getId() + "/confirm");
+        emailRequest.setConfirmUrl(frontendBaseUrl + "/bookings/" + booking.getId() + "/confirm");
 
         emailService.sendBookingApproved(emailRequest);
 
-        return mapToResponse(bookingRepository.save(booking));
+        return mapToResponse(booking);
     }
 
     // Reject the booking
