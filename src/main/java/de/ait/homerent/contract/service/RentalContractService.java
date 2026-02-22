@@ -70,7 +70,7 @@ public class RentalContractService {
             }
             emailRequest.setContractFileName(originalFileName);
 
-            emailService.sendContractUploaded(emailRequest); //
+            emailService.sendContractUploaded(emailRequest);
 
         } catch (Exception e) {
             log.error("Failed to send contract uploaded email for booking {}", booking.getId(), e);

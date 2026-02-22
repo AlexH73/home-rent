@@ -1,5 +1,6 @@
 package de.ait.homerent.property.dto;
 
+import de.ait.homerent.property.model.PropertyStatus;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.ait.homerent.utils.LocalDateTimeDeserializer;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ----------------------------------------------------------------------------
@@ -51,4 +53,7 @@ public class PropertyCreateRequest {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Schema(description = "End of availability period (format: yyyy-MM-dd)", example = "2026-12-31", requiredMode = Schema.RequiredMode.REQUIRED, type = "string", format = "date")
     private LocalDateTime availableTo;
+
+    @Schema(description = "List of photo URLs (optional field)", required = false)
+    private List<String> photoUrls;
 }

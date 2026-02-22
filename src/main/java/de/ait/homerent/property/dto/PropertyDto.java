@@ -1,11 +1,13 @@
 package de.ait.homerent.property.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import de.ait.homerent.property.model.PropertyStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ----------------------------------------------------------------------------
@@ -48,4 +50,7 @@ public class PropertyDto {
 
     @Schema(description = "Creation timestamp", example = "2026-02-21T10:15:30")
     private LocalDateTime createdAt;
+
+    @Schema(description = "List of photo URLs (optional field)", required = false)
+    private List<String> photoUrls;
 }
