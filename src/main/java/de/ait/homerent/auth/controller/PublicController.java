@@ -27,10 +27,9 @@ import java.util.Map;
 @Tag(
         name = "Public API Endpoints",
         description = """
-        ### Endpoints available without authentication
         
-        These API methods provide general service information and are accessible to all users.
-        No authentication is required for these endpoints.
+        Endpoints available without authentication
+        
         """
 )
 public class PublicController {

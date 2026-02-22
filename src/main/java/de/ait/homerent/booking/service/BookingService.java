@@ -8,9 +8,7 @@ import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.contract.service.RentalContractService;
-import de.ait.homerent.mail.EmailService;
 import de.ait.homerent.property.model.Property;
-import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.property.repository.PropertyRepository;
 import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
@@ -99,17 +97,14 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingResponse createBooking(BookingCreateRequest request) {
+    public BookingResponse createBooking(BookingCreateRequest request, User tenant) {
 
         if (request.getStartDate().isAfter(request.getEndDate())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date must be before end date");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date must be before or equal to end date");
         }
 
-        var property = propertyRepository.findById(request.getPropertyId())
+        Property property = propertyRepository.findById(request.getPropertyId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
-
-        var tenant = userRepository.findById(request.getTenantId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tenant not found"));
 
         int totalPrice = calculateTotalPrice(request.getStartDate(), request.getEndDate(), property.getPricePerDay());
 

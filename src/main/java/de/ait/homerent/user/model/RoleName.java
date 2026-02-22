@@ -1,4 +1,5 @@
 package de.ait.homerent.user.model;
+
 /**
  * ----------------------------------------------------------------------------
  * Author  : Dmitri Nedioglo
