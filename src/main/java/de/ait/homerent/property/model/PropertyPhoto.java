@@ -46,4 +46,8 @@ public class PropertyPhoto {
     @JsonBackReference
     private Property property;
 
+    public String getUrl() {
+        return this.filePath;
+    }
+
 }
