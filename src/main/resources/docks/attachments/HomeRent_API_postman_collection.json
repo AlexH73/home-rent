@@ -1,0 +1,1125 @@
+{
+  "info": {
+    "_postman_id": "b049365e-71a1-49db-9aed-8e47348b4fa0",
+    "name": "HomeRent API",
+    "description": "\n## HomeRent - Home Rental Platform\n### Overview\nBackend service for a home rental platform. The system allows:\n-   User registration and account management\n-   Property listing for rent\n-   Booking accommodations for selected dates\n-   Rental contract management\n-   Maintenance request tracking and management\n### User Roles:\n-   **ROLE\\_TENANT** - Tenant/Renter\n-   **ROLE\\_OWNER** - Property Owner\n-   **ROLE\\_OPERATOR** - Platform Operator\n-   **ROLE\\_ADMIN** - System Administrator",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51363806",
+    "_collection_link": "https://go.postman.co/collection/51363806-b049365e-71a1-49db-9aed-8e47348b4fa0?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Register new user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newtenant\",\n  \"email\": \"new@example.com\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Expected result: 201 Created, the body contains id, username, email, roles."
+          },
+          "response": []
+        },
+        {
+          "name": "Public info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/public/info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "public",
+                "info"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, информация о сервисе."
+          },
+          "response": []
+        },
+        {
+          "name": "Login user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newtenant\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Public endpoints (without authorization)"
+    },
+    {
+      "name": "Tenant",
+      "item": [
+        {
+          "name": "View available properties",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "tenant123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/properties/available?city=Berlin&startDate=2025-06-01&endDate=2025-06-10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "properties",
+                "available"
+              ],
+              "query": [
+                {
+                  "key": "city",
+                  "value": "Berlin"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2025-06-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2025-06-10"
+                }
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, массив доступных объектов."
+          },
+          "response": []
+        },
+        {
+          "name": "View property details",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "tenant123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/properties/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "properties",
+                "1"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, детальная информация об объекте."
+          },
+          "response": []
+        },
+        {
+          "name": "Create booking",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "tenant123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": 1,\n  \"startDate\": \"2026-06-01\",\n  \"endDate\": \"2027-06-10\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "bookings"
+              ]
+            },
+            "description": "Ожидаемый результат: 201 Created, объект бронирования со статусом REQUESTED."
+          },
+          "response": []
+        },
+        {
+          "name": "Get my bookings",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "tenant123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/bookings/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "bookings",
+                "my"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, массив бронирований текущего пользователя."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload contract",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "tenant123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/bookings/1/upload-contract",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "bookings",
+                "1",
+                "upload-contract"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK. Выберите PDF-файл в form-data."
+          },
+          "response": []
+        },
+        {
+          "name": "Create issue report",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "tenant123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "bookingId",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "The faucet in the kitchen is broken",
+                  "type": "text"
+                },
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "src": "/C:/Users/Asus/Downloads/maxresdefault.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/issues",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "issues"
+              ]
+            },
+            "description": "Ожидаемый результат: 201 Created, объект заявки со статусом OPEN."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for the tenant (ROLE_TENANT). Use Basic Auth tenant1/tenant123."
+    },
+    {
+      "name": "Owner",
+      "item": [
+        {
+          "name": "Get my properties",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "owner1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "owner123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/owner/properties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "owner",
+                "properties"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, массив объектов владельца."
+          },
+          "response": []
+        },
+        {
+          "name": "Add new property",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "owner1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "owner123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Уютная квартира в центре\",\n  \"address\": \"Berlin, Friedrichstr. 123\",\n  \"city\": \"Berlin\",\n  \"pricePerNight\": 150,\n  \"description\": \"Современная квартира с видом на реку\",\n  \"rooms\": 2,\n  \"maxGuests\": 4\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/owner/properties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "owner",
+                "properties"
+              ]
+            },
+            "description": "Ожидаемый результат: 201 Created, созданный объект."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete property",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "owner1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "owner123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/owner/properties/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "owner",
+                "properties",
+                "1"
+              ]
+            },
+            "description": "Ожидаемый результат: 204 No Content."
+          },
+          "response": []
+        },
+        {
+          "name": "Get pending bookings",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "owner1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "owner123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/owner/bookings/pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "owner",
+                "bookings",
+                "pending"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, массив ожидающих подтверждения бронирований."
+          },
+          "response": []
+        },
+        {
+          "name": "Approve booking",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "owner1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "owner123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/owner/bookings/6/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "owner",
+                "bookings",
+                "6",
+                "approve"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, статус меняется на APPROVED."
+          },
+          "response": []
+        },
+        {
+          "name": "Reject booking",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "owner1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "owner123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/owner/bookings/1/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "owner",
+                "bookings",
+                "1",
+                "reject"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, статус меняется на REJECTED."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for the owner (ROLE_OWNER). Use Basic Auth owner1/owner123."
+    },
+    {
+      "name": "Operator",
+      "item": [
+        {
+          "name": "Get active bookings",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "operator1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "operator123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/operator/bookings/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "operator",
+                "bookings",
+                "active"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, массив активных бронирований."
+          },
+          "response": []
+        },
+        {
+          "name": "Get all issues",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "operator1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "operator123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/operator/issues",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "operator",
+                "issues"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, массив всех заявок на поломки."
+          },
+          "response": []
+        },
+        {
+          "name": "Update issue status",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "operator1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "operator123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/operator/issues/1/status?status=IN_PROGRESS",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "operator",
+                "issues",
+                "1",
+                "status"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "IN_PROGRESS",
+                  "type": "text"
+                }
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, обновлённая заявка."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for the operator (ROLE_OPERATOR). Use Basic Auth operator1/operator123."
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get all users",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, список всех пользователей."
+          },
+          "response": []
+        },
+        {
+          "name": "Create user (admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"pass\",\n  \"roles\": [\"ROLE_OPERATOR\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            },
+            "description": "Ожидаемый результат: 201 Created, новый пользователь."
+          },
+          "response": []
+        },
+        {
+          "name": "Assign roles to user",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roles\": [\"ROLE_ADMIN\", \"ROLE_OWNER\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/3/roles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "3",
+                "roles"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, обновлённый пользователь."
+          },
+          "response": []
+        },
+        {
+          "name": "Update user enabled status",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/3/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "3",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get all properties (admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/properties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "properties"
+              ]
+            },
+            "description": "Ожидаемый результат: 200 OK, массив всех объектов."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete property (admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/properties/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "properties",
+                "1"
+              ]
+            },
+            "description": "Ожидаемый результат: 204 No Content."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for the administrator (ROLE_ADMIN). Use Basic Auth admin/password123."
+    },
+    {
+      "name": "Negative Scenarios",
+      "item": [
+        {
+          "name": "No auth - should 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/properties/available",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "properties",
+                "available"
+              ]
+            },
+            "description": "Ожидаемый результат: 401 Unauthorized."
+          },
+          "response": []
+        },
+        {
+          "name": "Tenant accessing owner endpoint - should 403",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "tenant123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/owner/properties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "owner",
+                "properties"
+              ]
+            },
+            "description": "Ожидаемый результат: 403 Forbidden."
+          },
+          "response": []
+        },
+        {
+          "name": "Wrong password - should 401",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "wrongpass",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/properties/available",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "properties",
+                "available"
+              ]
+            },
+            "description": "Ожидаемый результат: 401 Unauthorized."
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid booking dates (end before start) - should 400",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "tenant123",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": 1,\n  \"startDate\": \"2025-06-10\",\n  \"endDate\": \"2025-06-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "bookings"
+              ]
+            },
+            "description": "Ожидаемый результат: 400 Bad Request."
+          },
+          "response": []
+        }
+      ],
+      "description": "Negative tests: checking for authorization and validation errors."
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}

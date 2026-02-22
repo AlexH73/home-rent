@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,65 +26,75 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class FileStorageService {
+
     @Value("${app.upload.rental-contracts-dir}")
     private String rentalContractsDir;
+
     @Value("${app.upload.rental-contracts-max-size}")
     private Long rentalContractMaxSize;
 
-    public String storeRentalContract(Long bookingId, MultipartFile file) {
-        validateFile(file);
+    @Value("${app.upload.issues-dir}")
+    private String issuesDir;
 
+    @Value("${app.upload.issue-photo-max-size}")
+    private Long issuePhotoMaxSize;
+
+    @Value("${app.upload.issue-photo-allowed-types}")
+    private String issuePhotoAllowedTypes;
+
+    public String storeRentalContract(Long bookingId, MultipartFile file) {
+        validateFile(file, rentalContractMaxSize, "application/pdf");
+        return storeFile(file, rentalContractsDir, bookingId.toString());
+    }
+
+    public String storeIssuePhoto(Long bookingId, MultipartFile file) {
+        List<String> allowedTypes = Arrays.asList(issuePhotoAllowedTypes.split(","));
+        validateFile(file, issuePhotoMaxSize, allowedTypes);
+        return storeFile(file, issuesDir, bookingId.toString());
+    }
+
+    private String storeFile(MultipartFile file, String baseDir, String subDir) {
         try {
-            // creating a directory for a specific booking
-            Path targetDir = Paths.get(rentalContractsDir, bookingId.toString());
+            Path targetDir = Paths.get(baseDir, subDir);
             Files.createDirectories(targetDir);
 
-            // generating a unique file name
             String originalFilename = file.getOriginalFilename();
             String sanitizedFilename = originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
             String storedFilename = UUID.randomUUID() + "_" + sanitizedFilename;
             Path targetPath = targetDir.resolve(storedFilename);
 
-            // copying the file
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-            log.info("Rental contract saved to {}", targetPath);
+            log.info("File saved to {}", targetPath);
 
             return targetPath.toString();
         } catch (IOException e) {
-            log.error("Error storing rental contract for booking {}", bookingId, e);
-            throw new RuntimeException("Could not store rental contract", e);
+            log.error("Error storing file", e);
+            throw new RuntimeException("Could not store file", e);
         }
     }
 
-    // checking the file before saving
-    private void validateFile(MultipartFile file) {
+    private void validateFile(MultipartFile file, long maxSize, String... allowedContentTypes) {
+        validateFile(file, maxSize, Arrays.asList(allowedContentTypes));
+    }
+
+    private void validateFile(MultipartFile file, long maxSize, List<String> allowedContentTypes) {
         if (file == null || file.isEmpty()) {
-            log.warn("Rejected rental contract upload: file={}, reason={}",
-                    file != null ? file.getOriginalFilename() : "null",
-                    "file is empty");
             throw new IllegalArgumentException("File is empty");
         }
 
         String contentType = file.getContentType();
         if (contentType == null || contentType.isBlank()) {
-            log.warn("Rejected rental contract upload: file={}, reason={}",
-                    file.getOriginalFilename(), "content type is empty");
             throw new IllegalArgumentException("File content type is empty");
         }
 
-        boolean allowed = contentType.equals("application/pdf"); // only PDF files allowed for rental contracts
+        boolean allowed = allowedContentTypes.stream()
+                .anyMatch(allowedType -> allowedType.equalsIgnoreCase(contentType));
         if (!allowed) {
-            log.warn("Rejected rental contract upload: file={}, contentType={}, reason={}",
-                    file.getOriginalFilename(), contentType, "content type not allowed");
-            throw new IllegalArgumentException("File content type is not allowed: " + contentType);
+            throw new IllegalArgumentException("File content type not allowed: " + contentType);
         }
 
-        if (file.getSize() > rentalContractMaxSize) {
-            log.warn("Rejected rental contract upload: file={}, size={}, maxAllowed={}",
-                    file.getOriginalFilename(), file.getSize(), rentalContractMaxSize);
-            throw new IllegalArgumentException("File too large");
+        if (file.getSize() > maxSize) {
+            throw new IllegalArgumentException("File too large (max " + maxSize + " bytes)");
         }
     }
 }
-
-

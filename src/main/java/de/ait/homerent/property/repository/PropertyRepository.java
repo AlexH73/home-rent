@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * ----------------------------------------------------------------------------
@@ -36,4 +37,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
+
+    @Query("SELECT p FROM Property p JOIN FETCH p.owner WHERE p.id = :id")
+    Optional<Property> findByIdWithOwner(@Param("id") Long id);
 }

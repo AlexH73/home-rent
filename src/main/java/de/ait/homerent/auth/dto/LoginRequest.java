@@ -24,7 +24,7 @@ public class LoginRequest {
     @NotBlank(message = "Username is required")
     @Schema(
             description = "User's username",
-            example = "john_doe",
+            example = "olga_smith",
             minLength = 3,
             maxLength = 50
     )
@@ -33,7 +33,7 @@ public class LoginRequest {
     @NotBlank(message = "Password is required")
     @Schema(
             description = "User's password",
-            example = "password123",
+            example = "olgasmithd123",
             minLength = 6,
             maxLength = 100
     )

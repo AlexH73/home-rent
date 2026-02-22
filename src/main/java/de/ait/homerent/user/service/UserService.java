@@ -79,29 +79,29 @@ public class UserService {
     }
 
     @Transactional
-    public void updateRoles(Long id, List<String> roleNames) {
-        log.info("Updating roles for user ID: {}", id);
-
+    public UserDto updateRoles(Long id, List<String> roleNames) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User not found with id: " + id));
-
-        Set<Role> roles = roleNames.stream()
-                .map(name -> {
-                    try {
-                        RoleName roleNameEnum = RoleName.valueOf(name.toUpperCase());
-                        return roleRepository.findByName(roleNameEnum)
-                                .orElseThrow(() -> new ResponseStatusException(
-                                        HttpStatus.NOT_FOUND, "Role not found in DB: " + name));
-                    } catch (IllegalArgumentException e) {
-                        throw new ResponseStatusException(
-                                HttpStatus.BAD_REQUEST, "Invalid role name: " + name);
-                    }
-                })
-                .collect(Collectors.toSet());
-
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Set<Role> roles = roleNames.stream().map(name -> {
+            try {
+                RoleName roleNameEnum = RoleName.valueOf(name.toUpperCase());
+                return roleRepository.findByName(roleNameEnum)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found: " + name));
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid role name: " + name);
+            }
+        }).collect(Collectors.toSet());
         user.setRoles(roles);
-        log.info("Roles updated successfully for user: {}", user.getEmail());
+        return mapToDto(user);
+    }
+
+    @Transactional
+    public UserDto updateEnabledStatus(Long id, boolean enabled) {
+        log.info("Updating enabled status for user ID: {} to {}", id, enabled);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+        user.setEnabled(enabled);
+        return mapToDto(user);
     }
 
     private UserDto mapToDto(User user) {
