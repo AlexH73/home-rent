@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "b049365e-71a1-49db-9aed-8e47348b4fa0",
+    "_postman_id": "56b1fdd1-87ea-4213-be86-2747746b6293",
     "name": "HomeRent API",
     "description": "\n## HomeRent - Home Rental Platform\n### Overview\nBackend service for a home rental platform. The system allows:\n-   User registration and account management\n-   Property listing for rent\n-   Booking accommodations for selected dates\n-   Rental contract management\n-   Maintenance request tracking and management\n### User Roles:\n-   **ROLE\\_TENANT** - Tenant/Renter\n-   **ROLE\\_OWNER** - Property Owner\n-   **ROLE\\_OPERATOR** - Platform Operator\n-   **ROLE\\_ADMIN** - System Administrator",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "51363806",
-    "_collection_link": "https://go.postman.co/collection/51363806-b049365e-71a1-49db-9aed-8e47348b4fa0?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/51363806-56b1fdd1-87ea-4213-be86-2747746b6293?source=collection_link"
   },
   "item": [
     {
@@ -56,7 +56,7 @@
                 "info"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, информация о сервисе."
+            "description": "Expected result: 200 OK, service information."
           },
           "response": []
         },
@@ -256,7 +256,7 @@
                 "my"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, массив бронирований текущего пользователя."
+            "description": "Expected result: 200 OK, an array of bookings by the current user."
           },
           "response": []
         },
@@ -303,7 +303,7 @@
                 "upload-contract"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK. Выберите PDF-файл в form-data."
+            "description": "Expected result: 200 OK. Select the PDF file in the form-data."
           },
           "response": []
         },
@@ -358,7 +358,42 @@
                 "issues"
               ]
             },
-            "description": "Ожидаемый результат: 201 Created, объект заявки со статусом OPEN."
+            "description": "Expected result: 201 Created, application object with the OPEN status."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Booking Details",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "tenant123",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "tenant1",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tenant/bookings/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenant",
+                "bookings",
+                "1"
+              ]
+            }
           },
           "response": []
         }
@@ -443,7 +478,7 @@
                 "properties"
               ]
             },
-            "description": "Ожидаемый результат: 201 Created, созданный объект."
+            "description": "Expected result: 201 Created, created object."
           },
           "response": []
         },
@@ -479,7 +514,7 @@
                 "1"
               ]
             },
-            "description": "Ожидаемый результат: 204 No Content."
+            "description": "Expected result: 204 No Content."
           },
           "response": []
         },
@@ -515,7 +550,7 @@
                 "pending"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, массив ожидающих подтверждения бронирований."
+            "description": "Expected result: 200 OK, an array of bookings awaiting confirmation."
           },
           "response": []
         },
@@ -552,7 +587,7 @@
                 "approve"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, статус меняется на APPROVED."
+            "description": "Expected result: 200 OK, status changes to APPROVED."
           },
           "response": []
         },
@@ -589,7 +624,51 @@
                 "reject"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, статус меняется на REJECTED."
+            "description": "Expected result: 200 OK, status changes to REJECTED."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Property",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "owner123",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "owner1",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1,\r\n  \"ownerId\": 5,\r\n  \"title\": \"Updated Cozy Apartment\",\r\n  \"address\": \"123 Main St, Berlin\",\r\n  \"description\": \"This property has been updated with new description and price.\",\r\n  \"pricePerDay\": 140,\r\n  \"status\": \"AVAILABLE\",\r\n  \"availableFrom\": \"2026-08-01T00:00:00Z\",\r\n  \"availableTo\": \"2026-12-31T00:00:00Z\",\r\n  \"createdAt\": \"2026-02-22T10:00:00Z\",\r\n  \"photoUrls\": [\"http://example.com/photo1.jpg\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/owner/properties/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "owner",
+                "properties",
+                "1"
+              ]
+            }
           },
           "response": []
         }
@@ -631,7 +710,7 @@
                 "active"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, массив активных бронирований."
+            "description": "Expected result: 200 OK, an array of active bookings."
           },
           "response": []
         },
@@ -666,7 +745,7 @@
                 "issues"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, массив всех заявок на поломки."
+            "description": "Expected result: 200 OK, an array of all breakage requests."
           },
           "response": []
         },
@@ -719,7 +798,7 @@
                 }
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, обновлённая заявка."
+            "description": "Expected result: 200 OK, updated application."
           },
           "response": []
         }
@@ -804,7 +883,7 @@
                 "users"
               ]
             },
-            "description": "Ожидаемый результат: 201 Created, новый пользователь."
+            "description": "Expected result: 201 Created, new user."
           },
           "response": []
         },
@@ -850,7 +929,7 @@
                 "roles"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, обновлённый пользователь."
+            "description": "Expected result: 200 OK, updated user."
           },
           "response": []
         },
@@ -930,7 +1009,7 @@
                 "properties"
               ]
             },
-            "description": "Ожидаемый результат: 200 OK, массив всех объектов."
+            "description": "Expected result: 200 OK, an array of all objects."
           },
           "response": []
         },
@@ -966,7 +1045,50 @@
                 "1"
               ]
             },
-            "description": "Ожидаемый результат: 204 No Content."
+            "description": "Expected result: 204 No Content."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Property (Admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"ownerId\": 2,\r\n  \"title\": \"Admin Created Property\",\r\n  \"address\": \"456 Oak Ave, Berlin\",\r\n  \"description\": \"Property created by admin for testing\",\r\n  \"pricePerDay\": 200,\r\n  \"availableFrom\": \"2026-09-01\",\r\n  \"availableTo\": \"2027-09-01\",\r\n  \"photoUrls\": [\"https://example.com/photo.jpg\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/properties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "properties"
+              ]
+            }
           },
           "response": []
         }
@@ -977,140 +1099,2080 @@
       "name": "Negative Scenarios",
       "item": [
         {
-          "name": "No auth - should 401",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/tenant/properties/available",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "tenant",
-                "properties",
-                "available"
-              ]
+          "name": "Public",
+          "item": [
+            {
+              "name": "Register User – Duplicate Username",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"existinguser\",\n  \"email\": \"newemail@example.com\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
             },
-            "description": "Ожидаемый результат: 401 Unauthorized."
-          },
-          "response": []
+            {
+              "name": "Register User – Invalid Email",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"invalid-email\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Register User – Short Password",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login – Wrong Credentials",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"existinguser\",\n  \"password\": \"wrongpassword\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login – Unknown User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"nosuchuser\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         },
         {
-          "name": "Tenant accessing owner endpoint - should 403",
-          "request": {
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "tenant1",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "tenant123",
-                  "type": "string"
+          "name": "Tenant",
+          "item": [
+            {
+              "name": "Get Available Properties – No Auth",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/properties/available",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "properties",
+                    "available"
+                  ]
                 }
-              ]
+              },
+              "response": []
             },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/owner/properties",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "owner",
-                "properties"
-              ]
+            {
+              "name": "Get Property Details – Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/properties/9999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "properties",
+                    "9999"
+                  ]
+                }
+              },
+              "response": []
             },
-            "description": "Ожидаемый результат: 403 Forbidden."
-          },
-          "response": []
+            {
+              "name": "Get Property Details – No Auth",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/properties/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "properties",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Booking – Property Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"propertyId\": 9999,\n  \"startDate\": \"2026-07-01\",\n  \"endDate\": \"2026-07-10\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Booking – End Before Start",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"propertyId\": 1,\n  \"startDate\": \"2026-07-10\",\n  \"endDate\": \"2026-07-01\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Booking – Property Not Available",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"propertyId\": 1,\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-01-10\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Bookings – No Auth",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings/my",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings",
+                    "my"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Booking Details – Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings/9999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings",
+                    "9999"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Booking Details – Forbidden (Not Owner)",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings/5",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings",
+                    "5"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Upload Contract – No Auth",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings/1/upload-contract",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings",
+                    "1",
+                    "upload-contract"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Upload Contract – Booking Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "/path/to/dummy.pdf"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings/9999/upload-contract",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings",
+                    "9999",
+                    "upload-contract"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Upload Contract – Invalid File Type",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "/path/to/test.txt"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings/1/upload-contract",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings",
+                    "1",
+                    "upload-contract"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Issue – No Auth",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/issues?bookingId=1&description=test",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "issues"
+                  ],
+                  "query": [
+                    {
+                      "key": "bookingId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "description",
+                      "value": "test"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Tenant accessing owner endpoint - should 403",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties"
+                  ]
+                },
+                "description": "Expected result: 403 Forbidden."
+              },
+              "response": []
+            },
+            {
+              "name": "Invalid booking dates (end before start) - should 400",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"propertyId\": 1,\n  \"startDate\": \"2025-06-10\",\n  \"endDate\": \"2025-06-01\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/bookings",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "bookings"
+                  ]
+                },
+                "description": "Expected result: 400 Bad Request."
+              },
+              "response": []
+            },
+            {
+              "name": "Wrong password - should 401",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "wrongpass",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/properties/available",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "properties",
+                    "available"
+                  ]
+                },
+                "description": "Expected result: 401 Unauthorized."
+              },
+              "response": []
+            },
+            {
+              "name": "No auth - should 401",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/properties/available",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "properties",
+                    "available"
+                  ]
+                },
+                "description": "Expected result: 401 Unauthorized."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Issue – Booking Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "bookingId",
+                      "value": "9999"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Test"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/issues",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "issues"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Issue – Missing Description",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tenant/issues?bookingId=1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tenant",
+                    "issues"
+                  ],
+                  "query": [
+                    {
+                      "key": "bookingId",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         },
         {
-          "name": "Wrong password - should 401",
-          "request": {
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "tenant1",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "wrongpass",
-                  "type": "string"
+          "name": "Owner",
+          "item": [
+            {
+              "name": "Get My Properties – No Auth",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties"
+                  ]
                 }
-              ]
+              },
+              "response": []
             },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/tenant/properties/available",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "tenant",
-                "properties",
-                "available"
-              ]
+            {
+              "name": "Get My Properties – Forbidden (Tenant)",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties"
+                  ]
+                }
+              },
+              "response": []
             },
-            "description": "Ожидаемый результат: 401 Unauthorized."
-          },
-          "response": []
+            {
+              "name": "Create Property – No Auth",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Test\",\n  \"address\": \"123\",\n  \"pricePerDay\": 100\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Property – Missing Title",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"address\": \"123 Street\",\n  \"pricePerDay\": 100\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Property – No Auth",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": 1,\n  \"title\": \"Test\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Property – Forbidden (Not Owner)",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": 2,\n  \"ownerId\": 6,\n  \"title\": \"Hacked Title\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties/2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties",
+                    "2"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Property – Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": 9999,\n  \"ownerId\": 5,\n  \"title\": \"Test\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties/9999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties",
+                    "9999"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Property – Negative Price",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": 1,\n  \"ownerId\": 5,\n  \"title\": \"Test\",\n  \"pricePerDay\": -10\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Property – No Auth",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Property – Forbidden (Not Owner)",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties/2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties",
+                    "2"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Property – Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/properties/9999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "properties",
+                    "9999"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Pending Bookings – No Auth",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/bookings/pending",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "bookings",
+                    "pending"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Approve Booking – No Auth",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/bookings/1/approve",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "bookings",
+                    "1",
+                    "approve"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Approve Booking – Forbidden (Not Owner)",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/bookings/5/approve",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "bookings",
+                    "5",
+                    "approve"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Approve Booking – Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/bookings/9999/approve",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "bookings",
+                    "9999",
+                    "approve"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Approve Booking – Already Approved",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/bookings/2/approve",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "bookings",
+                    "2",
+                    "approve"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reject Booking – Forbidden (Not Owner)",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/owner/bookings/5/reject",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "owner",
+                    "bookings",
+                    "5",
+                    "reject"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         },
         {
-          "name": "Invalid booking dates (end before start) - should 400",
-          "request": {
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "tenant1",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "tenant123",
-                  "type": "string"
+          "name": "Operator",
+          "item": [
+            {
+              "name": "Get Active Bookings – No Auth",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operator/bookings/active",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operator",
+                    "bookings",
+                    "active"
+                  ]
                 }
-              ]
+              },
+              "response": []
             },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"propertyId\": 1,\n  \"startDate\": \"2025-06-10\",\n  \"endDate\": \"2025-06-01\"\n}"
+            {
+              "name": "Get Active Bookings – Forbidden (Tenant)",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "tenant1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "tenant123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operator/bookings/active",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operator",
+                    "bookings",
+                    "active"
+                  ]
+                }
+              },
+              "response": []
             },
-            "url": {
-              "raw": "{{baseUrl}}/api/tenant/bookings",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "tenant",
-                "bookings"
-              ]
+            {
+              "name": "Get All Issues – No Auth",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operator/issues",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operator",
+                    "issues"
+                  ]
+                }
+              },
+              "response": []
             },
-            "description": "Ожидаемый результат: 400 Bad Request."
-          },
-          "response": []
+            {
+              "name": "Update Issue Status – No Auth",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operator/issues/1/status?status=IN_PROGRESS",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operator",
+                    "issues",
+                    "1",
+                    "status"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "IN_PROGRESS"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Issue Status – Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "operator1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "operator123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operator/issues/9999/status?status=DONE",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operator",
+                    "issues",
+                    "9999",
+                    "status"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "DONE"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Issue Status – Invalid Status",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "operator1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "operator123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/operator/issues/1/status?status=INVALID",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "operator",
+                    "issues",
+                    "1",
+                    "status"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "INVALID"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Admin",
+          "item": [
+            {
+              "name": "Get All Users – No Auth",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Users – Forbidden (Owner)",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "owner1",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "owner123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create User – No Auth",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"new@example.com\",\n  \"password\": \"pass123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create User – Duplicate Username",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "admin",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "password123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"existinguser\",\n  \"email\": \"unique@example.com\",\n  \"password\": \"pass123\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Roles – No Auth",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"roles\": [\"ROLE_OWNER\"]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users/3/roles",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    "3",
+                    "roles"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Roles – User Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "admin",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "password123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"roles\": [\"ROLE_OWNER\"]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users/9999/roles",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    "9999",
+                    "roles"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Roles – Invalid Role",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "admin",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "password123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"roles\": [\"ROLE_SUPERUSER\"]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users/3/roles",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    "3",
+                    "roles"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User Status – No Auth",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"enabled\": false\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users/3/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    "3",
+                    "status"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User Status – Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "admin",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "password123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"enabled\": false\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/users/9999/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    "9999",
+                    "status"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Properties (Admin) – No Auth",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/properties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "properties"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Property (Admin) – No Auth",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ownerId\": 5,\n  \"title\": \"Test\",\n  \"address\": \"Addr\",\n  \"description\": \"Desc\",\n  \"pricePerDay\": 100,\n  \"availableFrom\": \"2026-01-01\",\n  \"availableTo\": \"2026-12-31\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/properties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "properties"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Property (Admin) – Owner Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "admin",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "password123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ownerId\": 9999,\n  \"title\": \"Test\",\n  \"address\": \"Addr\",\n  \"description\": \"Desc\",\n  \"pricePerDay\": 100,\n  \"availableFrom\": \"2026-01-01\",\n  \"availableTo\": \"2026-12-31\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/properties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "properties"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Property (Admin) – Missing Fields",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "admin",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "password123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"No owner\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/properties",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "properties"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Property (Admin) – No Auth",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/properties/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "properties",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Property (Admin) – Not Found",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "admin",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "password123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/admin/properties/9999",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "properties",
+                    "9999"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         }
       ],
       "description": "Negative tests: checking for authorization and validation errors."
