@@ -464,8 +464,22 @@
               }
             ],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Уютная квартира в центре\",\n  \"address\": \"Berlin, Friedrichstr. 123\",\n  \"city\": \"Berlin\",\n  \"pricePerNight\": 150,\n  \"description\": \"Современная квартира с видом на реку\",\n  \"rooms\": 2,\n  \"maxGuests\": 4\n}"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "property",
+                  "type": "text",
+                  "uuid": "b7d1c13f-eb82-40c9-bddf-87daf81fed51",
+                  "contentType": "application/json",
+                  "value": "{\n  \"ownerId\": 2,\n  \"title\": \"Cozy Apartment\",\n  \"address\": \"123 Main St, Berlin\",\n  \"description\": \"A nice apartment\",\n  \"pricePerDay\": 120,\n  \"availableFrom\": \"2026-08-01\",\n  \"availableTo\": \"2026-12-31\"\n}"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "uuid": "fb552cf5-f8d9-4af0-aad7-46069ff9cce9",
+                  "src": "/C:/Users/Asus/Downloads/maxresdefault.jpg"
+                }
+              ]
             },
             "url": {
               "raw": "{{baseUrl}}/api/owner/properties",
