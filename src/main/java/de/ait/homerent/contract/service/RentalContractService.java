@@ -33,6 +33,11 @@ public class RentalContractService {
     private final FileStorageService fileStorageService;
     private final EmailService emailService;
 
+    @Transactional(readOnly = true)
+    public boolean hasContract(Long bookingId) {
+        return rentalContractRepository.findByBookingId(bookingId).isPresent();
+    }
+
     @Transactional
     public RentalContract uploadContract(Long bookingId, MultipartFile file) {
         Booking booking = bookingRepository.findById(bookingId)
