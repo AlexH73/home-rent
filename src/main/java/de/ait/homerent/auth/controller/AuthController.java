@@ -136,28 +136,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+
     @Operation(
             summary = "Authenticate user",
             description = """
-            ### User login
-            
-            **Authentication mechanism:**
-            - Uses HTTP Basic Authentication
-            - After successful authentication, protected endpoints can be accessed
-            - For subsequent requests, use the Authorization header
-            
-            **How to use Basic Auth:**
-            ```
-            Authorization: Basic base64(username:password)
-            ```
-            
-            **Curl example:**
-            ```
-            curl -u username:password http://localhost:8080/api/...
-            ```
-            
-            **Note:** This endpoint is public and does not require pre-authentication.
-            """,
+        ### User login
+        
+        **Authentication mechanism:**
+        - User provides username and password in the request body.
+        - Upon successful authentication, the server returns user details and roles.
+        
+        **Note:** This endpoint is public and does not require pre-authentication.
+        """,
             tags = {"Authentication & Authorization"}
     )
     @ApiResponses({
@@ -225,11 +215,6 @@ public class AuthController {
             )
     })
     public ResponseEntity<AuthResponse> login(
-            @Parameter(
-                    description = "Login credentials",
-                    required = true,
-                    schema = @Schema(implementation = LoginRequest.class)
-            )
             @Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
