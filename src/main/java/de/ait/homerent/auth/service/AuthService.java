@@ -3,6 +3,7 @@ package de.ait.homerent.auth.service;
 import de.ait.homerent.auth.dto.AuthResponse;
 import de.ait.homerent.auth.dto.LoginRequest;
 import de.ait.homerent.auth.dto.RegisterRequest;
+import de.ait.homerent.auth.dto.RoleDto;
 import de.ait.homerent.user.model.Role;
 import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
@@ -81,10 +82,11 @@ public class AuthService {
                 .message("Registration successful")
                 .username(savedUser.getUsername())
                 .email(savedUser.getEmail())
-                .roles(savedUser.getRoles())
+                .roles(mapRolesToDto(user.getRoles()))
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
         log.info("Attempting to login user: {}", request.getUsername());
 
@@ -117,12 +119,21 @@ public class AuthService {
                     .message("Login successful")
                     .username(user.getUsername())
                     .email(user.getEmail())
-                    .roles(user.getRoles())
+                    .roles(mapRolesToDto(user.getRoles()))
                     .build();
 
         } catch (AuthenticationException e) {
             log.warn("Authentication failed for user: {} - {}", request.getUsername(), e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
+    }
+
+    private Set<RoleDto> mapRolesToDto(Set<Role> roles) {
+        return roles.stream()
+                .map(role -> RoleDto.builder()
+                        .id(role.getId())
+                        .name(role.getName())
+                        .build())
+                .collect(Collectors.toSet());
     }
 }

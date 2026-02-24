@@ -41,16 +41,6 @@ public class AuthResponse {
     )
     private String email;
 
-    @Schema(
-            description = "Roles assigned to the user",
-            example = """
-                    [
-                      {
-                        "id": 1,
-                        "name": "ROLE_TENANT"
-                      }
-                    ]
-                    """
-    )
-    private Set<Role> roles;
+    @Schema(description = "Roles assigned to the user")
+    private Set<RoleDto> roles;
 }

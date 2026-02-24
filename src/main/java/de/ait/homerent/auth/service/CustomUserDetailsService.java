@@ -51,7 +51,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         return builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .disabled(!user.isEnabled())
 
                 // Indicates whether the user account is enabled or disabled.
                 // Disabled accounts cannot authenticate.
