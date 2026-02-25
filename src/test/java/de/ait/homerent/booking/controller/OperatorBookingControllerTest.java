@@ -1,8 +1,10 @@
 package de.ait.homerent.booking.controller;
 
+import de.ait.homerent.auth.service.CustomUserDetailsService;
 import de.ait.homerent.booking.dto.BookingResponse;
 import de.ait.homerent.booking.service.BookingService;
 import de.ait.homerent.config.SecurityConfig;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -43,6 +46,9 @@ class OperatorBookingControllerTest {
     @TestConfiguration
     static class TestUsers {
 
+        @MockBean
+        CustomUserDetailsService customUserDetailsService;
+
         @Bean
         public BookingService bookingService() {
             return Mockito.mock(BookingService.class);
@@ -54,6 +60,16 @@ class OperatorBookingControllerTest {
                     User.withUsername("operator").password("pass").roles("OPERATOR").build(),
                     User.withUsername("tenant").password("pass").roles("TENANT").build()
             );
+        }
+
+        @BeforeEach
+        void setUpSecurityUser() {
+            when(customUserDetailsService.loadUserByUsername("operator1"))
+                    .thenReturn(org.springframework.security.core.userdetails.User
+                            .withUsername("operator1")
+                            .password("pw")
+                            .roles("OPERATOR")
+                            .build());
         }
     }
 
