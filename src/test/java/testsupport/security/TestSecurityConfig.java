@@ -7,16 +7,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@Profile("test-security")
 public class TestSecurityConfig {
 
     @Bean
     public SecurityFilterChain testSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .formLogin(login -> login.disable())
-                .httpBasic(basic -> basic.disable());
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/public/**").permitAll()
+                        .anyRequest().permitAll()
+                );
 
         return http.build();
     }
