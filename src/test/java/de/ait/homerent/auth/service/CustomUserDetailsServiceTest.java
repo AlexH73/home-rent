@@ -1,5 +1,6 @@
 package de.ait.homerent.auth.service;
 
+import de.ait.homerent.booking.service.BookingService;
 import de.ait.homerent.user.model.Role;
 import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -30,6 +32,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CustomUserDetailsService Unit Tests")
 class CustomUserDetailsServiceTest {
+
+    @MockBean
+    CustomUserDetailsService customUserDetailsService;
+
+    @MockBean
+    BookingService bookingService;
 
     @Mock
     private UserRepository userRepository;
