@@ -223,6 +223,18 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*Application*</exclude>
+                                <exclude>**/controller/**</exclude>
+                                <exclude>**/security/**</exclude>
+                                <exclude>**/utils/**</exclude>
+                                <exclude>**/dto/**</exclude>
+                                <exclude>**/model/**</exclude>
+                                <exclude>**/config/**</exclude>
+                                <exclude>**/scheduler/**</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
 
                     <!-- =========================
