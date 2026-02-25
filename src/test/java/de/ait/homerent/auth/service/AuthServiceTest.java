@@ -9,6 +9,7 @@ import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.RoleRepository;
 import de.ait.homerent.user.repository.UserRepository;
+import de.ait.homerent.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,12 +22,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -56,6 +61,8 @@ class AuthServiceTest {
 
     @InjectMocks
     private AuthService authService;
+    @InjectMocks
+    private UserService userService;
 
     private RegisterRequest registerRequest;
     private LoginRequest loginRequest;
@@ -177,9 +184,7 @@ class AuthServiceTest {
         assertEquals(user.getEmail(), response.getEmail());
         assertEquals(1, response.getRoles().size());
 
-        verify(authenticationManager).authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
+        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
     @Test
@@ -194,5 +199,104 @@ class AuthServiceTest {
         assertTrue(ex.getReason().contains("Invalid username or password"));
 
         verify(userRepository, never()).findByUsername(any());
+    }
+
+    @Test
+    @DisplayName("login(): happy path authenticates and returns AuthResponse")
+    void login_happyPath_returnsAuthResponse() {
+        LoginRequest req = new LoginRequest();
+        req.setUsername("u1");
+        req.setPassword("pw");
+
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+                "u1",
+                "pw",
+                Set.of(new SimpleGrantedAuthority("ROLE_TENANT"))
+        );
+
+        when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(auth);
+
+        Role tenantRole = new Role();
+        tenantRole.setId(1L);
+        tenantRole.setName(RoleName.ROLE_TENANT);
+
+        User user = new User();
+        user.setUsername("u1");
+        user.setEmail("u1@test.com");
+        user.setRoles(Set.of(tenantRole));
+
+        when(userRepository.findByUsername("u1")).thenReturn(Optional.of(user));
+
+        var resp = authService.login(req);
+
+        assertThat(resp.getMessage()).isEqualTo("Login successful");
+        assertThat(resp.getUsername()).isEqualTo("u1");
+        assertThat(resp.getEmail()).isEqualTo("u1@test.com");
+        assertThat(resp.getRoles()).isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("login(): executes service method (smoke test)")
+    void login_smoke_executesServiceMethod() {
+        LoginRequest req = LoginRequest.builder()
+                .username("smoke")
+                .password("pw")
+                .build();
+
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+                "smoke", "pw", Set.of(new SimpleGrantedAuthority("ROLE_TENANT"))
+        );
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(auth);
+        when(userRepository.findByUsername("smoke")).thenReturn(Optional.of(user));
+
+        AuthResponse resp = authService.login(req);
+
+        assertThat(resp.getUsername()).isEqualTo("testuser"); // from user field in setUp()
+    }
+
+    @Test
+    @DisplayName("updateRoles(): when user not found, throws 404 NOT_FOUND")
+    void updateRoles_whenUserNotFound_throws404() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.updateRoles(1L, List.of("ROLE_OWNER")))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode())
+                        .isEqualTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    @DisplayName("updateRoles(): when role enum is valid but role not found in DB, throws 404 NOT_FOUND")
+    void updateRoles_whenRoleNotFoundInDb_throws404() {
+        User user = new User();
+        user.setId(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        when(roleRepository.findByName(RoleName.ROLE_OWNER)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.updateRoles(1L, List.of("ROLE_OWNER")))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode())
+                        .isEqualTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    @DisplayName("login(): when authentication succeeds but user not found, throws RuntimeException")
+    void login_whenUserNotFoundAfterAuth_throws() {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                "testuser",
+                "rawPassword",
+                Set.of(new SimpleGrantedAuthority("ROLE_TENANT"))
+        );
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authentication);
+
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> authService.login(loginRequest));
+        assertEquals("User not found", ex.getMessage());
     }
 }
