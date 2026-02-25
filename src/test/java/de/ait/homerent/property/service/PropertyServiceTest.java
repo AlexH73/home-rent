@@ -265,4 +265,195 @@ class PropertyServiceTest {
         u.setRoles(Set.of(role(RoleName.ROLE_OWNER)));
         return u;
     }
+
+    @Test
+    @DisplayName("save(): admin happy path creates AVAILABLE property for OWNER user")
+    void save_adminHappyPath_createsProperty() {
+        User owner = new User();
+        owner.setId(10L);
+        owner.setRoles(Set.of(role(RoleName.ROLE_OWNER)));
+
+        PropertyCreateRequest req = new PropertyCreateRequest();
+        req.setOwnerId(10L);
+        req.setTitle("t");
+        req.setAddress("a");
+        req.setDescription("d");
+        req.setPricePerDay(100);
+        req.setAvailableFrom(LocalDateTime.of(2026, 3, 1, 0, 0));
+        req.setAvailableTo(LocalDateTime.of(2026, 3, 3, 0, 0));
+
+        when(userRepository.findById(10L)).thenReturn(Optional.of(owner));
+        when(propertyRepository.save(any(Property.class))).thenAnswer(inv -> {
+            Property p = inv.getArgument(0);
+            p.setId(1L);
+            return p;
+        });
+
+        PropertyDto dto = propertyService.save(req);
+
+        assertThat(dto.getId()).isEqualTo(1L);
+        assertThat(dto.getOwnerId()).isEqualTo(10L);
+        assertThat(dto.getStatus()).isEqualTo(PropertyStatus.AVAILABLE);
+    }
+
+    @Test
+    @DisplayName("deleteProperty(): owner happy path deletes own property and returns true")
+    void deleteProperty_ownerHappyPath_deletesAndReturnsTrue() {
+        User owner = ownerWithId(10L);
+
+        Property p = new Property();
+        p.setId(5L);
+        p.setOwner(owner);
+        p.setStatus(PropertyStatus.AVAILABLE);
+        p.setPhotos(List.of()); // triggers branch: photos empty
+
+        when(currentUserHelper.getCurrentOwner("owner1")).thenReturn(owner);
+        when(propertyRepository.findById(5L)).thenReturn(Optional.of(p));
+
+        boolean result = propertyService.deleteProperty("owner1", 5L);
+
+        assertThat(result).isTrue();
+        verify(propertyRepository).delete(p);
+        verifyNoInteractions(propertyFileStorageService);
+    }
+
+    @Test
+    @DisplayName("findAll(): returns mapped list")
+    void findAll_returnsMappedList() {
+        User owner = ownerWithId(10L);
+
+        Property p = new Property();
+        p.setId(1L);
+        p.setOwner(owner);
+        p.setTitle("t");
+        p.setAddress("a");
+        p.setDescription("d");
+        p.setPricePerDay(100);
+        p.setStatus(PropertyStatus.AVAILABLE);
+        p.setAvailableFrom(LocalDateTime.of(2026, 1, 1, 0, 0));
+        p.setAvailableTo(LocalDateTime.of(2026, 12, 31, 23, 59, 59));
+
+        when(propertyRepository.findAll()).thenReturn(List.of(p));
+
+        List<PropertyDto> res = propertyService.findAll();
+
+        assertThat(res).hasSize(1);
+        assertThat(res.get(0).getId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("findAvailable(): returns mapped list of AVAILABLE properties")
+    void findAvailable_returnsMappedList() {
+        User owner = ownerWithId(10L);
+
+        Property p = new Property();
+        p.setId(1L);
+        p.setOwner(owner);
+        p.setTitle("t");
+        p.setAddress("a");
+        p.setDescription("d");
+        p.setPricePerDay(100);
+        p.setStatus(PropertyStatus.AVAILABLE);
+        p.setAvailableFrom(LocalDateTime.of(2026, 1, 1, 0, 0));
+        p.setAvailableTo(LocalDateTime.of(2026, 12, 31, 23, 59, 59));
+
+        when(propertyRepository.findByStatus(PropertyStatus.AVAILABLE)).thenReturn(List.of(p));
+
+        List<PropertyDto> res = propertyService.findAvailable();
+
+        assertThat(res).hasSize(1);
+        assertThat(res.get(0).getStatus()).isEqualTo(PropertyStatus.AVAILABLE);
+    }
+
+    @Test
+    @DisplayName("getMyProperties(): returns mapped properties for current owner")
+    void getMyProperties_returnsMappedList() {
+        User owner = ownerWithId(10L);
+        owner.setUsername("owner1");
+
+        Property p = new Property();
+        p.setId(1L);
+        p.setOwner(owner);
+        p.setTitle("t");
+        p.setAddress("a");
+        p.setDescription("d");
+        p.setPricePerDay(100);
+        p.setStatus(PropertyStatus.AVAILABLE);
+        p.setAvailableFrom(LocalDateTime.of(2026, 1, 1, 0, 0));
+        p.setAvailableTo(LocalDateTime.of(2026, 12, 31, 23, 59, 59));
+
+        when(currentUserHelper.getCurrentOwner("owner1")).thenReturn(owner);
+        when(propertyRepository.findByOwnerId(10L)).thenReturn(List.of(p));
+
+        List<PropertyDto> res = propertyService.getMyProperties("owner1");
+
+        assertThat(res).hasSize(1);
+        assertThat(res.get(0).getOwnerId()).isEqualTo(10L);
+        assertThat(res.get(0).getId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("updateProperty(): happy path updates fields and returns updated DTO")
+    void updateProperty_happyPath_updatesAndReturnsDto() {
+        User owner = ownerWithId(10L);
+
+        Property existing = new Property();
+        existing.setId(1L);
+        existing.setOwner(owner);
+        existing.setTitle("old");
+        existing.setAddress("old");
+        existing.setDescription("old");
+        existing.setPricePerDay(50);
+        existing.setStatus(PropertyStatus.AVAILABLE);
+        existing.setAvailableFrom(LocalDateTime.of(2026, 1, 1, 0, 0));
+        existing.setAvailableTo(LocalDateTime.of(2026, 12, 31, 23, 59, 59));
+
+        when(propertyRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(propertyRepository.save(any(Property.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        PropertyDto dto = new PropertyDto();
+        dto.setTitle("new");
+        dto.setAddress("new");
+        dto.setDescription("new");
+        dto.setPricePerDay(100);
+        dto.setStatus(PropertyStatus.BOOKED);
+        dto.setAvailableFrom(LocalDateTime.of(2026, 3, 1, 0, 0));
+        dto.setAvailableTo(LocalDateTime.of(2026, 3, 10, 0, 0));
+
+        PropertyDto res = propertyService.updateProperty(1L, dto);
+
+        assertThat(res.getId()).isEqualTo(1L);
+        assertThat(res.getTitle()).isEqualTo("new");
+        assertThat(res.getAddress()).isEqualTo("new");
+        assertThat(res.getPricePerDay()).isEqualTo(100);
+        assertThat(res.getStatus()).isEqualTo(PropertyStatus.BOOKED);
+
+        verify(propertyRepository).save(existing);
+    }
+
+    @Test
+    @DisplayName("deleteById(): when property not found, throws 404 NOT_FOUND")
+    void deleteById_whenNotFound_throws404() {
+        when(propertyRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> propertyService.deleteById(999L))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode())
+                        .isEqualTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    @DisplayName("updateProperty(): when property not found, throws 404 NOT_FOUND")
+    void updateProperty_whenNotFound_throws404() {
+        when(propertyRepository.findById(999L)).thenReturn(Optional.empty());
+
+        PropertyDto dto = new PropertyDto();
+        dto.setTitle("x");
+
+        assertThatThrownBy(() -> propertyService.updateProperty(999L, dto))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode())
+                        .isEqualTo(HttpStatus.NOT_FOUND));
+    }
+
 }
