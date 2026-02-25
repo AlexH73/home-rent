@@ -157,4 +157,69 @@ class UserServiceTest {
                 .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode())
                         .isEqualTo(HttpStatus.NOT_FOUND));
     }
+
+    @Test
+    @DisplayName("findAll(): returns mapped users list")
+    void findAll_returnsMappedList() {
+        User u = new User();
+        u.setId(1L);
+        u.setUsername("u1");
+        u.setEmail("u1@test.com");
+        u.setEnabled(true);
+
+        Role role = new Role();
+        role.setName(RoleName.ROLE_TENANT);
+        u.setRoles(Set.of(role));
+
+        when(userRepository.findAll()).thenReturn(List.of(u));
+
+        List<UserDto> res = userService.findAll();
+
+        assertThat(res).hasSize(1);
+        assertThat(res.get(0).getId()).isEqualTo(1L);
+        assertThat(res.get(0).getUsername()).isEqualTo("u1");
+        assertThat(res.get(0).getRoles()).contains(RoleName.ROLE_TENANT.name());
+    }
+
+    @Test
+    @DisplayName("updateRoles(): happy path sets resolved roles and returns DTO")
+    void updateRoles_happyPath_setsRoles() {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("u1");
+        user.setEmail("u1@test.com");
+        user.setEnabled(true);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Role ownerRole = new Role();
+        ownerRole.setName(RoleName.ROLE_OWNER);
+        when(roleRepository.findByName(RoleName.ROLE_OWNER)).thenReturn(Optional.of(ownerRole));
+
+        UserDto dto = userService.updateRoles(1L, List.of("ROLE_OWNER"));
+
+        assertThat(dto.getRoles()).containsExactly(RoleName.ROLE_OWNER.name());
+        assertThat(user.getRoles()).containsExactly(ownerRole);
+    }
+
+    @Test
+    @DisplayName("updateEnabledStatus(): happy path updates enabled flag and returns DTO")
+    void updateEnabledStatus_happyPath_updatesEnabled() {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("u1");
+        user.setEmail("u1@test.com");
+        user.setEnabled(true);
+
+        Role role = new Role();
+        role.setName(RoleName.ROLE_TENANT);
+        user.setRoles(Set.of(role));
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        UserDto dto = userService.updateEnabledStatus(1L, false);
+
+        assertThat(user.isEnabled()).isFalse();
+        assertThat(dto.isEnabled()).isFalse();
+    }
 }
