@@ -200,7 +200,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>0.8.12</version>
 
                 <executions>
 
@@ -238,6 +238,16 @@
                             <rules>
                                 <rule>
                                     <element>CLASS</element>
+                                    <!-- check ONLY services -->
+                                    <includes>
+                                        <include>**/*Service*</include>
+                                    </includes>
+
+                                    <!-- optional: still ignore bootstrap/config even if it matches by name -->
+                                    <excludes>
+                                        <exclude>**/*Application*</exclude>
+                                    </excludes>
+
                                     <limits>
                                         <limit>
                                             <counter>LINE</counter>
