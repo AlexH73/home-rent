@@ -37,6 +37,5 @@ build/
 .DS_Store
 **/.DS_Store
 
-### VS Code ###
-.vscode/
-/src/main/resources/.env
+### Test upload artifacts ###
+uploads-test/
