@@ -5,7 +5,6 @@ import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.issue.model.IssueStatus;
-import de.ait.homerent.mail.EmailService;
 import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.property.repository.PropertyRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import testsupport.it.AbstractIT;
 
@@ -35,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class IssueFlowIT extends AbstractIT {
 
     @Autowired MockMvc mockMvc;
@@ -88,8 +88,8 @@ class IssueFlowIT extends AbstractIT {
         String issueCreateResult = mockMvc.perform(multipart("/api/tenant/issues")
                         .with(httpBasic("tenant1", "tenant123"))
                         .param("bookingId", String.valueOf(bookingId))
-                        .param("description", description)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                        .param("description", description))
+//                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.bookingId").value(bookingId))
