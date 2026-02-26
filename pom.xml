@@ -28,124 +28,88 @@
          ========================= -->
     <dependencies>
 
-        <!-- =========================
-             Spring Web
-             REST API, Controllers, JSON
-             ========================= -->
+        <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- =========================
-             Spring Data JPA
-             Hibernate + repositories
-             ========================= -->
+        <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- =========================
-             Spring Security
-             Authentication & Authorization
-             ========================= -->
+        <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- =========================
-             Bean Validation
-             @NotNull, @Email, @Size ...
-             ========================= -->
+        <!-- Bean Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- =========================
-             Spring Mail
-             Email notifications
-             ========================= -->
+        <!-- Spring Mail -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!-- =========================
-             Thymeleaf
-             Email templates (HTML)
-             ========================= -->
+        <!-- Thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- =========================
-             Swagger / OpenAPI
-             API documentation UI
-             ========================= -->
+        <!-- Swagger / OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.5.0</version>
         </dependency>
 
-        <!-- =========================
-             Liquibase
-             Database migrations
-             ========================= -->
+        <!-- Liquibase -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
 
-        <!-- =========================
-             H2 Database
-             Dev & Test environment
-             ========================= -->
+        <!-- H2 Database (dev/test runtime) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- =========================
-             Lombok
-             Reduces boilerplate code
-             ========================= -->
+        <!-- PostgreSQL driver (prod + Testcontainers) -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- =========================
-             Spring Boot Test
-             JUnit, Mockito, MockMvc
-             ========================= -->
+
+        <!-- Spring Boot Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- =========================
-             Spring Security Test
-             ========================= -->
+        <!-- Spring Security Test -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <!-- =========================
-             PostgreSQL (required for prod AND for Testcontainers PostgreSQL tests)
-             ========================= -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- Testcontainers -->
@@ -168,10 +132,7 @@
     <build>
         <plugins>
 
-            <!-- =========================
-                 Maven Compiler Plugin
-                 Lombok Annotation Processing
-                 ========================= -->
+            <!-- Maven Compiler Plugin (Lombok annotation processing) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -185,10 +146,7 @@
                 </configuration>
             </plugin>
 
-            <!-- =========================
-                 Spring Boot Maven Plugin
-                 Executable JAR Builder
-                 ========================= -->
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -202,10 +160,29 @@
                 </configuration>
             </plugin>
 
-            <!-- =========================
-                 JaCoCo
-                 Code Coverage Analysis
-                 ========================= -->
+            <!-- Failsafe: run integration tests (*IT, *ITCase) on verify, not on test -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.5.4</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT.java</include>
+                                <include>**/*ITCase.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- JaCoCo -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -213,9 +190,7 @@
 
                 <executions>
 
-                    <!-- =========================
-                         Prepare Agent
-                         ========================= -->
+                    <!-- Prepare Agent (collect coverage for both unit + IT) -->
                     <execution>
                         <id>prepare-agent</id>
                         <goals>
@@ -223,12 +198,10 @@
                         </goals>
                     </execution>
 
-                    <!-- =========================
-                         Generate Report
-                         ========================= -->
+                    <!-- Generate Report (after unit + IT, so run on verify) -->
                     <execution>
                         <id>report</id>
-                        <phase>test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
@@ -246,9 +219,7 @@
                         </configuration>
                     </execution>
 
-                    <!-- =========================
-                         Coverage Check (50% Lines)
-                         ========================= -->
+                    <!-- Coverage Check (50% Lines) -->
                     <execution>
                         <id>check</id>
                         <phase>verify</phase>
@@ -259,12 +230,13 @@
                             <rules>
                                 <rule>
                                     <element>CLASS</element>
+
                                     <!-- check ONLY services -->
                                     <includes>
                                         <include>**/*Service*</include>
                                     </includes>
 
-                                    <!-- optional: still ignore bootstrap/config even if it matches by name -->
+                                    <!-- still ignore bootstrap/config even if it matches by name -->
                                     <excludes>
                                         <exclude>**/*Application*</exclude>
                                     </excludes>
