@@ -9,6 +9,7 @@ import de.ait.homerent.contract.repository.RentalContractRepository;
 import de.ait.homerent.mail.EmailService;
 import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.property.repository.PropertyRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class BookingFlowIT extends AbstractIT {
 
     @Autowired
@@ -52,6 +55,13 @@ class BookingFlowIT extends AbstractIT {
     PropertyRepository propertyRepository;
     @Autowired
     RentalContractRepository rentalContractRepository;
+//
+//    @BeforeEach
+//    void setUp() {
+//        // Clean up bookings and contracts before each test to ensure a clean slate
+//        bookingRepository.deleteAll();
+//        rentalContractRepository.deleteAll();
+//    }
 
     @Test
     @DisplayName("Full booking lifecycle: tenant REQUESTED -> owner APPROVED -> tenant uploads contract -> operator activates -> operator sees ACTIVE")
