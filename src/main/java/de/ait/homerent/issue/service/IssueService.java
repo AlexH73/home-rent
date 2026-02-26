@@ -1,6 +1,7 @@
 package de.ait.homerent.issue.service;
 
 import de.ait.homerent.booking.model.Booking;
+import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.contract.service.FileStorageService;
 import de.ait.homerent.issue.dto.IssueCreateRequest;
@@ -44,6 +45,10 @@ public class IssueService {
 
         if (!booking.getTenant().getId().equals(tenant.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only report issues for your own bookings");
+        }
+
+        if (!BookingStatus.ACTIVE.equals(booking.getStatus())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Issues can only be reported for active bookings");
         }
 
         String photoPath = "no-photo";

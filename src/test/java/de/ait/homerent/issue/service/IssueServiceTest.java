@@ -1,6 +1,7 @@
 package de.ait.homerent.issue.service;
 
 import de.ait.homerent.booking.model.Booking;
+import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.contract.service.FileStorageService;
 import de.ait.homerent.issue.dto.IssueCreateRequest;
@@ -101,6 +102,7 @@ class IssueServiceTest {
         Booking booking = new Booking();
         booking.setId(1L);
         booking.setTenant(tenant);
+        booking.setStatus(BookingStatus.ACTIVE);
 
         IssueCreateRequest req = new IssueCreateRequest();
         req.setBookingId(1L);
@@ -130,6 +132,7 @@ class IssueServiceTest {
         Booking booking = new Booking();
         booking.setId(1L);
         booking.setTenant(tenant);
+        booking.setStatus(BookingStatus.ACTIVE);
 
         MultipartFile photo = mock(MultipartFile.class);
         when(photo.isEmpty()).thenReturn(false);
@@ -148,6 +151,30 @@ class IssueServiceTest {
         assertThat(response.getPhotoPath()).isEqualTo("path/to/photo.jpg");
         verify(fileStorageService).storeIssuePhoto(1L, photo);
         verify(issueReportRepository).save(any(IssueReport.class));
+    }
+
+    @Test
+    @DisplayName("createIssue(): when booking is not ACTIVE, throws 400 BAD_REQUEST")
+    void createIssue_whenBookingNotActive_throws400() {
+        User tenant = new User();
+        tenant.setId(10L);
+        tenant.setUsername("t1");
+
+        Booking booking = new Booking();
+        booking.setId(1L);
+        booking.setTenant(tenant);
+        booking.setStatus(BookingStatus.APPROVED);
+
+        IssueCreateRequest req = new IssueCreateRequest();
+        req.setBookingId(1L);
+        req.setDescription("broken");
+
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+
+        assertThatThrownBy(() -> issueService.createIssue(req, tenant))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("400")
+                .hasMessageContaining("active bookings");
     }
 
     @Test

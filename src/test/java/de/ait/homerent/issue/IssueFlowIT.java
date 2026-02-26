@@ -20,6 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import testsupport.it.AbstractIT;
 
 
+import org.springframework.mock.web.MockMultipartFile;
+
+import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -78,8 +81,24 @@ class IssueFlowIT extends AbstractIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("APPROVED"));
 
+        // upload contract (required to activate booking)
+        MockMultipartFile pdf = new MockMultipartFile(
+                "file", "contract.pdf", "application/pdf",
+                "dummy pdf content".getBytes(StandardCharsets.UTF_8)
+        );
+        mockMvc.perform(multipart("/api/tenant/bookings/{id}/upload-contract", bookingId)
+                        .file(pdf)
+                        .with(httpBasic("tenant1", "tenant123")))
+                .andExpect(status().isOk());
+
+        // activate the booking (operator sets status to ACTIVE)
+        mockMvc.perform(post("/api/operator/bookings/{id}/activate", bookingId)
+                        .with(httpBasic("operator1", "operator123")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+
         Booking booking = bookingRepository.findById(bookingId).orElseThrow();
-        assertThat(booking.getStatus()).isEqualTo(BookingStatus.APPROVED);
+        assertThat(booking.getStatus()).isEqualTo(BookingStatus.ACTIVE);
 
         // 1) tenant creates issue (NO photo -> no FileStorageService usage)
         // TenantIssueController uses @ModelAttribute and MULTIPART, so we send multipart form fields
