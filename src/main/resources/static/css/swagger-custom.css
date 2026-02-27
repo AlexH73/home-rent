@@ -20,7 +20,7 @@
     display: inline-block;
     width: 150px;
     height: 60px;
-    background-image: url('/static/images/logo-swagger.png'); /* белая версия лого */
+    background-image: url('../images/logo-swagger.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
