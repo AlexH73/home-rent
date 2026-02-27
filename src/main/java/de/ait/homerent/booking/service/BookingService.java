@@ -118,18 +118,14 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date must be before or equal to end date");
         }
 
-        validateAvailability(
-                request.getPropertyId(),
-                request.getStartDate(),
-                request.getEndDate()
-        );
-
         Property property = propertyRepository.findById(request.getPropertyId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
 
         if (property.getStatus() != PropertyStatus.AVAILABLE) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Property is not available for booking");
         }
+
+        validateAvailability(property.getId(), request.getStartDate(), request.getEndDate());
 
         LocalDateTime normalizedStart = normalizeStart(request.getStartDate());
         LocalDateTime normalizedEnd = normalizeEnd(request.getEndDate());
@@ -227,10 +223,6 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.APPROVED);
-
-//        Property property = booking.getProperty();
-//        property.setStatus(PropertyStatus.BOOKED);
-//        propertyRepository.save(property);
 
         bookingRepository.save(booking);
 
