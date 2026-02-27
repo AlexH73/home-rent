@@ -46,9 +46,8 @@ public class SwaggerCustomizer extends SwaggerIndexPageTransformer {
                 String html = reader.lines().collect(Collectors.joining(System.lineSeparator()));
 
 
-                String cssLink = "<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/css/swagger-custom.css\">";
-
-                String scriptTag = "<script src=\"/static/js/swagger-custom.js\"></script>";
+                String cssLink = "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/swagger-custom.css\">";
+                String scriptTag = "<script src=\"/js/swagger-custom.js\"></script>";
 
                 String modifiedHtml = html.replace("</head>", cssLink + "</head>");
                 modifiedHtml = modifiedHtml.replace("</body>", scriptTag + "</body>");
