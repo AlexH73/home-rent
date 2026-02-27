@@ -52,26 +52,30 @@ public class PropertyService {
     }
 
     @Transactional(readOnly = true)
-    public List<PropertyDto> findAvailable(LocalDateTime startDate,
-                                           LocalDateTime endDate) {
-        log.info("Fetching available properties");
+    public List<PropertyDto> findAvailable(LocalDateTime startDate, LocalDateTime endDate) {
+        log.info("Fetching available properties with startDate={}, endDate={}", startDate, endDate);
 
         LocalDateTime effectiveStart = startDate;
         LocalDateTime effectiveEnd = endDate;
 
         if (startDate == null && endDate != null) {
             effectiveStart = LocalDate.now().atStartOfDay();
+            log.info("Only endDate provided, using effectiveStart={}", effectiveStart);
         }
         if (startDate != null && endDate == null) {
             effectiveEnd = startDate.plusYears(10);
+            log.info("Only startDate provided, using effectiveEnd={}", effectiveEnd);
         }
 
         List<Property> properties;
         if (effectiveStart == null && effectiveEnd == null) {
             properties = propertyRepository.findByStatus(PropertyStatus.AVAILABLE);
+            log.info("No date filters, found {} properties", properties.size());
         } else {
             properties = propertyRepository.findAvailable(effectiveStart, effectiveEnd);
+            log.info("With date filters, found {} properties", properties.size());
         }
+
         return properties.stream().map(this::mapToDto).toList();
     }
 
