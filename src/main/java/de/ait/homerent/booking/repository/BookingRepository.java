@@ -51,4 +51,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("end") LocalDateTime end,
             @Param("statuses") Collection<BookingStatus> statuses
     );
+
+    @Query("""
+            SELECT COUNT(b) > 0
+            FROM Booking b
+            WHERE b.property.id = :propertyId
+            AND b.status IN :statuses
+            AND b.startDate < :endDate
+            AND b.endDate > :startDate
+            """)
+    boolean existsConflictingBooking(
+            Long propertyId,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            List<BookingStatus> statuses
+    );
 }
