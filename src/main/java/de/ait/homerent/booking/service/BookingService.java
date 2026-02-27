@@ -118,6 +118,12 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date must be before or equal to end date");
         }
 
+        validateAvailability(
+                request.getPropertyId(),
+                request.getStartDate(),
+                request.getEndDate()
+        );
+
         Property property = propertyRepository.findById(request.getPropertyId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
 
@@ -222,9 +228,9 @@ public class BookingService {
 
         booking.setStatus(BookingStatus.APPROVED);
 
-        Property property = booking.getProperty();
-        property.setStatus(PropertyStatus.BOOKED);
-        propertyRepository.save(property);
+//        Property property = booking.getProperty();
+//        property.setStatus(PropertyStatus.BOOKED);
+//        propertyRepository.save(property);
 
         bookingRepository.save(booking);
 
@@ -336,5 +342,26 @@ public class BookingService {
         propertyRepository.save(property);
 
         return mapToResponse(saved);
+    }
+
+    private void validateAvailability(Long propertyId,
+                                      LocalDateTime startDate,
+                                      LocalDateTime endDate) {
+
+        boolean conflict =
+                bookingRepository.existsConflictingBooking(
+                        propertyId,
+                        startDate,
+                        endDate,
+                        List.of(
+                                BookingStatus.APPROVED,
+                                BookingStatus.ACTIVE
+                        )
+                );
+
+        if (conflict) {
+            throw new IllegalStateException(
+                    "Property already booked for selected dates");
+        }
     }
 }
