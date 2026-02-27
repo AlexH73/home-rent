@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +52,27 @@ public class PropertyService {
     }
 
     @Transactional(readOnly = true)
-    public List<PropertyDto> findAvailable() {
+    public List<PropertyDto> findAvailable(LocalDateTime startDate,
+                                           LocalDateTime endDate) {
         log.info("Fetching available properties");
-        return propertyRepository.findByStatus(PropertyStatus.AVAILABLE).stream()
-                .map(this::mapToDto)
-                .toList();
+
+        LocalDateTime effectiveStart = startDate;
+        LocalDateTime effectiveEnd = endDate;
+
+        if (startDate == null && endDate != null) {
+            effectiveStart = LocalDate.now().atStartOfDay();
+        }
+        if (startDate != null && endDate == null) {
+            effectiveEnd = startDate.plusYears(10);
+        }
+
+        List<Property> properties;
+        if (effectiveStart == null && effectiveEnd == null) {
+            properties = propertyRepository.findByStatus(PropertyStatus.AVAILABLE);
+        } else {
+            properties = propertyRepository.findAvailable(effectiveStart, effectiveEnd);
+        }
+        return properties.stream().map(this::mapToDto).toList();
     }
 
     @Transactional(readOnly = true)
