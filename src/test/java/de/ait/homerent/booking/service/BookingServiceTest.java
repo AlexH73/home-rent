@@ -110,7 +110,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("createBooking: rejects if property not AVAILABLE")
     void createBooking_rejectsWhenPropertyNotAvailable() {
-        property.setStatus(PropertyStatus.BOOKED);
+        property.setStatus(PropertyStatus.UNAVAILABLE);
 
         BookingCreateRequest req = new BookingCreateRequest();
         req.setPropertyId(property.getId());
@@ -323,19 +323,17 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("approveBooking: happy path sets booking APPROVED, property BOOKED and sends email")
-    void approveBooking_happyPath_setsApproved_booksProperty_sendsEmail() {
-        // owner with ROLE_OWNER
+    @DisplayName("approveBooking: happy path sets booking APPROVED and sends email")
+    void approveBooking_happyPath_setsApproved_sendsEmail() {
         User owner = new User();
         owner.setId(200L);
         owner.setUsername("owner1");
         owner.setRoles(Set.of(role(RoleName.ROLE_OWNER)));
 
-        // tenant must have email for email request
         tenant.setEmail("tenant1@test.com");
 
         property.setOwner(owner);
-        property.setStatus(PropertyStatus.AVAILABLE);
+        property.setStatus(PropertyStatus.AVAILABLE); // начальный статус
 
         Booking booking = Booking.builder()
                 .id(1L)
@@ -349,18 +347,17 @@ class BookingServiceTest {
 
         when(userRepository.findByUsername("owner1")).thenReturn(Optional.of(owner));
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-        when(propertyRepository.save(any(Property.class))).thenAnswer(inv -> inv.getArgument(0));
         when(bookingRepository.save(any(Booking.class))).thenAnswer(inv -> inv.getArgument(0));
 
         BookingResponse resp = bookingService.approveBooking("owner1", 1L);
 
         assertThat(resp.getStatus()).isEqualTo(BookingStatus.APPROVED);
         assertThat(booking.getStatus()).isEqualTo(BookingStatus.APPROVED);
-        assertThat(property.getStatus()).isEqualTo(PropertyStatus.BOOKED);
+        assertThat(property.getStatus()).isEqualTo(PropertyStatus.AVAILABLE);
 
         verify(emailService).sendBookingApproved(any());
-        verify(propertyRepository).save(property);
         verify(bookingRepository).save(booking);
+        verify(propertyRepository, never()).save(any());
     }
 
     @Test
