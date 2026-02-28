@@ -1,11 +1,12 @@
 package de.ait.homerent.auth.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.ait.homerent.utils.LocalDateTimeFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import testsupport.security.TestSecurityConfig;
 
@@ -27,8 +28,8 @@ class PublicControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @MockitoBean
+    private LocalDateTimeFormatter localDateTimeFormatter;
 
     @Test
     @DisplayName("GET /api/public/info - should return service information with status 200")

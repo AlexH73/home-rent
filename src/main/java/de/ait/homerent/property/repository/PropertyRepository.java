@@ -38,6 +38,25 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             @Param("end") LocalDateTime end
     );
 
+    @Query("""
+            SELECT p FROM Property p
+            WHERE p.status = 'AVAILABLE'
+            AND NOT EXISTS (
+                SELECT b FROM Booking b
+                WHERE b.property = p
+                AND b.status IN ('APPROVED', 'ACTIVE')
+                AND (
+                    (:startDate IS NULL OR b.endDate > :startDate)
+                    AND
+                    (:endDate IS NULL OR b.startDate < :endDate)
+                )
+            )
+            """)
+    List<Property> findAvailable(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
+
     @Query("SELECT p FROM Property p JOIN FETCH p.owner WHERE p.id = :id")
     Optional<Property> findByIdWithOwner(@Param("id") Long id);
 }

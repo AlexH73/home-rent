@@ -7,6 +7,7 @@ import de.ait.homerent.auth.dto.RegisterRequest;
 import de.ait.homerent.auth.dto.RoleDto;
 import de.ait.homerent.auth.service.AuthService;
 import de.ait.homerent.user.model.RoleName;
+import de.ait.homerent.utils.LocalDateTimeFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,9 @@ class AuthControllerUTest {
 
     @MockitoBean
     private AuthService authService;
+
+    @MockitoBean
+    private LocalDateTimeFormatter localDateTimeFormatter;
 
     private RegisterRequest validRegisterRequest;
     private LoginRequest validLoginRequest;

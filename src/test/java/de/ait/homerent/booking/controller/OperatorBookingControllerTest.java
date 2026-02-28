@@ -4,15 +4,13 @@ import de.ait.homerent.auth.service.CustomUserDetailsService;
 import de.ait.homerent.booking.dto.BookingResponse;
 import de.ait.homerent.booking.service.BookingService;
 import de.ait.homerent.config.SecurityConfig;
-import org.junit.jupiter.api.BeforeEach;
+import de.ait.homerent.utils.LocalDateTimeFormatter;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -21,6 +19,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -40,36 +39,23 @@ class OperatorBookingControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+    @MockitoBean
     private BookingService bookingService;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockitoBean
+    private LocalDateTimeFormatter localDateTimeFormatter;
 
     @TestConfiguration
     static class TestUsers {
-
-        @MockBean
-        CustomUserDetailsService customUserDetailsService;
-
-        @Bean
-        public BookingService bookingService() {
-            return Mockito.mock(BookingService.class);
-        }
-
         @Bean
         public UserDetailsService userDetailsService() {
             return new InMemoryUserDetailsManager(
                     User.withUsername("operator").password("pass").roles("OPERATOR").build(),
                     User.withUsername("tenant").password("pass").roles("TENANT").build()
             );
-        }
-
-        @BeforeEach
-        void setUpSecurityUser() {
-            when(customUserDetailsService.loadUserByUsername("operator1"))
-                    .thenReturn(org.springframework.security.core.userdetails.User
-                            .withUsername("operator1")
-                            .password("pw")
-                            .roles("OPERATOR")
-                            .build());
         }
     }
 
@@ -119,10 +105,3 @@ class OperatorBookingControllerTest {
         log.info("Test completed: getActiveBookings_unauthorized");
     }
 }
-
-
-
-
-
-
-
