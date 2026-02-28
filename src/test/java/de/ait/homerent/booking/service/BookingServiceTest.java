@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.time.LocalDateTime;
@@ -110,7 +111,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("createBooking: rejects if property not AVAILABLE")
     void createBooking_rejectsWhenPropertyNotAvailable() {
-        property.setStatus(PropertyStatus.BOOKED);
+        property.setStatus(PropertyStatus.UNAVAILABLE);
 
         BookingCreateRequest req = new BookingCreateRequest();
         req.setPropertyId(property.getId());
@@ -130,7 +131,7 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("createBooking: rejects if overlaps with REQUESTED/APPROVED/ACTIVE")
+    @DisplayName("createBooking: rejects if overlaps with APPROVED or ACTIVE")
     void createBooking_rejectsWhenOverlaps() {
         BookingCreateRequest req = new BookingCreateRequest();
         req.setPropertyId(property.getId());
@@ -138,8 +139,12 @@ class BookingServiceTest {
         req.setEndDate(LocalDateTime.of(2026, 3, 3, 0, 0));
 
         when(propertyRepository.findById(property.getId())).thenReturn(Optional.of(property));
-        when(bookingRepository.existsOverlappingBooking(eq(property.getId()), any(), any(), any()))
-                .thenReturn(true);
+        when(bookingRepository.existsOverlappingBooking(
+                eq(property.getId()),
+                any(),
+                any(),
+                eq(EnumSet.of(BookingStatus.APPROVED, BookingStatus.ACTIVE))
+        )).thenReturn(true);
 
         ResponseStatusException ex = catchThrowableOfType(
                 () -> bookingService.createBooking(req, tenant),
@@ -205,28 +210,30 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("activateBooking: sets booking ACTIVE and property RENTED")
-    void activateBooking_setsActiveAndRentsProperty() {
+    @DisplayName("activateBooking: sets booking ACTIVE")
+    void activateBooking_setsActive() {
+
         Booking booking = Booking.builder()
                 .id(1L)
                 .tenant(tenant)
                 .property(property)
                 .status(BookingStatus.APPROVED)
-                .startDate(LocalDateTime.of(2026, 3, 1, 0, 0))
-                .endDate(LocalDateTime.of(2026, 3, 3, 0, 0))
-                .totalPrice(300)
                 .build();
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
         when(rentalContractService.hasContract(1L)).thenReturn(true);
-        when(bookingRepository.save(any(Booking.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(bookingRepository.save(any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        when(propertyRepository.save(any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         BookingResponse resp = bookingService.activateBooking(1L);
 
         assertThat(resp.getStatus()).isEqualTo(BookingStatus.ACTIVE);
         assertThat(booking.getStatus()).isEqualTo(BookingStatus.ACTIVE);
 
-        verify(propertyRepository).save(argThat(p -> p.getStatus() == PropertyStatus.RENTED));
+        verify(bookingRepository).save(booking);
     }
 
     @Test
@@ -323,19 +330,17 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("approveBooking: happy path sets booking APPROVED, property BOOKED and sends email")
-    void approveBooking_happyPath_setsApproved_booksProperty_sendsEmail() {
-        // owner with ROLE_OWNER
+    @DisplayName("approveBooking: happy path sets booking APPROVED and sends email")
+    void approveBooking_happyPath_setsApproved_sendsEmail() {
         User owner = new User();
         owner.setId(200L);
         owner.setUsername("owner1");
         owner.setRoles(Set.of(role(RoleName.ROLE_OWNER)));
 
-        // tenant must have email for email request
         tenant.setEmail("tenant1@test.com");
 
         property.setOwner(owner);
-        property.setStatus(PropertyStatus.AVAILABLE);
+        property.setStatus(PropertyStatus.AVAILABLE); // начальный статус
 
         Booking booking = Booking.builder()
                 .id(1L)
@@ -349,18 +354,17 @@ class BookingServiceTest {
 
         when(userRepository.findByUsername("owner1")).thenReturn(Optional.of(owner));
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-        when(propertyRepository.save(any(Property.class))).thenAnswer(inv -> inv.getArgument(0));
         when(bookingRepository.save(any(Booking.class))).thenAnswer(inv -> inv.getArgument(0));
 
         BookingResponse resp = bookingService.approveBooking("owner1", 1L);
 
         assertThat(resp.getStatus()).isEqualTo(BookingStatus.APPROVED);
         assertThat(booking.getStatus()).isEqualTo(BookingStatus.APPROVED);
-        assertThat(property.getStatus()).isEqualTo(PropertyStatus.BOOKED);
+        assertThat(property.getStatus()).isEqualTo(PropertyStatus.AVAILABLE);
 
         verify(emailService).sendBookingApproved(any());
-        verify(propertyRepository).save(property);
         verify(bookingRepository).save(booking);
+        verify(propertyRepository, never()).save(any());
     }
 
     @Test

@@ -366,7 +366,7 @@ class PropertyServiceTest {
 
         when(propertyRepository.findByStatus(PropertyStatus.AVAILABLE)).thenReturn(List.of(p));
 
-        List<PropertyDto> res = propertyService.findAvailable();
+        List<PropertyDto> res = propertyService.findAvailable(null, null);
 
         assertThat(res).hasSize(1);
         assertThat(res.get(0).getStatus()).isEqualTo(PropertyStatus.AVAILABLE);
