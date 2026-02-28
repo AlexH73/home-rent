@@ -17,7 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Project : HomeRent
  * ----------------------------------------------------------------------------
  */
-@SpringBootTest
+@SpringBootTest(properties = {
+        "app.mail.from=test@example.com",
+        "EMAIL_FROM_USERNAME=test@example.com"
+})
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DisplayName("Integration tests for PublicController")

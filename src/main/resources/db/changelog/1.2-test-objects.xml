@@ -75,7 +75,7 @@
     <!-- OPEN, IN_PROGRESS, DONE -->
     <!-- ========================================================= -->
 
-    <changeSet id="1.2-2-create-test-issue-reports" author="Tetiana Anufriieva">
+    <changeSet id="1.2-2-create-test-issue-reports" context="dev,test" author="Tetiana Anufriieva">
         <comment>Create sample issue reports with correct enum statuses</comment>
 
         <insert tableName="issue_reports">
@@ -110,7 +110,7 @@
     <!-- Property Photos -->
     <!-- ========================================================= -->
 
-    <changeSet id="1.2-3-create-test-property-photos" author="Tetiana Anufriieva">
+    <changeSet id="1.2-3-create-test-property-photos" context="dev,test" author="Tetiana Anufriieva">
         <comment>Add sample photos for properties</comment>
 
         <insert tableName="property_photos">
@@ -145,7 +145,7 @@
     <!-- only for APPROVED, ACTIVE, FINISHED -->
     <!-- ========================================================= -->
 
-    <changeSet id="1.2-4-create-test-rental-contracts" author="Tetiana Anufriieva">
+    <changeSet id="1.2-4-create-test-rental-contracts" context="dev,test" author="Tetiana Anufriieva">
         <comment>Add sample rental contracts</comment>
 
         <insert tableName="rental_contracts">

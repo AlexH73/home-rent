@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -16,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 /**
  * ----------------------------------------------------------------------------
@@ -40,13 +42,10 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-
         DaoAuthenticationProvider provider =
                 new DaoAuthenticationProvider();
-
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
-
         return provider;
     }
 
@@ -54,7 +53,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config
     ) throws Exception {
-
         return config.getAuthenticationManager();
     }
 
@@ -93,7 +91,10 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
                                 "/webjars/**",
-                                "/static/**"
+                                "/static/**",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**"
                         ).permitAll()
                         .requestMatchers("/api/tenant/**").hasAnyRole("TENANT", "ADMIN")
                         .requestMatchers("/api/owner/**").hasAnyRole("OWNER", "ADMIN")
@@ -101,8 +102,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(basic -> {
-                });
+                .httpBasic(basic -> basic
+                    .authenticationEntryPoint(
+                            new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+                    )
+                );
         return http.build();
     }
 

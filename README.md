@@ -6,12 +6,104 @@
 [![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-3.0%2B-lightgrey?logo=spring)](https://spring.io/projects/spring-data-jpa)
 [![Liquibase](https://img.shields.io/badge/Liquibase-4.0%2B-blue?logo=liquibase)](https://www.liquibase.org/)
 [![H2 Database](https://img.shields.io/badge/H2%20Database-2.0%2B-blue)](https://www.h2database.com/)
-[![Swagger UI](https://img.shields.io/badge/Swagger%20UI-2.5.0-green?logo=swagger)](https://swagger.io/)
+[![Swagger UI](https://img.shields.io/badge/Swagger%20UI-springdoc-green?logo=swagger)](https://swagger.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./src/main/resources/docks/CONTRIBUTING.md)
 ![Status](https://img.shields.io/badge/Status-🚧%20Under%20Active%20Development-important)
 
-**HomeRent** is a comprehensive backend service for managing residential property rentals, supporting both long-term and short-term leases. The system provides role-based access for tenants, property owners, operators, and administrators, following a clean, modular architecture.
+**HomeRent** is a backend service for managing residential property rentals (long-term and short-term).  
+The system provides role-based access for **tenants**, **property owners**, **operators**, and **administrators**.
+
+![HomeRent Swagger UI](/src/main/resources/docks/screenshots/swagger/swagger_1.png)
+---
+
+## 🚀 Quick Start (Docker, PostgreSQL + pgAdmin)
+
+### Prerequisites
+- Docker + Docker Compose
+
+### 1) Configure [environment](/src/main/resources/docks/environment_variables_eng.md)
+Create a `.env` file in the project root (next to `docker-compose.yml`).
+
+If you have `.env.example`, use:
+```bash
+cp .env.example .env
+```
+
+> ⚠️ Important Docker Compose note  
+> Docker Compose substitutes `${VAR}` only from your **shell environment** or the **root `.env` file**.  
+> `env_file:` passes variables into the container, but does **not** affect YAML interpolation.
+
+Example `.env` keys:
+```dotenv
+# ---------- App ----------
+APP_BASE_URL=http://localhost:8080
+
+# ---------- Postgres (DB init) ----------
+POSTGRES_DB=homerent_db
+POSTGRES_USER=homerent_app
+POSTGRES_PASSWORD=change-me
+
+# ---------- App DB (Spring datasource) ----------
+DB_NAME=homerent_db
+DB_USERNAME=homerent_app
+DB_PASSWORD=change-me
+DB_PORT=5432
+
+# ---------- Email (app) ----------
+EMAIL_FROM_USERNAME=your@gmail.com
+EMAIL_PASSWORD=your-app-password
+
+# ---------- pgAdmin ----------
+PGADMIN_PORT=5050
+PGADMIN_DEFAULT_EMAIL=admin@example.com
+PGADMIN_DEFAULT_PASSWORD=admin
+```
+
+### 2) Run
+```bash
+docker compose up --build
+```
+
+### Access points
+- **App**: http://localhost:8080
+- **Swagger UI**: http://localhost:8080/swagger-ui/index.html
+- **OpenAPI JSON**: http://localhost:8080/v3/api-docs
+- **pgAdmin**: http://localhost:5050
+
+### pgAdmin connection
+Register a new server in pgAdmin:
+- Host name/address: `db` (service name inside docker network)
+- Port: `5432`
+- Maintenance database: `${POSTGRES_DB}` (e.g. `homerent_db`)
+- Username: `${POSTGRES_USER}` (e.g. `homerent_app`)
+- Password: `${POSTGRES_PASSWORD}`
+
+---
+
+## ▶️ Run locally (without Docker)
+
+### Prerequisites
+- Java 21+
+- Maven 3.8+
+
+```bash
+git clone https://github.com/AlexH73/home-rent.git
+cd home-rent
+mvn clean install
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+---
+
+## 🧪 Application Profiles
+
+| Profile | Database | Use Case |
+|---------|----------|----------|
+| `dev`  | H2 (in-memory) | Local development |
+| `test` | H2 (isolated) | Running tests without external DB |
+| `prod` | PostgreSQL | Docker / production-like run |
+| `tc`   | Testcontainers (PostgreSQL) | Integration tests with real PostgreSQL in a container |
 
 ---
 
@@ -55,10 +147,10 @@
 | **Build Tool** | Maven | 3.8+ |
 | **Security** | Spring Security | 6.0+ |
 | **Persistence** | Spring Data JPA | 3.0+ |
-| **Database** | H2 (dev/test) | 2.0+ |
+| **Database** | H2 (dev/test), PostgreSQL (prod) | 2.0+ / 16+ |
 | **Migrations** | Liquibase | 4.0+ |
 | **Validation** | Bean Validation | 3.0+ |
-| **API Docs** | SpringDoc OpenAPI + Swagger UI | 2.5.0 |
+| **API Docs** | SpringDoc OpenAPI + Swagger UI | 2.x |
 | **Email** | Spring Mail + Thymeleaf | 3.0+ |
 | **Testing** | Spring Boot Test, JUnit 5, MockMvc | 3.5+ |
 | **Utilities** | Lombok | 1.18+ |
@@ -66,246 +158,17 @@
 
 ---
 
-## 🏗 Architecture Overview
+## 🏗 Architecture
 
-HomeRent follows a **domain-driven, role-based controller architecture** with strict separation of concerns according to the approved architecture:
-
-### 🧱 Project Roots
-```
-src/main/java/de/ait/homerent
-src/test/java/de/ait/homerent
-```
-
-### 🏠 Core Package Structure
-```
-homerent/
-│
-├── logs/
-│   └── homerent.log
-│
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── de/ait/homerent
-│   │   │       │
-│   │   │       ├── HomeRentApplication.java
-│   │   │       │
-│   │   │       ├── config/
-│   │   │       │   ├── SecurityConfig.java
-│   │   │       │   ├── OpenApiConfig.java
-│   │   │       │   ├── MailConfig.java
-│   │   │       │   └── StorageConfig.java
-│   │   │       │
-│   │   │       ├── security/
-│   │   │       │   ├── CustomUserDetailsService.java
-│   │   │       │   └── UserPrincipal.java
-│   │   │       │
-│   │   │       ├── auth/
-│   │   │       │   ├── controller/
-│   │   │       │   │   ├── AuthController.java
-│   │   │       │   │   └── PublicController.java          // public endpoints
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── LoginRequest.java
-│   │   │       │   │   ├── RegisterRequest.java
-│   │   │       │   │   └── AuthResponse.java
-│   │   │       │   └── service/
-│   │   │       │       ├── AuthService.java
-│   │   │       │       └── CustomUserDetailsService.java
-│   │   │       │
-│   │   │       ├── user/
-│   │   │       │   ├── model/
-│   │   │       │   │   ├── RoleName.java
-│   │   │       │   │   ├── User.java
-│   │   │       │   │   └── Role.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   ├── UserRepository.java
-│   │   │       │   │   └── RoleRepository.java
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── UpdateRolesRequest.java
-│   │   │       │   │   ├── UserCreateRequest.java
-│   │   │       │   │   └── UserDto.java
-│   │   │       │   ├── service/
-│   │   │       │   │   └── UserService.java
-│   │   │       │   └── controller/
-│   │   │       │       └── AdminUserController.java     // ROLE_ADMIN only
-│   │   │       │
-│   │   │       ├── property/
-│   │   │       │   ├── model/
-│   │   │       │   │   ├── Property.java
-│   │   │       │   │   ├── PropertyPhoto.java
-│   │   │       │   │   └── PropertyStatus.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   ├── PropertyPhotoRepository.java
-│   │   │       │   │   └── PropertyRepository.java
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── PropertyCreateRequest.java
-│   │   │       │   │   └── PropertyDto.java
-│   │   │       │   ├── service/
-│   │   │       │   │   └── PropertyService.java
-│   │   │       │   └── controller/
-│   │   │       │       ├── TenantPropertyController.java // ROLE_TENANT
-│   │   │       │       ├── OwnerPropertyController.java  // ROLE_OWNER
-│   │   │       │       └── AdminPropertyController.java  // ROLE_ADMIN
-│   │   │       │
-│   │   │       ├── booking/
-│   │   │       │   ├── model/
-│   │   │       │   │   ├── Booking.java
-│   │   │       │   │   └── BookingStatus.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   └── BookingRepository.java
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── BookingCreateRequest.java
-│   │   │       │   │   ├── BookingEmailRequest.java
-│   │   │       │   │   ├── BookingResponse.java
-│   │   │       │   │   └── RentalFinishedEmailRequest.java
-│   │   │       │   ├── service/
-│   │   │       │   │   └── BookingService.java
-│   │   │       │   └── controller/
-│   │   │       │       ├── TenantBookingController.java   // ROLE_TENANT
-│   │   │       │       ├── OwnerBookingController.java    // ROLE_OWNER
-│   │   │       │       └── OperatorBookingController.java // ROLE_OPERATOR
-│   │   │       │
-│   │   │       ├── contract/
-│   │   │       │   ├── model/
-│   │   │       │   │   └── RentalContract.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   └── RentalContractRepository.java
-│   │   │       │   ├── dto/
-│   │   │       │   │   └── ContractUploadedEmailRequest.java
-│   │   │       │   └── service/
-│   │   │       │       ├── FileStorageService.java
-│   │   │       │       └── RentalContractService.java
-│   │   │       │
-│   │   │       ├── issue/
-│   │   │       │   ├── model/
-│   │   │       │   │   ├── IssueReport.java
-│   │   │       │   │   └── IssueStatus.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   └── IssueReportRepository.java 
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── IssueCreateRequest.java
-│   │   │       │   │   └── IssueReportResponse.java
-│   │   │       │   ├── service/
-│   │   │       │   │   └── IssueService.java
-│   │   │       │   └── controller/
-│   │   │       │       ├── TenantIssueController.java     // ROLE_TENANT
-│   │   │       │       └── OperatorIssueController.java   // ROLE_OPERATOR
-│   │   │       │
-│   │   │       ├── mail/
-│   │   │       │   └── EmailService.java
-│   │   │       │
-│   │   │       ├── storage/
-│   │   │       │   └── FileStorageService.java
-│   │   │       │
-│   │   │       ├── exception/
-│   │   │       │   ├── GlobalExceptionHandler.java
-│   │   │       │   ├── NotFoundException.java
-│   │   │       │   ├── AccessDeniedException.java
-│   │   │       │   └── BadRequestException.java
-│   │   │       │
-│   │   │       └── utils/
-│   │   │           └── FilePathUtils.java
-│   │   │
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       ├── application-dev.properties
-│   │       ├── application-test.properties
-│   │       ├── application-prod.properties
-│   │       ├── logback-spring.xml
-│   │       ├── .dockerignore
-│   │       │
-│   │       ├── db/changelog/
-│   │       │   ├── db.changelog-master.xml
-│   │       │   ├── 1.0-create-tables.xml
-│   │       │   ├── 1.1-insert-reference-data.xml
-│   │       │   └── 1.2-test-objects.xml
-│   │       │
-│   │       ├── templates/
-│   │       │   └── mail/
-│   │       │       ├── booking-confirmation.html
-│   │       │       ├── contract-uploaded.html
-│   │       │       └── rental-finished.html
-│   │       │
-│   │       ├── static/
-│   │       │   └── swagger-ui.css
-│   │       │
-│   │       └── uploads/
-│   │           ├── contracts/
-│   │           └── issues/
-│   │
-│   └── test/
-│       ├── java/
-│       │   └── de/ait/homerent
-│       │       ├── auth/
-│       │       │   └── AuthControllerTest.java
-│       │       │
-│       │       ├── property/
-│       │       │   ├── PropertyServiceTest.java
-│       │       │   └── PropertyControllerTest.java
-│       │       │
-│       │       ├── booking/
-│       │       │   ├── BookingServiceTest.java
-│       │       │   ├── BookingControllerTest.java
-│       │       │   └── BookingIntegrationTest.java
-│       │       │
-│       │       ├── issue/
-│       │       │   └── IssueIntegrationTest.java
-│       │       │
-│       │       ├── security/
-│       │       │   └── SecurityTest.java
-│       │       │
-│       │       └── integration/
-│       │           ├── FullRentalFlowIT.java
-│       │           └── IssueFlowIT.java
-│       │
-│       └── resources
-│           ├── application-test.properties
-│           └── db/changelog/
-│               └── test-changelog.xml
-│
-├── pom.xml
-├── .gitignore
-├── Dockerfile
-└── README.md
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Java 21 or higher
-- Maven 3.8+
-- Git
-
-### Quick Start
-```bash
-# Clone repository
-git clone https://github.com/AlexH73/home-rent.git
-cd home-rent
-
-# Build project
-mvn clean install
-
-# Run with dev profile (H2 database)
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
-```
-
-### Application Profiles
-| Profile | Database | Use Case |
-|---------|----------|----------|
-| `dev` | H2 (in-memory) | Development with auto-reload |
-| `test` | H2 (isolated) | Running tests |
-| `prod` | PostgreSQL | Production deployment |
-
-### Access Points
-- **Application**: `http://localhost:8080`
-- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
-- **H2 Console**: `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:homerentdb`)
+For a detailed package structure and architecture overview see:
+- `src/main/resources/`[ARCHITECTURE.md](src/main/resources/ARCHITECTURE.md)
 
 ---
 
 ## 📚 API Endpoints
 
-All endpoints are documented via **Swagger UI** at `http://localhost:8080/swagger-ui.html`.
+All endpoints are documented via **Swagger UI**:
+- http://localhost:8080/swagger-ui/index.html
 
 ### Public Endpoints
 | Method | Endpoint | Description |
@@ -337,9 +200,10 @@ All endpoints are documented via **Swagger UI** at `http://localhost:8080/swagge
 ### Operator API (ROLE_OPERATOR)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/operator/bookings/active` | View active rentals |
+| `GET` | `/api/operator/bookings/active` | View active bookings |
+| `POST` | `/api/operator/bookings/{id}/activate` | Activate an APPROVED booking after verification |
 | `GET` | `/api/operator/issues` | View all issue reports |
-| `POST` | `/api/operator/issues/{id}/status` | Update issue status |
+| `POST` | `/api/operator/issues/{id}/status` | Update issue status (`status=OPEN|IN_PROGRESS|DONE`) |
 
 ### Admin API (ROLE_ADMIN)
 | Method | Endpoint | Description |
@@ -353,163 +217,62 @@ All endpoints are documented via **Swagger UI** at `http://localhost:8080/swagge
 
 ---
 
-## 🗄 Database Configuration
+## 🗄 Database & Migrations
 
-### Development (H2)
-```properties
-# application-dev.properties
-spring.datasource.url=jdbc:h2:mem:homerentdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.h2.console.enabled=true
-```
-
-### Production (PostgreSQL)
-```properties
-# application-prod.properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/homerent
-spring.datasource.username=postgres
-spring.datasource.password=yourpassword
-spring.jpa.hibernate.ddl-auto=validate
-```
+- Database schema is managed via **Liquibase**.
+- Changelog master: `classpath:db/changelog/db.changelog-master.xml`
+- Docker/`prod` profile runs migrations automatically on startup.
 
 ### Liquibase Migration Structure
 ```
 src/main/resources/db/changelog/
 ├── db.changelog-master.xml
-├── 1.0-create-tables.xml          # users, roles, properties, bookings, etc.
-├── 1.1-insert-reference-data.xml  # roles: TENANT, OWNER, OPERATOR, ADMIN + test admin
-└── 1.2-test-objects.xml          # test properties, bookings, issue reports
+├── 1.0-create-tables.xml
+├── 1.1-insert-reference-data.xml
+└── 1.2-test-objects.xml
 ```
+
+> Note: Postgres container applies `POSTGRES_*` variables only on the **first initialization** (empty volume).
+> If you change DB/user/password and want a clean init:
+> ```bash
+> docker compose down -v
+> docker compose up --build
+> ```
 
 ---
 
 ## 📧 Email Notifications
 
-### Email Templates (Thymeleaf)
-Located in `src/main/resources/templates/mail/`:
-- `booking-confirmation.html` – Booking confirmation with dates and price
-- `contract-uploaded.html` – Contract upload confirmation
-- `rental-finished.html` – Rental completion receipt
-
-### Email Scenarios
-1. **Booking Confirmation** – Sent to tenant when booking is approved
-2. **Contract Upload Notification** – Sent when contract is successfully uploaded
-3. **Rental Completion Receipt** – Sent at end of rental period
+Email templates (Thymeleaf) are located in `src/main/resources/templates/mail/`.
 
 ---
 
-## 🧪 Testing Strategy
+## 🧪 Testing
 
-### Test Types
-| Type | Location | Tools | Purpose |
-|------|----------|-------|---------|
-| **Unit Tests** | `*ServiceTest.java` | JUnit 5, Mockito | Test business logic without Spring context |
-| **Controller Tests** | `*ControllerTest.java` | MockMvc, @WebMvcTest | Test REST endpoints and role access |
-| **Integration Tests** | `*IntegrationTest.java`, `*IT.java` | @SpringBootTest, H2, Liquibase | Test full scenarios with real database |
-
-### Running Tests
 ```bash
 # Run all tests
 mvn test
 
-# Run specific test class
+# Run a specific test class
 mvn test -Dtest=BookingServiceTest
 
 # Run integration tests only
 mvn test -Dtest="*IT"
 ```
 
-### Test Scenarios
-1. **Full Rental Flow**: Tenant books → Owner approves → Tenant uploads contract → Operator sees active rental
-2. **Issue Reporting Flow**: Tenant reports issue → Operator updates status → Notifications sent
-
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow our workflow:
-
-### 1. Fork and Clone
-```bash
-git clone https://github.com/YOUR-USERNAME/home-rent.git
-cd home-rent
-```
-
-### 2. Create Feature Branch
-```bash
-git checkout -b feature/amazing-feature
-```
-
-### 3. Commit Changes
-```bash
-git commit -m 'Add amazing feature'
-```
-
-### 4. Push and Create PR
-```bash
-git push origin feature/amazing-feature
-```
-
-### Development Guidelines
-- Follow the established package structure
-- Add tests for new functionality
-- Update Swagger documentation for API changes
-- Use meaningful commit messages
-- Ensure code passes all tests before PR
-
-### Code Style
-- Java naming conventions
-- Lombok for boilerplate reduction
-- Spring Security annotations for access control
-- Consistent formatting with 4-space indentation
-
----
-
-## 👥 Contributors
-
-| Contributor | Role | GitHub |
-|-------------|------|--------|
-| **AlexH73** | Lead Developer & Architect | [@AlexH73](https://github.com/AlexH73) |
-| **dmitrined** | Backend Developer | [@dmitrined](https://github.com/dmitrined) |
-| **TetianaAnufriieva** | Full Stack Developer | [@TetianaAnufriieva](https://github.com/TetianaAnufriieva) |
-| **Gott-II** | DevOps & Security Specialist | [@Gott-II](https://github.com/Gott-II) |
+We welcome contributions! See: `./src/main/resources/docks/CONTRIBUTING.md`
 
 ---
 
 ## 📄 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 📊 Project Status
-
-**🚧 Under Active Development**
-
-| Version | Status | Next Milestone |
-|---------|--------|----------------|
-| `0.0.1-SNAPSHOT` | In Development | Core MVP Features |
-| `1.0.0` | Planned | Production Ready Release |
-
-### Roadmap
-- [ ] Payment gateway integration (stripe/paypal)
-- [ ] Advanced search with geolocation
-- [ ] Real-time notifications (WebSocket)
-- [ ] Mobile app client
-- [ ] Multi-language support
-- [ ] Kubernetes deployment configuration
+MIT License. See [LICENSE](LICENSE).
 
 ---
 
 ## 📞 Support & Resources
-
-- **GitHub Issues**: [Report bugs or request features](https://github.com/AlexH73/home-rent/issues)
-- **Project Wiki**: [Detailed documentation](https://github.com/AlexH73/home-rent/wiki)
-- **API Documentation**: `http://localhost:8080/swagger-ui.html` (when running)
-
----
-
-**Happy Renting! 🏠✨**
-
-*This README is also available in: [Russian](README.ru.md) | [German](README.de.md)*
+- **GitHub Issues**: https://github.com/AlexH73/home-rent/issues
+- **API Docs**: http://localhost:8080/swagger-ui/index.html

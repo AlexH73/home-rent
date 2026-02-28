@@ -52,6 +52,21 @@ public class PropertyFileStorageService {
         }
     }
 
+    public void deleteFile(String filePath) {
+        try {
+            Path path = Paths.get(filePath);
+            boolean deleted = Files.deleteIfExists(path);
+            if (deleted) {
+                log.info("Deleted file: {}", filePath);
+            } else {
+                log.warn("File not found for deletion: {}", filePath);
+            }
+        } catch (IOException e) {
+            log.error("Error deleting file: {}", filePath, e);
+            throw new RuntimeException("Could not delete file", e);
+        }
+    }
+
     private void validateFile(MultipartFile file) {
 
         if (file == null || file.isEmpty()) {

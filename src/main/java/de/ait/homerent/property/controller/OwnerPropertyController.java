@@ -1,12 +1,10 @@
 package de.ait.homerent.property.controller;
 
+import de.ait.homerent.user.dto.ErrorResponseDto;
 import de.ait.homerent.property.dto.PropertyCreateRequest;
 import de.ait.homerent.property.dto.PropertyDto;
 import de.ait.homerent.property.service.PropertyService;
-
-import de.ait.homerent.user.dto.ErrorResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,28 +14,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.*;
 /**
  * ----------------------------------------------------------------------------
- * Author  : Tetiana Anufriieva
- * Created : 16.02.2026
- * Project : home-rent
+ * Author  : Alexander Hermann
+ * Created : 14.02.2026
+ * Project : HomeRent
  * ----------------------------------------------------------------------------
  */
 @RestController
@@ -49,7 +38,7 @@ public class OwnerPropertyController {
 
     private final PropertyService propertyService;
 
-    @PutMapping("/{id}")
+    @PutMapping("/properties/{id}")
     @PreAuthorize("hasRole('OWNER') and @propertySecurity.isOwner(#id, authentication)")
     @Operation(summary = "Update property", description = "Updates property details if the authenticated user is the owner")
     @ApiResponses({
@@ -127,9 +116,9 @@ public class OwnerPropertyController {
             @ApiResponse(responseCode = "404", description = "Property not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
-    public ResponseEntity<Void> deleteProperty(Authentication authentication,
-                                               @Parameter(description = "Property ID", example = "1", required = true)
-                                               @PathVariable Long id) {
+    public ResponseEntity<Void> deleteProperty(
+            Authentication authentication,
+            @Parameter(description = "Property ID", example = "1", required = true) @PathVariable Long id) {
         String username = authentication.getName();
         log.info("Deleting property {} for owner: {}", id, username);
         propertyService.deleteProperty(username, id);
