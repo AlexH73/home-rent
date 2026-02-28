@@ -40,7 +40,7 @@ public class TenantIssueController {
 
     private final IssueService issueService;
     private final UserRepository userRepository;
-/*
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('TENANT')")
     @ResponseStatus(HttpStatus.CREATED)
@@ -53,21 +53,6 @@ public class TenantIssueController {
             @ApiResponse(responseCode = "403", description = "Forbidden – not your booking or not TENANT"),
             @ApiResponse(responseCode = "404", description = "Booking not found")
     })
-    public IssueReportResponse createIssue(
-            @Parameter(description = "Issue details (bookingId, description, optional photo)", required = true)
-            @Valid @ModelAttribute IssueCreateRequest request,
-            Principal principal) {
-        User user = userRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return issueService.createIssue(request, user);
-    }
-
- */
-
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('TENANT')")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create an issue report")
     public IssueReportResponse createIssue(
 
             Principal principal,
