@@ -33,7 +33,8 @@ public class BookingFinishScheduler {
         this.bookingService = bookingService;
     }
 
-    @Scheduled(fixedRate = 300000) // every 5 minutes
+    @Scheduled(cron = "0 0 0,12 * * *") // Every 12 hours at midnight and noon
+
     @Transactional
     public void finishExpiredBookings() {
         log.info("Starting finishExpiredBookings task");
