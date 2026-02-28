@@ -1,5 +1,6 @@
 package de.ait.homerent.property.service;
 
+import de.ait.homerent.utils.FileStorageUtilService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -25,17 +26,17 @@ class PropertyFileStorageUtilServiceTest {
     Path tempDir;
 
     @Test
-    @DisplayName("storeFile(): saves file to <propertiesDir>/<propertyId> directory and returns full path")
-    void storeFile_savesFileAndReturnsPath() throws Exception {
-        PropertyFileStorageService service = new PropertyFileStorageService();
+    @DisplayName("storePropertyFile(): saves file to <propertiesDir>/<propertyId> directory and returns full path")
+    void storePropertyFile_savesFileAndReturnsPath() throws Exception {
+        FileStorageUtilService service = new FileStorageUtilService();
         ReflectionTestUtils.setField(service, "propertiesDir", tempDir.toString());
-        ReflectionTestUtils.setField(service, "maxFileSize", 10_000_000L);
+        ReflectionTestUtils.setField(service, "propertyMaxSize", 10_000_000L);
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "photo.jpg", "image/jpeg", "hello".getBytes()
         );
 
-        String storedPath = service.storeFile(7L, file);
+        String storedPath = service.storePropertyFile(7L, file);
 
         assertThat(storedPath).isNotBlank();
         assertThat(Path.of(storedPath)).exists();
@@ -43,33 +44,33 @@ class PropertyFileStorageUtilServiceTest {
     }
 
     @Test
-    @DisplayName("storeFile(): when file is empty, throws IllegalArgumentException")
-    void storeFile_whenEmpty_throws() {
-        PropertyFileStorageService service = new PropertyFileStorageService();
+    @DisplayName("storePropertyFile(): when file is empty, throws IllegalArgumentException")
+    void storePropertyFile_whenEmpty_throws() {
+        FileStorageUtilService service = new FileStorageUtilService();
         ReflectionTestUtils.setField(service, "propertiesDir", tempDir.toString());
-        ReflectionTestUtils.setField(service, "maxFileSize", 10_000_000L);
+        ReflectionTestUtils.setField(service, "propertyMaxSize", 10_000_000L);
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "photo.jpg", "image/jpeg", new byte[0]
         );
 
-        assertThatThrownBy(() -> service.storeFile(7L, file))
+        assertThatThrownBy(() -> service.storePropertyFile(7L, file))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("empty");
     }
 
     @Test
-    @DisplayName("storeFile(): when content type is not allowed, throws IllegalArgumentException")
-    void storeFile_whenWrongContentType_throws() {
-        PropertyFileStorageService service = new PropertyFileStorageService();
+    @DisplayName("storePropertyFile(): when content type is not allowed, throws IllegalArgumentException")
+    void storePropertyFile_whenWrongContentType_throws() {
+        FileStorageUtilService service = new FileStorageUtilService();
         ReflectionTestUtils.setField(service, "propertiesDir", tempDir.toString());
-        ReflectionTestUtils.setField(service, "maxFileSize", 10_000_000L);
+        ReflectionTestUtils.setField(service, "propertyMaxSize", 10_000_000L);
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "photo.gif", "image/gif", "x".getBytes()
         );
 
-        assertThatThrownBy(() -> service.storeFile(7L, file))
+        assertThatThrownBy(() -> service.storePropertyFile(7L, file))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Only JPEG and PNG images are allowed");
     }
@@ -77,9 +78,9 @@ class PropertyFileStorageUtilServiceTest {
     @Test
     @DisplayName("deleteFile(): deletes file if it exists")
     void deleteFile_deletesExisting() throws Exception {
-        PropertyFileStorageService service = new PropertyFileStorageService();
+        FileStorageUtilService service = new FileStorageUtilService();
         ReflectionTestUtils.setField(service, "propertiesDir", tempDir.toString());
-        ReflectionTestUtils.setField(service, "maxFileSize", 10_000_000L);
+        ReflectionTestUtils.setField(service, "propertyMaxSize", 10_000_000L);
 
         Path file = tempDir.resolve("x.txt");
         Files.writeString(file, "data");
@@ -93,9 +94,9 @@ class PropertyFileStorageUtilServiceTest {
     @Test
     @DisplayName("deleteFile(): when file does not exist, does not throw")
     void deleteFile_whenMissing_doesNotThrow() {
-        PropertyFileStorageService service = new PropertyFileStorageService();
+        FileStorageUtilService service = new FileStorageUtilService();
         ReflectionTestUtils.setField(service, "propertiesDir", tempDir.toString());
-        ReflectionTestUtils.setField(service, "maxFileSize", 10_000_000L);
+        ReflectionTestUtils.setField(service, "propertyMaxSize", 10_000_000L);
 
         assertThatCode(() -> service.deleteFile(tempDir.resolve("missing.txt").toString()))
                 .doesNotThrowAnyException();
