@@ -45,9 +45,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingService {
 
-    private static final Set<BookingStatus> BLOCKING_STATUSES =
-            EnumSet.of(BookingStatus.REQUESTED, BookingStatus.APPROVED, BookingStatus.ACTIVE);
-
     private final BookingRepository bookingRepository;
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
@@ -115,6 +112,7 @@ public class BookingService {
     public BookingResponse createBooking(BookingCreateRequest request, User tenant) {
 
         if (request.getStartDate().isAfter(request.getEndDate())) {
+            log.info("Invalid booking dates: start {} is after end {}", request.getStartDate(), request.getEndDate());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date must be before or equal to end date");
         }
 
@@ -122,6 +120,7 @@ public class BookingService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
 
         if (property.getStatus() != PropertyStatus.AVAILABLE) {
+            log.info("Attempt to book unavailable property ID {}. Current status: {}", property.getId(), property.getStatus());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Property is not available for booking");
         }
 
@@ -143,6 +142,7 @@ public class BookingService {
                 BLOCKING_STATUSES
         );
         if (overlaps) {
+            log.info("Booking conflict detected for property ID {} between {} and {}", property.getId(), normalizedStart, normalizedEnd);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Property is already booked for the selected dates");
         }
 
@@ -329,8 +329,6 @@ public class BookingService {
         Booking saved = bookingRepository.save(booking);
 
         Property property = saved.getProperty();
-        // BOOKED -> RENTED when operator activates
-        property.setStatus(PropertyStatus.RENTED);
         propertyRepository.save(property);
 
         return mapToResponse(saved);
@@ -341,19 +339,26 @@ public class BookingService {
                                       LocalDateTime endDate) {
 
         boolean conflict =
-                bookingRepository.existsConflictingBooking(
+                bookingRepository.existsOverlappingBooking(
                         propertyId,
-                        startDate,
-                        endDate,
-                        List.of(
-                                BookingStatus.APPROVED,
-                                BookingStatus.ACTIVE
-                        )
+                        normalizeStart(startDate),
+                        normalizeEnd(endDate),
+                        BLOCKING_STATUSES
                 );
 
         if (conflict) {
-            throw new IllegalStateException(
-                    "Property already booked for selected dates");
+            log.warn("Booking conflict detected for property ID {} between {} and {}", propertyId, startDate, endDate);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Property already booked for selected dates"
+            );
         }
     }
+
+    private static final EnumSet<BookingStatus> BLOCKING_STATUSES =
+            EnumSet.of(
+                    //BookingStatus.REQUESTED,
+                    BookingStatus.APPROVED,
+                    BookingStatus.ACTIVE
+            );
 }
