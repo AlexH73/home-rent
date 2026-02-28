@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
  * ----------------------------------------------------------------------------
  */
 @DisplayName("PropertyFileStorageService unit tests")
-class PropertyFileStorageServiceTest {
+class PropertyFileStorageUtilServiceTest {
 
     @TempDir
     Path tempDir;

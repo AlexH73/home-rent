@@ -97,4 +97,20 @@ public class FileStorageService {
             throw new IllegalArgumentException("File too large (max " + maxSize + " bytes)");
         }
     }
+
+    public void deleteFile(String path) {
+        if (path == null || path.isBlank()) {
+            return;
+        }
+
+        try {
+            Path filePath = Paths.get(path);
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+                log.info("File deleted: {}", path);
+            }
+        } catch (IOException e) {
+            log.error("Failed to delete file: {}", path, e);
+        }
+    }
 }
