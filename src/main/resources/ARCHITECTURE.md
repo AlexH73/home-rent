@@ -190,195 +190,244 @@ Tools:
 > Note: This is a reference tree for navigation. Some packages may evolve over time.
 
 ```
-homerent/
-│
-├── logs/
-│   └── homerent.log
-│
+HomeRent/
 ├── src/
 │   ├── main/
 │   │   ├── java/
-│   │   │   └── de/ait/homerent
-│   │   │       │
-│   │   │       ├── HomeRentApplication.java
-│   │   │       │
-│   │   │       ├── config/
-│   │   │       │   ├── SecurityConfig.java
-│   │   │       │   ├── OpenApiConfig.java
-│   │   │       │   ├── MailConfig.java
-│   │   │       │   └── StorageConfig.java
-│   │   │       │
-│   │   │       ├── security/
-│   │   │       │   ├── CustomUserDetailsService.java
-│   │   │       │   └── UserPrincipal.java
-│   │   │       │
-│   │   │       ├── auth/
-│   │   │       │   ├── controller/
-│   │   │       │   │   ├── AuthController.java
-│   │   │       │   │   └── PublicController.java          // public endpoints
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── LoginRequest.java
-│   │   │       │   │   ├── RegisterRequest.java
-│   │   │       │   │   └── AuthResponse.java
-│   │   │       │   └── service/
-│   │   │       │       ├── AuthService.java
-│   │   │       │       └── CustomUserDetailsService.java
-│   │   │       │
-│   │   │       ├── user/
-│   │   │       │   ├── model/
-│   │   │       │   │   ├── RoleName.java
-│   │   │       │   │   ├── User.java
-│   │   │       │   │   └── Role.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   ├── UserRepository.java
-│   │   │       │   │   └── RoleRepository.java
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── UpdateRolesRequest.java
-│   │   │       │   │   ├── UserCreateRequest.java
-│   │   │       │   │   └── UserDto.java
-│   │   │       │   ├── service/
-│   │   │       │   │   └── UserService.java
-│   │   │       │   └── controller/
-│   │   │       │       └── AdminUserController.java     // ROLE_ADMIN only
-│   │   │       │
-│   │   │       ├── property/
-│   │   │       │   ├── model/
-│   │   │       │   │   ├── Property.java
-│   │   │       │   │   ├── PropertyPhoto.java
-│   │   │       │   │   └── PropertyStatus.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   ├── PropertyPhotoRepository.java
-│   │   │       │   │   └── PropertyRepository.java
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── PropertyCreateRequest.java
-│   │   │       │   │   └── PropertyDto.java
-│   │   │       │   ├── service/
-│   │   │       │   │   └── PropertyService.java
-│   │   │       │   └── controller/
-│   │   │       │       ├── TenantPropertyController.java // ROLE_TENANT
-│   │   │       │       ├── OwnerPropertyController.java  // ROLE_OWNER
-│   │   │       │       └── AdminPropertyController.java  // ROLE_ADMIN
-│   │   │       │
-│   │   │       ├── booking/
-│   │   │       │   ├── model/
-│   │   │       │   │   ├── Booking.java
-│   │   │       │   │   └── BookingStatus.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   └── BookingRepository.java
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── BookingCreateRequest.java
-│   │   │       │   │   ├── BookingEmailRequest.java
-│   │   │       │   │   ├── BookingResponse.java
-│   │   │       │   │   └── RentalFinishedEmailRequest.java
-│   │   │       │   ├── service/
-│   │   │       │   │   └── BookingService.java
-│   │   │       │   └── controller/
-│   │   │       │       ├── TenantBookingController.java   // ROLE_TENANT
-│   │   │       │       ├── OwnerBookingController.java    // ROLE_OWNER
-│   │   │       │       └── OperatorBookingController.java // ROLE_OPERATOR
-│   │   │       │
-│   │   │       ├── contract/
-│   │   │       │   ├── model/
-│   │   │       │   │   └── RentalContract.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   └── RentalContractRepository.java
-│   │   │       │   ├── dto/
-│   │   │       │   │   └── ContractUploadedEmailRequest.java
-│   │   │       │   └── service/
-│   │   │       │       ├── FileStorageService.java
-│   │   │       │       └── RentalContractService.java
-│   │   │       │
-│   │   │       ├── issue/
-│   │   │       │   ├── model/
-│   │   │       │   │   ├── IssueReport.java
-│   │   │       │   │   └── IssueStatus.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   └── IssueReportRepository.java 
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── IssueCreateRequest.java
-│   │   │       │   │   └── IssueReportResponse.java
-│   │   │       │   ├── service/
-│   │   │       │   │   └── IssueService.java
-│   │   │       │   └── controller/
-│   │   │       │       ├── TenantIssueController.java     // ROLE_TENANT
-│   │   │       │       └── OperatorIssueController.java   // ROLE_OPERATOR
-│   │   │       │
-│   │   │       ├── mail/
-│   │   │       │   └── EmailService.java
-│   │   │       │
-│   │   │       ├── storage/
-│   │   │       │   └── FileStorageService.java
-│   │   │       │
-│   │   │       ├── exception/
-│   │   │       │   ├── GlobalExceptionHandler.java
-│   │   │       │   ├── NotFoundException.java
-│   │   │       │   ├── AccessDeniedException.java
-│   │   │       │   └── BadRequestException.java
-│   │   │       │
-│   │   │       └── utils/
-│   │   │           └── FilePathUtils.java
-│   │   │
+│   │   │   └── de/
+│   │   │       └── ait/
+│   │   │           └── homerent/
+│   │   │               ├── HomeRentApplication.java
+│   │   │               ├── auth/
+│   │   │               │   ├── controller/
+│   │   │               │   │   ├── AuthController.java
+│   │   │               │   │   └── PublicController.java
+│   │   │               │   ├── dto/
+│   │   │               │   │   ├── AuthResponse.java
+│   │   │               │   │   ├── LoginRequest.java
+│   │   │               │   │   ├── RegisterRequest.java
+│   │   │               │   │   └── RoleDto.java
+│   │   │               │   └── service/
+│   │   │               │       ├── AuthService.java
+│   │   │               │       └── CustomUserDetailsService.java
+│   │   │               ├── booking/
+│   │   │               │   ├── controller/
+│   │   │               │   │   ├── OperatorBookingController.java
+│   │   │               │   │   ├── OwnerBookingController.java
+│   │   │               │   │   └── TenantBookingController.java
+│   │   │               │   ├── dto/
+│   │   │               │   │   ├── BookingCreateRequest.java
+│   │   │               │   │   ├── BookingEmailRequest.java
+│   │   │               │   │   ├── BookingResponse.java
+│   │   │               │   │   └── RentalFinishedEmailRequest.java
+│   │   │               │   ├── model/
+│   │   │               │   │   ├── Booking.java
+│   │   │               │   │   └── BookingStatus.java
+│   │   │               │   ├── repository/
+│   │   │               │   │   └── BookingRepository.java
+│   │   │               │   ├── scheduler/
+│   │   │               │   │   └── BookingFinishScheduler.java
+│   │   │               │   └── service/
+│   │   │               │       └── BookingService.java
+│   │   │               ├── config/
+│   │   │               │   ├── DevStartupLogger.java
+│   │   │               │   ├── OpenApiConfig.java
+│   │   │               │   ├── SecurityConfig.java
+│   │   │               │   ├── SwaggerCustomizer.java
+│   │   │               │   └── WebConfig.java
+│   │   │               ├── contract/
+│   │   │               │   ├── dto/
+│   │   │               │   │   └── ContractUploadedEmailRequest.java
+│   │   │               │   ├── model/
+│   │   │               │   │   └── RentalContract.java
+│   │   │               │   ├── repository/
+│   │   │               │   │   └── RentalContractRepository.java
+│   │   │               │   └── service/
+│   │   │               │       ├── FileStorageService.java
+│   │   │               │       └── RentalContractService.java
+│   │   │               ├── issue/
+│   │   │               │   ├── controller/
+│   │   │               │   │   ├── OperatorIssueController.java
+│   │   │               │   │   └── TenantIssueController.java
+│   │   │               │   ├── dto/
+│   │   │               │   │   ├── IssueCreateRequest.java
+│   │   │               │   │   └── IssueReportResponse.java
+│   │   │               │   ├── model/
+│   │   │               │   │   ├── IssueReport.java
+│   │   │               │   │   └── IssueStatus.java
+│   │   │               │   ├── repository/
+│   │   │               │   │   └── IssueReportRepository.java
+│   │   │               │   └── service/
+│   │   │               │       └── IssueService.java
+│   │   │               ├── mail/
+│   │   │               │   └── EmailService.java
+│   │   │               ├── property/
+│   │   │               │   ├── controller/
+│   │   │               │   │   ├── AdminPropertyController.java
+│   │   │               │   │   ├── OwnerPropertyController.java
+│   │   │               │   │   └── TenantPropertyController.java
+│   │   │               │   ├── dto/
+│   │   │               │   │   ├── PropertyCreateRequest.java
+│   │   │               │   │   └── PropertyDto.java
+│   │   │               │   ├── model/
+│   │   │               │   │   ├── Property.java
+│   │   │               │   │   ├── PropertyPhoto.java
+│   │   │               │   │   └── PropertyStatus.java
+│   │   │               │   ├── repository/
+│   │   │               │   │   ├── PropertyPhotoRepository.java
+│   │   │               │   │   └── PropertyRepository.java
+│   │   │               │   └── service/
+│   │   │               │       ├── PropertyFileStorageService.java
+│   │   │               │       └── PropertyService.java
+│   │   │               ├── security/
+│   │   │               │   ├── BookingSecurity.java
+│   │   │               │   └── PropertySecurity.java
+│   │   │               ├── user/
+│   │   │               │   ├── controller/
+│   │   │               │   │   └── AdminUserController.java
+│   │   │               │   ├── dto/
+│   │   │               │   │   ├── ErrorResponseDto.java
+│   │   │               │   │   ├── UpdateRolesRequest.java
+│   │   │               │   │   ├── UpdateUserStatusRequest.java
+│   │   │               │   │   ├── UserCreateRequest.java
+│   │   │               │   │   └── UserDto.java
+│   │   │               │   ├── model/
+│   │   │               │   │   ├── Role.java
+│   │   │               │   │   ├── RoleName.java
+│   │   │               │   │   └── User.java
+│   │   │               │   ├── repository/
+│   │   │               │   │   ├── RoleRepository.java
+│   │   │               │   │   └── UserRepository.java
+│   │   │               │   └── service/
+│   │   │               │       └── UserService.java
+│   │   │               └── utils/
+│   │   │                   ├── CurrentUserHelper.java
+│   │   │                   ├── FilePathUtils.java
+│   │   │                   ├── LocalDateTimeDeserializer.java
+│   │   │                   └── LocalDateTimeFormatter.java
 │   │   └── resources/
-│   │       ├── application.properties
 │   │       ├── application-dev.properties
-│   │       ├── application-test.properties
 │   │       ├── application-prod.properties
+│   │       ├── application.properties
+│   │       ├── ARCHITECTURE.md
+│   │       ├── db/
+│   │       │   └── changelog/
+│   │       │       ├── 1.0-create-tables.xml
+│   │       │       ├── 1.1-insert-reference-data.xml
+│   │       │       ├── 1.2-test-objects.xml
+│   │       │       └── db.changelog-master.xml
+│   │       ├── docks/
+│   │       │   ├── api-screenshots.md
+│   │       │   ├── attachments/
+│   │       │   │   └── HomeRent_API_postman_collection.json
+│   │       │   ├── CONTRIBUTING.md
+│   │       │   ├── environment_variables.md
+│   │       │   ├── HomeRent.md
+│   │       │   ├── HomeRent.pdf
+│   │       │   └── screenshots/
+│   │       │       ├── environment/
+│   │       │       │   ├── Screenshot_007.png
+│   │       │       │   ├── Screenshot_01.png
+│   │       │       │   ├── Screenshot_02.png
+│   │       │       │   ├── Screenshot_07.png
+│   │       │       │   ├── Screenshot_08.png
+│   │       │       │   ├── Screenshot_10.png
+│   │       │       │   ├── Screenshot_2.png
+│   │       │       │   ├── Screenshot_3.png
+│   │       │       │   ├── Screenshot_4.png
+│   │       │       │   ├── Screenshot_5.png
+│   │       │       │   ├── Screenshot_6.png
+│   │       │       │   ├── Screenshot_7.png
+│   │       │       │   ├── Screenshot_8.png
+│   │       │       │   └── Screenshot_9.png
+│   │       │       └── postman/
+│   │       │           ├── postman-admin-users.png
+│   │       │           ├── postman-available-properties.png
+│   │       │           ├── postman-collection-overview.png
+│   │       │           ├── postman-create-booking.png
+│   │       │           ├── postman-create-issue.png
+│   │       │           ├── postman-login.png
+│   │       │           ├── postman-my-bookings.png
+│   │       │           ├── postman-operator-active.png
+│   │       │           ├── postman-property-details.png
+│   │       │           ├── postman-register.png
+│   │       │           └── postman-upload-contract.png
 │   │       ├── logback-spring.xml
-│   │       │
-│   │       ├── db/changelog/
-│   │       │   ├── db.changelog-master.xml
-│   │       │   ├── 1.0-create-tables.xml
-│   │       │   ├── 1.1-insert-reference-data.xml
-│   │       │   └── 1.2-test-objects.xml
-│   │       │
-│   │       ├── templates/
-│   │       │   └── mail/
-│   │       │       ├── booking-confirmation.html
-│   │       │       ├── contract-uploaded.html
-│   │       │       └── rental-finished.html
-│   │       │
 │   │       ├── static/
-│   │       │   └── swagger-ui.css
-│   │       │
-│   │       └── uploads/
-│   │           ├── contracts/
-│   │           └── issues/
-│   │
+│   │       │   ├── css/
+│   │       │   │   └── swagger-custom.css
+│   │       │   ├── images/
+│   │       │   │   ├── home-background.png
+│   │       │   │   ├── logo-swagger.png
+│   │       │   │   └── logo.jpeg
+│   │       │   └── js/
+│   │       │       └── swagger-custom.js
+│   │       └── templates/
+│   │           └── mail/
+│   │               ├── booking-confirmation.html
+│   │               ├── contract-upload-confirmation.html
+│   │               └── rental-finished-notice.html
 │   └── test/
 │       ├── java/
-│       │   └── de/ait/homerent
-│       │       ├── auth/
-│       │       │   └── AuthControllerTest.java
-│       │       │
-│       │       ├── property/
-│       │       │   ├── PropertyServiceTest.java
-│       │       │   └── PropertyControllerTest.java
-│       │       │
-│       │       ├── booking/
-│       │       │   ├── BookingServiceTest.java
-│       │       │   ├── BookingControllerTest.java
-│       │       │   └── BookingIntegrationTest.java
-│       │       │
-│       │       ├── issue/
-│       │       │   └── IssueIntegrationTest.java
-│       │       │
-│       │       ├── security/
-│       │       │   └── SecurityTest.java
-│       │       │
-│       │       └── integration/
-│       │           ├── FullRentalFlowIT.java
-│       │           └── IssueFlowIT.java
-│       │
-│       └── resources
-│           ├── application-test.properties
-│           └── db/changelog/
-│               └── test-changelog.xml
-│
-├── pom.xml
-├── .gitignore
-├── .dockerignore
-├── Dockerfile
-└── README.md
+│       │   ├── de/
+│       │   │   └── ait/
+│       │   │       └── homerent/
+│       │   │           ├── auth/
+│       │   │           │   ├── controller/
+│       │   │           │   │   ├── AuthControllerIT.java
+│       │   │           │   │   ├── AuthControllerTest.java
+│       │   │           │   │   ├── AuthControllerUTest.java
+│       │   │           │   │   ├── PublicControllerIT.java
+│       │   │           │   │   └── PublicControllerTest.java
+│       │   │           │   └── service/
+│       │   │           │       ├── AuthServiceTest.java
+│       │   │           │       └── CustomUserDetailsServiceTest.java
+│       │   │           ├── booking/
+│       │   │           │   ├── BookingAvailabilityIT.java
+│       │   │           │   ├── BookingFlowIT.java
+│       │   │           │   ├── BookingOverlapIT.java
+│       │   │           │   ├── controller/
+│       │   │           │   │   └── OperatorBookingControllerTest.java
+│       │   │           │   └── service/
+│       │   │           │       └── BookingServiceTest.java
+│       │   │           ├── contract/
+│       │   │           │   └── service/
+│       │   │           │       ├── FileStorageServiceTest.java
+│       │   │           │       └── RentalContractServiceTest.java
+│       │   │           ├── HomeRentApplicationTests.java
+│       │   │           ├── issue/
+│       │   │           │   ├── IssueFlowIT.java
+│       │   │           │   ├── IssuePhotoUploadIT.java
+│       │   │           │   ├── repository/
+│       │   │           │   │   └── IssueReportRepositoryIT.java
+│       │   │           │   └── service/
+│       │   │           │       └── IssueServiceTest.java
+│       │   │           ├── mail/
+│       │   │           │   └── EmailServiceTest.java
+│       │   │           ├── PostgresContainerIT.java
+│       │   │           ├── property/
+│       │   │           │   ├── PropertyAvailabilityIT.java
+│       │   │           │   └── service/
+│       │   │           │       ├── BookingServiceAdditionalTest.java
+│       │   │           │       ├── PropertyFileStorageServiceTest.java
+│       │   │           │       ├── PropertyServiceAdditionalTest.java
+│       │   │           │       └── PropertyServiceTest.java
+│       │   │           ├── security/
+│       │   │           │   └── SecurityAccessIT.java
+│       │   │           └── user/
+│       │   │               ├── repository/
+│       │   │               │   ├── RoleRepositoryIT.java
+│       │   │               │   └── UserRepositoryIT.java
+│       │   │               └── service/
+│       │   │                   └── UserServiceTest.java
+│       │   └── testsupport/
+│       │       ├── it/
+│       │       │   └── AbstractIT.java
+│       │       └── security/
+│       │           └── TestSecurityConfig.java
+│       └── resources/
+│           ├── application-tc.properties
+│           └── application-test.properties
 ```
 
 Notes:
