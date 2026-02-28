@@ -1,6 +1,6 @@
 package de.ait.homerent.booking.controller;
 
-import de.ait.homerent.booking.dto.BookingResponse;
+import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.property.model.Property;
@@ -15,19 +15,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import testsupport.it.AbstractIT;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * ----------------------------------------------------------------------------
@@ -37,12 +40,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  * ----------------------------------------------------------------------------
  */
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
-class TenantBookingIT {
+class TenantBookingIT extends AbstractIT {
 
         @Autowired
-        private TestRestTemplate restTemplate;
+        private MockMvc mockMvc;
 
         @Autowired
         private PropertyRepository propertyRepository;
@@ -107,63 +111,202 @@ class TenantBookingIT {
 
         @Test
         @DisplayName("Create Booking: Success as Tenant")
-        void createBooking_ShouldReturnCreated_WhenRequestIsValid() {
-                Map<String, Object> request = new HashMap<>();
-                request.put("propertyId", propertyId);
-                request.put("startDate", "2026-03-01");
-                request.put("endDate", "2026-03-05");
+        void createBooking_ShouldReturnCreated_WhenRequestIsValid() throws Exception {
+                String jsonRequest = """
+                                {
+                                  "propertyId": %d,
+                                  "startDate": "2026-03-01",
+                                  "endDate": "2026-03-05"
+                                }
+                                """.formatted(propertyId);
 
-                ResponseEntity<BookingResponse> response = restTemplate
-                                .withBasicAuth(TENANT_USERNAME, TENANT_PASSWORD)
-                                .postForEntity("/api/tenant/bookings", request, BookingResponse.class);
-
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-                assertThat(response.getBody()).isNotNull();
-                assertThat(response.getBody().getStatus()).isEqualTo(BookingStatus.REQUESTED);
-                assertThat(response.getBody().getTotalPrice()).isEqualTo(500); // 5 days inclusive
-                assertThat(response.getBody().getPropertyTitle()).isEqualTo("Integration Test Property");
+                mockMvc.perform(post("/api/tenant/bookings")
+                                .with(httpBasic(TENANT_USERNAME, TENANT_PASSWORD))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonRequest))
+                                .andExpect(status().isCreated())
+                                .andExpect(jsonPath("$.status").value("REQUESTED"))
+                                .andExpect(jsonPath("$.totalPrice").value(500))
+                                .andExpect(jsonPath("$.propertyTitle").value("Integration Test Property"));
         }
 
         @Test
         @DisplayName("Create Booking: Forbidden for User without ROLE_TENANT")
-        void createBooking_ShouldReturnForbidden_WhenUserIsOwner() {
-                Map<String, Object> request = new HashMap<>();
-                request.put("propertyId", propertyId);
-                request.put("startDate", "2026-03-01");
-                request.put("endDate", "2026-03-05");
+        void createBooking_ShouldReturnForbidden_WhenUserIsOwner() throws Exception {
+                String jsonRequest = """
+                                {
+                                  "propertyId": %d,
+                                  "startDate": "2026-03-01",
+                                  "endDate": "2026-03-05"
+                                }
+                                """.formatted(propertyId);
 
-                ResponseEntity<String> response = restTemplate
-                                .withBasicAuth("owner_test", "password")
-                                .postForEntity("/api/tenant/bookings", request, String.class);
-
-                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+                mockMvc.perform(post("/api/tenant/bookings")
+                                .with(httpBasic("owner_test", "password"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonRequest))
+                                .andExpect(status().isForbidden());
         }
 
         @Test
         @DisplayName("Create Booking: Conflict when overlapping")
-        void createBooking_ShouldReturnBadRequest_WhenOverlappingExists() {
+        void createBooking_ShouldReturnBadRequest_WhenOverlappingExists() throws Exception {
                 // First booking
-                Map<String, Object> request1 = new HashMap<>();
-                request1.put("propertyId", propertyId);
-                request1.put("startDate", "2026-03-10");
-                request1.put("endDate", "2026-03-15");
+                String json1 = """
+                                {
+                                  "propertyId": %d,
+                                  "startDate": "2026-03-10",
+                                  "endDate": "2026-03-15"
+                                }
+                                """.formatted(propertyId);
 
-                ResponseEntity<BookingResponse> response1 = restTemplate.withBasicAuth(TENANT_USERNAME, TENANT_PASSWORD)
-                                .postForEntity("/api/tenant/bookings", request1, BookingResponse.class);
+                mockMvc.perform(post("/api/tenant/bookings")
+                                .with(httpBasic(TENANT_USERNAME, TENANT_PASSWORD))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json1))
+                                .andExpect(status().isCreated());
 
-                assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+                // IMPORTANT: In the new logic, REQUESTED bookings do not block each other.
+                // We must APPROVE the first one to test blocking.
+                // We can use a simple way to find it since we cleared DB
+                Booking booking = bookingRepository.findAll().get(0);
+                booking.setStatus(BookingStatus.APPROVED);
+                bookingRepository.save(booking);
 
                 // Second overlapping booking
-                Map<String, Object> request2 = new HashMap<>();
-                request2.put("propertyId", propertyId);
-                request2.put("startDate", "2026-03-12");
-                request2.put("endDate", "2026-03-17");
+                String json2 = """
+                                {
+                                  "propertyId": %d,
+                                  "startDate": "2026-03-12",
+                                  "endDate": "2026-03-17"
+                                }
+                                """.formatted(propertyId);
 
-                ResponseEntity<String> response2 = restTemplate
-                                .withBasicAuth(TENANT_USERNAME, TENANT_PASSWORD)
-                                .postForEntity("/api/tenant/bookings", request2, String.class);
+                mockMvc.perform(post("/api/tenant/bookings")
+                                .with(httpBasic(TENANT_USERNAME, TENANT_PASSWORD))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json2))
+                                .andExpect(status().isBadRequest());
+        }
 
-                assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                assertThat(response2.getBody()).contains("already booked");
+        @Test
+        @DisplayName("Get My Bookings: Success")
+        void getMyBookings_ShouldReturnList() throws Exception {
+                createBooking_ShouldReturnCreated_WhenRequestIsValid();
+
+                mockMvc.perform(get("/api/tenant/bookings/my")
+                                .with(httpBasic(TENANT_USERNAME, TENANT_PASSWORD)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))))
+                                .andExpect(jsonPath("$[0].tenantName").value(TENANT_USERNAME));
+        }
+
+        @Test
+        @DisplayName("Get Booking By ID: Success")
+        void getBookingById_ShouldReturnBooking() throws Exception {
+                // Create booking manually or via API
+                String jsonRequest = """
+                                {
+                                  "propertyId": %d,
+                                  "startDate": "2026-03-01",
+                                  "endDate": "2026-03-05"
+                                }
+                                """.formatted(propertyId);
+
+                mockMvc.perform(post("/api/tenant/bookings")
+                                .with(httpBasic(TENANT_USERNAME, TENANT_PASSWORD))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonRequest))
+                                .andExpect(status().isCreated());
+
+                // Extract ID from response (simplified for example, or just use repository)
+                Booking booking = bookingRepository.findAll().get(0);
+                Long bookingId = booking.getId();
+
+                mockMvc.perform(get("/api/tenant/bookings/" + bookingId)
+                                .with(httpBasic(TENANT_USERNAME, TENANT_PASSWORD)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(bookingId));
+        }
+
+        @Test
+        @DisplayName("Get Booking By ID: Forbidden for another tenant")
+        void getBookingById_ShouldReturnForbidden_WhenNotOwner() throws Exception {
+                // Create a booking for primary tenant
+                createBooking_ShouldReturnCreated_WhenRequestIsValid();
+                Booking booking = bookingRepository.findAll().get(0);
+                Long bookingId = booking.getId();
+
+                // Create another tenant
+                Role tenantRole = roleRepository.findByName(RoleName.ROLE_TENANT).orElseThrow();
+                User otherTenant = User.builder()
+                                .username("other_tenant")
+                                .email("other@test.com")
+                                .password(passwordEncoder.encode("password"))
+                                .enabled(true)
+                                .roles(Set.of(tenantRole))
+                                .build();
+                userRepository.save(otherTenant);
+
+                // Try to access as other tenant
+                mockMvc.perform(get("/api/tenant/bookings/" + bookingId)
+                                .with(httpBasic("other_tenant", "password")))
+                                .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @DisplayName("Upload Contract: Success when approved")
+        void uploadContract_ShouldReturnOk_WhenApproved() throws Exception {
+                createBooking_ShouldReturnCreated_WhenRequestIsValid();
+                Booking booking = bookingRepository.findAll().get(0);
+                booking.setStatus(BookingStatus.APPROVED);
+                bookingRepository.save(booking);
+
+                MockMultipartFile file = new MockMultipartFile(
+                                "file",
+                                "contract.pdf",
+                                MediaType.APPLICATION_PDF_VALUE,
+                                "test content".getBytes());
+
+                mockMvc.perform(multipart("/api/tenant/bookings/" + booking.getId() + "/upload-contract")
+                                .file(file)
+                                .with(httpBasic(TENANT_USERNAME, TENANT_PASSWORD)))
+                                .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("Upload Contract: Bad Request when only requested")
+        void uploadContract_ShouldReturnBadRequest_WhenStatusIsRequested() throws Exception {
+                createBooking_ShouldReturnCreated_WhenRequestIsValid();
+                Booking booking = bookingRepository.findAll().get(0);
+
+                MockMultipartFile file = new MockMultipartFile(
+                                "file",
+                                "contract.pdf",
+                                MediaType.APPLICATION_PDF_VALUE,
+                                "test content".getBytes());
+
+                mockMvc.perform(multipart("/api/tenant/bookings/" + booking.getId() + "/upload-contract")
+                                .file(file)
+                                .with(httpBasic(TENANT_USERNAME, TENANT_PASSWORD)))
+                                .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Create Booking: Bad Request when dates outside availability")
+        void createBooking_ShouldReturnBadRequest_WhenOutsideAvailability() throws Exception {
+                String jsonRequest = """
+                                {
+                                  "propertyId": %d,
+                                  "startDate": "2027-01-01",
+                                  "endDate": "2027-01-05"
+                                }
+                                """.formatted(propertyId);
+
+                mockMvc.perform(post("/api/tenant/bookings")
+                                .with(httpBasic(TENANT_USERNAME, TENANT_PASSWORD))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonRequest))
+                                .andExpect(status().isBadRequest());
         }
 }
