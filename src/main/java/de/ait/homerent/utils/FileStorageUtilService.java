@@ -1,53 +1,68 @@
-package de.ait.homerent.property.service;
+package de.ait.homerent.utils;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.UUID;
 
-/**
- * ----------------------------------------------------------------------------
- * Author  : Tetiana Anufriieva
- * Created : 17.02.2026
- * Project : home-rent
- * ----------------------------------------------------------------------------
- */
-
+//Universal service for file storage (Property & Issue)
 @Service
 @Slf4j
-public class PropertyFileStorageService {
+@Getter
+public class FileStorageUtilService {
 
     @Value("${app.upload.properties-dir}")
     private String propertiesDir;
 
     @Value("${app.upload.property-max-size}")
-    private Long maxFileSize;
+    private Long propertyMaxSize;
 
-    public String storeFile(Long propertyId, MultipartFile file) {
-        validateFile(file);
+    @Value("${app.upload.issues-dir}")
+    private String issuesDir;
 
+
+    @Value("${app.upload.issue-photo-max-size}")
+    private Long issueMaxSize;
+
+    private static final String[] ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png"};
+
+    // For Property
+    public String storePropertyFile(Long propertyId, MultipartFile file) {
+        validateFile(file, propertyMaxSize, ALLOWED_IMAGE_TYPES);
+        return storeFile(file, propertiesDir, propertyId);
+    }
+
+    // For Issue
+    public String storeIssueFile(Long issueId, MultipartFile file) {
+        validateFile(file, issueMaxSize, ALLOWED_IMAGE_TYPES);
+        return storeFile(file, issuesDir, issueId);
+    }
+
+    // General save method
+    private String storeFile(MultipartFile file, String baseDir, Long entityId) {
         try {
-            Path propertyDir = Paths.get(propertiesDir, propertyId.toString());
-            Files.createDirectories(propertyDir);
+            Path dir = Paths.get(baseDir, entityId.toString());
+            Files.createDirectories(dir);
 
             String originalFilename = file.getOriginalFilename();
-            String sanitizedFilename = originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+            String sanitizedFilename = originalFilename != null
+                    ? originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-]", "_")
+                    : "file";
+
             String storedFilename = UUID.randomUUID() + "_" + sanitizedFilename;
+            Path targetPath = dir.resolve(storedFilename);
 
-            Path targetPath = propertyDir.resolve(storedFilename);
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
             log.info("File saved to {}", targetPath);
+
             return targetPath.toString();
         } catch (IOException e) {
-            log.error("Error storing file for property {}", propertyId, e);
+            log.error("Error storing file for entity {}", entityId, e);
             throw new RuntimeException("Could not store file", e);
         }
     }
@@ -67,31 +82,21 @@ public class PropertyFileStorageService {
         }
     }
 
-    private void validateFile(MultipartFile file) {
-
+    // File check
+    private void validateFile(MultipartFile file, Long maxSize, String[] allowedContentTypes) {
         if (file == null || file.isEmpty()) {
-            log.warn("Rejected property image upload: file={}, reason={}",
-                    file != null ? file.getOriginalFilename() : "null",
-                    "file is empty");
+            log.warn("Rejected upload: file is empty");
             throw new IllegalArgumentException("File is empty");
         }
 
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || originalFilename.isBlank()) {
-            log.warn("Rejected property image upload: reason=filename is empty");
-            throw new IllegalArgumentException("File name is empty");
-        }
-
-        if (file.getSize() > maxFileSize) {
-            log.warn("Rejected property image upload: file={}, size={}, maxAllowed={}",
-                    originalFilename, file.getSize(), maxFileSize);
-            throw new IllegalArgumentException("File too large");
+        if (file.getSize() > maxSize) {
+            throw new IllegalArgumentException("File too large: " + file.getOriginalFilename());
         }
 
         String contentType = file.getContentType();
         if (contentType == null || contentType.isBlank()) {
-            log.warn("Rejected property image upload: file={}, reason=content type is empty",
-                    originalFilename);
+            log.warn("Rejected upload: file={}, reason=content type is empty",
+                    file.getOriginalFilename());
             throw new IllegalArgumentException("File content type is empty");
         }
 
@@ -100,7 +105,7 @@ public class PropertyFileStorageService {
 
         if (!allowed) {
             log.warn("Rejected property image upload: file={}, contentType={}, reason=not allowed",
-                    originalFilename, contentType);
+                    file.getOriginalFilename(), contentType);
             throw new IllegalArgumentException("Only JPEG and PNG images are allowed");
         }
     }

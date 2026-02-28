@@ -1,5 +1,6 @@
 package de.ait.homerent.property.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ait.homerent.user.dto.ErrorResponseDto;
 import de.ait.homerent.property.dto.PropertyCreateRequest;
 import de.ait.homerent.property.dto.PropertyDto;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -78,31 +80,43 @@ public class OwnerPropertyController {
         return propertyService.getMyProperties(username);
     }
 
-    @PostMapping(value = "/properties", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/properties", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('OWNER')")
-    @Operation(summary = "Create a new property", description = "Create a new property for the currently authenticated owner with optional photos")
+    @Operation(
+            summary = "Create a new property",
+            description = "Create a new property for the currently authenticated owner with optional photos"
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Property created successfully",
                     content = @Content(schema = @Schema(implementation = PropertyDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data",
-                    content = @Content()),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                    content = @Content()),
-            @ApiResponse(responseCode = "403", description = "Forbidden – requires OWNER role",
-                    content = @Content())
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden – requires OWNER role")
     })
     public PropertyDto createProperty(
             Authentication authentication,
-            @Parameter(description = "Property details (JSON)", required = true,
-                    content = @Content(mediaType = "application/json"))
-            @Valid @RequestPart("property") PropertyCreateRequest request,
+
+            @Parameter(
+                    description = "Property details (JSON)",
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = PropertyCreateRequest.class)
+                    )
+            )
+            @RequestPart("property") String propertyJson,
+
             @Parameter(description = "Optional photo files (images)")
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        String username = authentication.getName();
-        int filesCount = (files != null) ? files.size() : 0;
-        log.info("Creating property for owner: {} with {} files", username, filesCount);
-        return propertyService.createProperty(username, request, files);
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
+    ) throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+        PropertyCreateRequest request =
+                mapper.readValue(propertyJson, PropertyCreateRequest.class);
+
+        return propertyService.createProperty(authentication.getName(), request, files);
     }
+
 
     @DeleteMapping("/properties/{id}")
     @PreAuthorize("hasRole('OWNER') and @propertySecurity.isOwner(#id, authentication)")

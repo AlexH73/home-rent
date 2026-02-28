@@ -1,5 +1,6 @@
 package de.ait.homerent.issue.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ait.homerent.issue.dto.IssueCreateRequest;
 import de.ait.homerent.issue.dto.IssueReportResponse;
 import de.ait.homerent.issue.service.IssueService;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
@@ -38,7 +40,7 @@ public class TenantIssueController {
 
     private final IssueService issueService;
     private final UserRepository userRepository;
-
+/*
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('TENANT')")
     @ResponseStatus(HttpStatus.CREATED)
@@ -57,6 +59,44 @@ public class TenantIssueController {
             Principal principal) {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return issueService.createIssue(request, user);
+    }
+
+ */
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('TENANT')")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create an issue report")
+    public IssueReportResponse createIssue(
+
+            Principal principal,
+
+            @Parameter(
+                    description = "Issue details (JSON)",
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = IssueCreateRequest.class)
+                    )
+            )
+            @RequestPart("issue") String issueJson,
+
+            @Parameter(description = "Optional issue photo")
+            @RequestPart(value = "photo", required = false)
+            MultipartFile photo
+
+    ) throws Exception {
+
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        ObjectMapper mapper = new ObjectMapper();
+        IssueCreateRequest request =
+                mapper.readValue(issueJson, IssueCreateRequest.class);
+
+        request.setPhoto(photo);
+
         return issueService.createIssue(request, user);
     }
 }
