@@ -95,8 +95,8 @@ class BookingOverlapIT extends AbstractIT {
     }
 
     @Test
-    @DisplayName("Tenant cannot create overlapping booking for the same property (REQUESTED blocks)")
-    void overlappingBookingRejected() throws Exception {
+    @DisplayName("Tenant CAN create overlapping REQUESTED bookings")
+    void overlappingRequestedBookingAllowed() throws Exception {
         String firstJson = """
                 {
                   "propertyId": %d,
@@ -123,6 +123,6 @@ class BookingOverlapIT extends AbstractIT {
                         .with(httpBasic("tenant1", "tenant123"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(secondJson))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isCreated());
     }
 }
