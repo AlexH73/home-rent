@@ -14,6 +14,7 @@
 **HomeRent** is a backend service for managing residential property rentals (long-term and short-term).  
 The system provides role-based access for **tenants**, **property owners**, **operators**, and **administrators**.
 
+![HomeRent Swagger UI](/src/main/resources/docks/screenshots/swagger/swagger_1.png)
 ---
 
 ## 🚀 Quick Start (Docker, PostgreSQL + pgAdmin)
