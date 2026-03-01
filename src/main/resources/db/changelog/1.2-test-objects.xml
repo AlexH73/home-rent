@@ -10,8 +10,8 @@
     <!-- REQUESTED, APPROVED, REJECTED, ACTIVE, FINISHED -->
     <!-- ========================================================= -->
 
-    <changeSet id="1.2-1-insert-test-bookings" context="dev,test" author="Tetiana Anufriieva">
-        <comment>Insert sample bookings for testing</comment>
+    <changeSet id="1.2-1-create-test-bookings" context="dev,test" author="Tetiana Anufriieva">
+        <comment>Create sample bookings for testing</comment>
         <!-- Property 1 -->
         <insert tableName="bookings">
             <column name="property_id"
@@ -68,11 +68,19 @@
     <!-- OPEN, IN_PROGRESS, DONE -->
     <!-- ========================================================= -->
 
-    <changeSet id="1.2-2-insert-test-issue-reports" context="dev,test" author="Tetiana Anufriieva">
+    <changeSet id="1.2-2-create-test-issue-reports" context="dev,test" author="Tetiana Anufriieva">
         <comment>Create sample issue reports with correct enum statuses</comment>
         <insert tableName="issue_reports">
             <column name="booking_id"
-                    valueComputed="(SELECT id FROM bookings WHERE status='FINISHED')"/>
+                    valueComputed="(
+                SELECT id FROM bookings
+                WHERE property_id = (
+                    SELECT id FROM properties WHERE title='Cozy Apartment in City Center'
+                )
+                AND start_date='2026-02-17T14:00:00'
+                AND end_date='2026-02-27T11:00:00'
+                AND status='FINISHED'
+            )"/>
             <column name="reported_by" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
             <column name="description" value="Heating system not working properly"/>
             <column name="photo_path" value="uploads/issues/1/heating-problem.jpg"/>
@@ -80,7 +88,15 @@
         </insert>
         <insert tableName="issue_reports">
             <column name="booking_id"
-                    valueComputed="(SELECT id FROM bookings WHERE status='ACTIVE')"/>
+                    valueComputed="(
+                SELECT id FROM bookings
+                WHERE property_id = (
+                    SELECT id FROM properties WHERE title='Modern Studio'
+                )
+                AND start_date='2026-02-26T14:00:00'
+                AND end_date='2026-03-07T11:00:00'
+                AND status='ACTIVE'
+            )"/>
             <column name="reported_by"
                     valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
             <column name="description"
@@ -92,7 +108,15 @@
         </insert>
         <insert tableName="issue_reports">
             <column name="booking_id"
-                    valueComputed="(SELECT id FROM bookings WHERE status='APPROVED')"/>
+                    valueComputed="(
+                SELECT id FROM bookings
+                WHERE property_id = (
+                    SELECT id FROM properties WHERE title='Lake House'
+                )
+                AND start_date='2026-03-11T14:00:00'
+                AND end_date='2026-03-15T11:00:00'
+                AND status='APPROVED'
+            )"/>
             <column name="reported_by" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
             <column name="description" value="Air conditioning not working"/>
             <column name="photo_path" value="uploads/issues/4/ac-problem.jpg"/>
@@ -104,8 +128,8 @@
     <!-- Property Photos -->
     <!-- ========================================================= -->
 
-    <changeSet id="1.2-3-insert-test-property-photos" context="dev,test" author="Tetiana Anufriieva">
-        <comment>Insert sample photos for test properties</comment>
+    <changeSet id="1.2-3-create-test-property-photos" context="dev,test" author="Tetiana Anufriieva">
+        <comment>Create sample photos for test properties</comment>
 
         <!-- Cozy Apartment in City Center -->
         <insert tableName="property_photos">
