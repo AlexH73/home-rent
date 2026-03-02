@@ -151,7 +151,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 | **Database** | H2 (dev/test), PostgreSQL (prod) | 2.0+ / 16+ |
 | **Migrations** | Liquibase | 4.0+ |
 | **Validation** | Bean Validation | 3.0+ |
-| **API Docs** | SpringDoc OpenAPI + Swagger UI | 2.x |
+| **API Docs** | SpringDoc OpenAPI + Swagger UI | 2.5.0 |
 | **Email** | Spring Mail + Thymeleaf | 3.0+ |
 | **Testing** | Spring Boot Test, JUnit 5, MockMvc | 3.5+ |
 | **Utilities** | Lombok | 1.18+ |
@@ -181,24 +181,26 @@ All endpoints are documented via **Swagger UI**:
 | `POST` | `/api/auth/login` | User authentication |
 
 ### Tenant API (ROLE_TENANT)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/tenant/properties/available` | Browse available properties |
-| `GET` | `/api/tenant/properties/{id}` | View property details |
-| `POST` | `/api/tenant/bookings` | Create booking request |
-| `GET` | `/api/tenant/bookings/my` | View my bookings |
-| `POST` | `/api/tenant/bookings/{id}/upload-contract` | Upload rental contract |
-| `POST` | `/api/tenant/issues` | Report an issue |
+| Method | Endpoint                                    | Description                 |
+|--------|---------------------------------------------|-----------------------------|
+| `GET` | `/api/tenant/properties/available`          | Browse available properties |
+| `GET` | `/api/tenant/properties/{id}`               | View property details       |
+| `POST` | `/api/tenant/bookings`                      | Create booking request      |
+| `GET` | `/api/tenant/bookings/{id}`                  | View booking details        |
+| `GET` | `/api/tenant/bookings/my`                   | View my bookings            |
+| `POST` | `/api/tenant/bookings/{id}/upload-contract` | Upload rental contract      |
+| `POST` | `/api/tenant/issues`                        | Report an issue             |
 
 ### Owner API (ROLE_OWNER)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/owner/properties` | Manage my properties |
-| `POST` | `/api/owner/properties` | Add new property |
-| `DELETE` | `/api/owner/properties/{id}` | Delete property |
-| `GET` | `/api/owner/bookings/pending` | View pending bookings |
-| `POST` | `/api/owner/bookings/{id}/approve` | Approve booking |
-| `POST` | `/api/owner/bookings/{id}/reject` | Reject booking |
+| Method   | Endpoint | Description           |
+|----------|----------|-----------------------|
+| `GET`    | `/api/owner/properties` | Manage my properties  |
+| `POST`   | `/api/owner/properties` | Add new property      |
+| `PUT`    | `/api/owner/properties/{id}` | Update property       |
+| `DELETE` | `/api/owner/properties/{id}` | Delete property       |
+| `GET`    | `/api/owner/bookings/pending` | View pending bookings |
+| `POST`   | `/api/owner/bookings/{id}/approve` | Approve booking       |
+| `POST`   | `/api/owner/bookings/{id}/reject` | Reject booking        |
 
 ### Operator API (ROLE_OPERATOR)
 | Method | Endpoint | Description |
@@ -209,14 +211,15 @@ All endpoints are documented via **Swagger UI**:
 | `POST` | `/api/operator/issues/{id}/status` | Update issue status (`status=OPEN|IN_PROGRESS|DONE`) |
 
 ### Admin API (ROLE_ADMIN)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/admin/users` | Manage all users |
-| `POST` | `/api/admin/users` | Create new user |
-| `POST` | `/api/admin/users/{id}/roles` | Modify user roles |
-| `GET` | `/api/admin/properties` | Manage all properties |
-| `POST` | `/api/admin/properties` | Create property |
-| `DELETE` | `/api/admin/properties/{id}` | Delete property |
+| Method   | Endpoint                       | Description                 |
+|----------|--------------------------------|-----------------------------|
+| `GET`    | `/api/admin/users`             | Manage all users            |
+| `POST`   | `/api/admin/users`             | Create new user             |
+| `POST`   | `/api/admin/users/{id}/roles`  | Modify user roles           |
+| `PATCH`  | `/api/admin/users/{id}/status` | Update users enabled status |
+| `GET`    | `/api/admin/properties`        | Manage all properties       |
+| `POST`   | `/api/admin/properties`        | Create property             |
+| `DELETE` | `/api/admin/properties/{id}`   | Delete property             |
 
 ---
 
