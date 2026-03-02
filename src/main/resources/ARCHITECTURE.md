@@ -316,7 +316,7 @@ HomeRent/
 │   │       │       ├── 1.1-insert-reference-data.xml
 │   │       │       ├── 1.2-test-objects.xml
 │   │       │       └── db.changelog-master.xml
-│   │       ├── docks/
+│   │       ├── docs/
 │   │       │   ├── api-screenshots.md
 │   │       │   ├── attachments/
 │   │       │   │   └── HomeRent_API_postman_collection.json

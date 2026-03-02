@@ -8,13 +8,13 @@
 [![H2 Database](https://img.shields.io/badge/H2%20Database-2.0%2B-blue)](https://www.h2database.com/)
 [![Swagger UI](https://img.shields.io/badge/Swagger%20UI-springdoc-green?logo=swagger)](https://swagger.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./src/main/resources/docks/CONTRIBUTING.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./src/main/resources/docs/CONTRIBUTING.md)
 ![Status](https://img.shields.io/badge/Status-🚧%20Under%20Active%20Development-important)
 
 **HomeRent** is a backend service for managing residential property rentals (long-term and short-term).  
 The system provides role-based access for **tenants**, **property owners**, **operators**, and **administrators**.
 
-![HomeRent Swagger UI](/src/main/resources/docks/screenshots/swagger/swagger_1.png)
+![HomeRent Swagger UI](/src/main/resources/docs/screenshots/swagger/swagger_1.png)
 ---
 
 ## 🚀 Quick Start (Docker, PostgreSQL + pgAdmin)
@@ -22,7 +22,7 @@ The system provides role-based access for **tenants**, **property owners**, **op
 ### Prerequisites
 - Docker + Docker Compose
 
-### 1) Configure [environment](/src/main/resources/docks/environment_variables_eng.md)
+### 1) Configure [environment](/src/main/resources/docs/environment_variables_eng.md)
 Create a `.env` file in the project root (next to `docker-compose.yml`).
 
 If you have `.env.example`, use:
@@ -264,7 +264,7 @@ mvn test -Dtest="*IT"
 
 ## 🤝 Contributing
 
-We welcome contributions! See: `./src/main/resources/docks/CONTRIBUTING.md`
+[CONTRIBUTING](./src/main/resources/docs/CONTRIBUTING.md)
 
 ---
 
