@@ -268,9 +268,16 @@ mvn test -Dtest="*IT"
 
 ---
 
-## 🤝 Contributing
+## 👥 Contributors
 
-[CONTRIBUTING](./src/main/resources/docs/CONTRIBUTING.md)
+| Contributor | Focus| GitHub |
+|-------------|------|--------|
+| **AlexH73** | Lead Developer & Architect | [@AlexH73](https://github.com/AlexH73) |
+| **dmitrined** | Backend Developer | [@dmitrined](https://github.com/dmitrined) |
+| **TetianaAnufriieva** | Full Stack Developer | [@TetianaAnufriieva](https://github.com/TetianaAnufriieva) |
+| **Gott-II** | DevOps & Security Specialist | [@Gott-II](https://github.com/Gott-II) |
+
+See: [CONTRIBUTING](./src/main/resources/docs/CONTRIBUTING.md)
 
 ---
 
