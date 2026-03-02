@@ -9,7 +9,6 @@ import de.ait.homerent.contract.repository.RentalContractRepository;
 import de.ait.homerent.mail.EmailService;
 import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.property.repository.PropertyRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +45,16 @@ class BookingFlowIT extends AbstractIT {
 
     @Autowired
     MockMvc mockMvc;
+
     @Autowired
     ObjectMapper objectMapper;
 
     @Autowired
     BookingRepository bookingRepository;
+
     @Autowired
     PropertyRepository propertyRepository;
+
     @Autowired
     RentalContractRepository rentalContractRepository;
 //
@@ -83,8 +85,8 @@ class BookingFlowIT extends AbstractIT {
         String createJson = """
                 {
                   "propertyId": %d,
-                  "startDate": "2026-03-01",
-                  "endDate": "2026-03-03"
+                  "startDate": "2026-03-10",
+                  "endDate": "2026-03-13"
                 }
                 """.formatted(propertyId);
 
