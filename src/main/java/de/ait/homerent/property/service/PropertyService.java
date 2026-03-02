@@ -1,5 +1,8 @@
 package de.ait.homerent.property.service;
 
+import de.ait.homerent.contract.service.RentalContractService;
+import de.ait.homerent.issue.model.IssueReport;
+import de.ait.homerent.issue.repository.IssueReportRepository;
 import de.ait.homerent.property.dto.PropertyCreateRequest;
 import de.ait.homerent.property.dto.PropertyDto;
 import de.ait.homerent.property.model.Property;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import de.ait.homerent.utils.FileStorageUtilService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,8 +44,10 @@ public class PropertyService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final PropertyPhotoRepository propertyPhotoRepository;
-    private final PropertyFileStorageService propertyFileStorageService;
+    private final FileStorageUtilService fileStorageService;
     private final CurrentUserHelper currentUserHelper;
+    private final IssueReportRepository issueReportRepository;
+    private final RentalContractService rentalContractService;
 
     @Transactional(readOnly = true)
     public List<PropertyDto> findAll() {
@@ -209,7 +215,7 @@ public class PropertyService {
     private void savePropertyPhotos(Property property, List<MultipartFile> files) {
         List<PropertyPhoto> photos = new ArrayList<>();
         for (MultipartFile file : files) {
-            String path = propertyFileStorageService.storeFile(property.getId(), file);
+            String path = fileStorageService.storePropertyFile(property.getId(), file);
             PropertyPhoto photo = PropertyPhoto.builder()
                     .filePath(path)
                     .fileName(file.getOriginalFilename())
@@ -222,11 +228,26 @@ public class PropertyService {
     }
 
     private void deletePropertyFiles(Property property) {
+        //Delete photo property
         if (property.getPhotos() != null && !property.getPhotos().isEmpty()) {
             for (PropertyPhoto photo : property.getPhotos()) {
-                propertyFileStorageService.deleteFile(photo.getFilePath());
+                fileStorageService.deleteFile(photo.getFilePath());
+            }
+            property.getPhotos().clear();
+        }
+        //Delete photos of all issues of this property
+        List<IssueReport> issues =
+                issueReportRepository.findByBookingPropertyId(property.getId());
+
+        for (IssueReport issue : issues) {
+            if (issue.getPhotoPath() != null &&
+                    !"no-photo".equals(issue.getPhotoPath())) {
+
+                fileStorageService.deleteFile(issue.getPhotoPath());
             }
         }
+        //Delete all contracts for this property
+        rentalContractService.deleteByPropertyId(property.getId());
     }
 
     private PropertyDto mapToDto(Property property) {

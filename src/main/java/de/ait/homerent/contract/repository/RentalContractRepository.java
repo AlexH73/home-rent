@@ -2,6 +2,8 @@ package de.ait.homerent.contract.repository;
 import de.ait.homerent.contract.model.RentalContract;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -15,4 +17,5 @@ import java.util.Optional;
 public interface RentalContractRepository extends JpaRepository<RentalContract, Long> {
 
     Optional<RentalContract> findByBookingId(Long bookingId);
+    List<RentalContract> findByBookingPropertyId(Long propertyId);
 }

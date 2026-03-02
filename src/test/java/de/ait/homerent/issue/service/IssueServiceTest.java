@@ -1,6 +1,7 @@
 package de.ait.homerent.issue.service;
 
 import de.ait.homerent.booking.model.Booking;
+import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.contract.service.FileStorageService;
 import de.ait.homerent.issue.dto.IssueCreateRequest;
@@ -8,6 +9,7 @@ import de.ait.homerent.issue.dto.IssueReportResponse;
 import de.ait.homerent.issue.model.IssueReport;
 import de.ait.homerent.issue.model.IssueStatus;
 import de.ait.homerent.issue.repository.IssueReportRepository;
+import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.user.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -101,6 +103,13 @@ class IssueServiceTest {
         Booking booking = new Booking();
         booking.setId(1L);
         booking.setTenant(tenant);
+        booking.setStatus(BookingStatus.APPROVED);
+
+        // Add a property with the AVAILABLE status
+        var property = new de.ait.homerent.property.model.Property();
+        property.setId(100L);
+        property.setStatus(PropertyStatus.AVAILABLE);
+        booking.setProperty(property);
 
         IssueCreateRequest req = new IssueCreateRequest();
         req.setBookingId(1L);
@@ -130,6 +139,13 @@ class IssueServiceTest {
         Booking booking = new Booking();
         booking.setId(1L);
         booking.setTenant(tenant);
+        booking.setStatus(BookingStatus.APPROVED);
+
+        // Add a property with the AVAILABLE status
+        var property = new de.ait.homerent.property.model.Property();
+        property.setId(100L);
+        property.setStatus(PropertyStatus.AVAILABLE);
+        booking.setProperty(property);
 
         MultipartFile photo = mock(MultipartFile.class);
         when(photo.isEmpty()).thenReturn(false);
@@ -193,5 +209,58 @@ class IssueServiceTest {
 
         assertThat(issue.getStatus()).isEqualTo(IssueStatus.DONE);
         verify(issueReportRepository).save(issue);
+    }
+
+    @Test
+    @DisplayName("createIssue(): when booking status is not APPROVED or ACTIVE, throws 400 BAD_REQUEST")
+    void createIssue_whenBookingStatusInvalid_throws400() {
+        User tenant = new User();
+        tenant.setId(10L);
+        tenant.setUsername("t1");
+
+        Booking booking = new Booking();
+        booking.setId(1L);
+        booking.setTenant(tenant);
+        booking.setStatus(BookingStatus.REQUESTED); // Not APPROVED/ACTIVE
+
+        IssueCreateRequest req = new IssueCreateRequest();
+        req.setBookingId(1L);
+        req.setDescription("broken");
+
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+
+        assertThatThrownBy(() -> issueService.createIssue(req, tenant))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("400")
+                .hasMessageContaining("booking status must be APPROVED or ACTIVE");
+    }
+
+    @Test
+    @DisplayName("createIssue(): when property status is not AVAILABLE, throws 400 BAD_REQUEST")
+    void createIssue_whenPropertyNotAvailable_throws400() {
+        User tenant = new User();
+        tenant.setId(10L);
+        tenant.setUsername("t1");
+
+        Booking booking = new Booking();
+        booking.setId(1L);
+        booking.setTenant(tenant);
+
+        // property with non-AVAILABLE status
+        booking.setProperty(new de.ait.homerent.property.model.Property());
+        booking.getProperty().setStatus(PropertyStatus.BOOKED);
+
+        booking.setStatus(BookingStatus.APPROVED);
+
+        IssueCreateRequest req = new IssueCreateRequest();
+        req.setBookingId(1L);
+        req.setDescription("broken");
+
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+
+        assertThatThrownBy(() -> issueService.createIssue(req, tenant))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("400")
+                .hasMessageContaining("property must be AVAILABLE");
     }
 }
