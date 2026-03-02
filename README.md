@@ -14,7 +14,7 @@
 **HomeRent** is a backend service for managing residential property rentals (long-term and short-term).  
 The system provides role-based access for **tenants**, **property owners**, **operators**, and **administrators**.
 
-![HomeRent Swagger UI](/src/main/resources/docs/screenshots/swagger/swagger_1.png)
+![HomeRent Swagger UI](./src/main/resources/docs/screenshots/swagger/swagger_1.png)
 ---
 
 ## 🚀 Quick Start (Docker, PostgreSQL + pgAdmin)
@@ -22,7 +22,7 @@ The system provides role-based access for **tenants**, **property owners**, **op
 ### Prerequisites
 - Docker + Docker Compose
 
-### 1) Configure [environment](/src/main/resources/docs/environment_variables_eng.md)
+### 1) Configure [environment](./src/main/resources/docs/environment_variables_eng.md)
 Create a `.env` file in the project root (next to `docker-compose.yml`).
 
 If you have `.env.example`, use:
@@ -86,6 +86,7 @@ Register a new server in pgAdmin:
 ### Prerequisites
 - Java 21+
 - Maven 3.8+
+- - Configure environment variables in IntelliJ: [EN](./src/main/resources/docs/environment_variables_eng.md) | [RU](./src/main/resources/docs/environment_variables.md)
 
 ```bash
 git clone https://github.com/AlexH73/home-rent.git
@@ -158,10 +159,12 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 ---
 
-## 🏗 Architecture
+## 📚 Documentation
 
-For a detailed package structure and architecture overview see:
-- `src/main/resources/`[ARCHITECTURE.md](src/main/resources/ARCHITECTURE.md)
+- Architecture doc: [ARCHITECTURE](src/main/resources/ARCHITECTURE.md)
+- Environment variables (IntelliJ): [EN](src/main/resources/docs/environment_variables_eng.md) | [RU](src/main/resources/docs/environment_variables.md)
+- API screenshots: [EN](src/main/resources/docs/api-screenshots-eng.md) | [RU](src/main/resources/docs/api-screenshots.md)
+- Contributing guidelines: [CONTRIBUTING](src/main/resources/docs/CONTRIBUTING.md)
 
 ---
 
