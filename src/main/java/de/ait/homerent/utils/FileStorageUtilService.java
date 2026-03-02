@@ -67,18 +67,34 @@ public class FileStorageUtilService {
         }
     }
 
-    public void deleteFile(String filePath) {
+    // General file deletion method
+    public void deleteFile(String path) {
+        if (path == null || path.isBlank()) return;
+
         try {
-            Path path = Paths.get(filePath);
-            boolean deleted = Files.deleteIfExists(path);
-            if (deleted) {
-                log.info("Deleted file: {}", filePath);
-            } else {
-                log.warn("File not found for deletion: {}", filePath);
+            Path filePath = Paths.get(path);
+
+            if (!Files.exists(filePath)) return;
+
+            Files.delete(filePath);
+            log.info("Deleted file {}", path);
+
+            // delete empty folders up
+            Path parent = filePath.getParent();
+
+            while (parent != null && isDirectoryEmpty(parent)) {
+                Files.delete(parent);
+                parent = parent.getParent();
             }
+
         } catch (IOException e) {
-            log.error("Error deleting file: {}", filePath, e);
-            throw new RuntimeException("Could not delete file", e);
+            log.error("Error deleting file {}", path, e);
+        }
+    }
+
+    private boolean isDirectoryEmpty(Path directory) throws IOException {
+        try (var stream = Files.newDirectoryStream(directory)) {
+            return !stream.iterator().hasNext();
         }
     }
 
