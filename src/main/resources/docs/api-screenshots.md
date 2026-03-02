@@ -14,17 +14,18 @@
 *Пример развёрнутого эндпоинта для создания бронирования. Видно описание, параметры и модель запроса.*
 
 ### Owner API
-![Swagger Owner](../screenshots/swagger/swagger-owner.png)
+![Swagger Owner](./screenshots/swagger/swagger-owner.png)
 
 *Эндпоинты управления объектами недвижимости и подтверждения бронирований.*
 
 ### Operator API
-![Swagger Operator](../screenshots/swagger/swagger-operator.png)
+![Swagger Operator](./screenshots/swagger/swagger-operator.png)
 
 *Просмотр активных аренд и заявок на поломки.*
 
 ### Admin API
-![Swagger Admin](../screenshots/swagger/swagger-admin.png)
+![Swagger Admin](./screenshots/swagger/swagger-admin-users.png)
+![Swagger Admin](./screenshots/swagger/swagger-admin-properties.png)
 
 *Управление пользователями и всеми объектами.*
 
@@ -78,7 +79,7 @@
 *POST /api/tenant/issues с описанием проблемы и ответом.*
 
 ### Подтверждение бронирования (Owner)
-![Postman Approve Booking](../screenshots/postman/postman-approve-booking.png)
+![Postman Approve Booking](./screenshots/postman/postman-approve-booking.png)
 
 *Владелец подтверждает бронирование через POST /api/owner/bookings/{id}/approve.*
 

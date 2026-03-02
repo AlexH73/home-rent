@@ -115,8 +115,8 @@ class TenantBookingIT extends AbstractIT {
                 String jsonRequest = """
                                 {
                                   "propertyId": %d,
-                                  "startDate": "2026-03-01",
-                                  "endDate": "2026-03-05"
+                                  "startDate": "2026-03-10",
+                                  "endDate": "2026-03-15"
                                 }
                                 """.formatted(propertyId);
 
@@ -126,7 +126,7 @@ class TenantBookingIT extends AbstractIT {
                                 .content(jsonRequest))
                                 .andExpect(status().isCreated())
                                 .andExpect(jsonPath("$.status").value("REQUESTED"))
-                                .andExpect(jsonPath("$.totalPrice").value(500))
+                                .andExpect(jsonPath("$.totalPrice").value(600))
                                 .andExpect(jsonPath("$.propertyTitle").value("Integration Test Property"));
         }
 
@@ -208,8 +208,8 @@ class TenantBookingIT extends AbstractIT {
                 String jsonRequest = """
                                 {
                                   "propertyId": %d,
-                                  "startDate": "2026-03-01",
-                                  "endDate": "2026-03-05"
+                                  "startDate": "2026-03-10",
+                                  "endDate": "2026-03-15"
                                 }
                                 """.formatted(propertyId);
 
