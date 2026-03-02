@@ -1,5 +1,7 @@
 package de.ait.homerent.property.service;
 
+import de.ait.homerent.contract.service.RentalContractService;
+import de.ait.homerent.issue.repository.IssueReportRepository;
 import de.ait.homerent.property.dto.PropertyCreateRequest;
 import de.ait.homerent.property.dto.PropertyDto;
 import de.ait.homerent.property.model.Property;
@@ -12,6 +14,7 @@ import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
 import de.ait.homerent.utils.CurrentUserHelper;
+import de.ait.homerent.utils.FileStorageUtilService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +25,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -44,8 +48,10 @@ class PropertyServiceTest {
     @Mock PropertyRepository propertyRepository;
     @Mock UserRepository userRepository;
     @Mock PropertyPhotoRepository propertyPhotoRepository;
-    @Mock PropertyFileStorageService propertyFileStorageService;
+    @Mock FileStorageUtilService fileStorageUtilService;
     @Mock CurrentUserHelper currentUserHelper;
+    @Mock IssueReportRepository issueReportRepository;
+    @Mock RentalContractService rentalContractService;
 
     @InjectMocks PropertyService propertyService;
 
@@ -146,7 +152,7 @@ class PropertyServiceTest {
 
         assertThat(dto.getId()).isEqualTo(77L);
         verify(propertyPhotoRepository, never()).saveAll(any());
-        verify(propertyFileStorageService, never()).storeFile(anyLong(), any());
+        verify(fileStorageUtilService, never()).storePropertyFile(anyLong(), any());
     }
 
     @Test
@@ -172,13 +178,13 @@ class PropertyServiceTest {
             return p;
         });
 
-        when(propertyFileStorageService.storeFile(eq(77L), any())).thenReturn("path-1", "path-2");
+        when(fileStorageUtilService.storePropertyFile(eq(77L), any())).thenReturn("path-1", "path-2");
 
         PropertyDto dto = propertyService.createProperty("owner1", req, List.of(f1, f2));
 
         assertThat(dto.getId()).isEqualTo(77L);
 
-        verify(propertyFileStorageService, times(2)).storeFile(eq(77L), any());
+        verify(fileStorageUtilService, times(2)).storePropertyFile(eq(77L), any());
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         ArgumentCaptor<Iterable<PropertyPhoto>> captor = (ArgumentCaptor) ArgumentCaptor.forClass(Iterable.class);
@@ -242,14 +248,15 @@ class PropertyServiceTest {
         property.setId(1L);
         property.setOwner(owner);
         property.setStatus(PropertyStatus.AVAILABLE);
-        property.setPhotos(List.of(photo1, photo2));
+        List<PropertyPhoto> photos = new ArrayList<>(List.of(photo1, photo2));
+        property.setPhotos(photos);
 
         when(propertyRepository.findById(1L)).thenReturn(Optional.of(property));
 
         propertyService.deleteById(1L);
 
-        verify(propertyFileStorageService).deleteFile("p1");
-        verify(propertyFileStorageService).deleteFile("p2");
+        verify(fileStorageUtilService).deleteFile("p1");
+        verify(fileStorageUtilService).deleteFile("p2");
         verify(propertyRepository).delete(property);
     }
 
@@ -314,7 +321,7 @@ class PropertyServiceTest {
 
         assertThat(result).isTrue();
         verify(propertyRepository).delete(p);
-        verifyNoInteractions(propertyFileStorageService);
+        verifyNoInteractions(fileStorageUtilService);
     }
 
     @Test

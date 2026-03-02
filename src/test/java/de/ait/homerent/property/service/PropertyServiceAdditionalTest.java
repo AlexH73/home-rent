@@ -1,5 +1,8 @@
 package de.ait.homerent.property.service;
 
+import de.ait.homerent.contract.repository.RentalContractRepository;
+import de.ait.homerent.contract.service.RentalContractService;
+import de.ait.homerent.issue.repository.IssueReportRepository;
 import de.ait.homerent.property.dto.PropertyDto;
 import de.ait.homerent.property.model.Property;
 import de.ait.homerent.property.model.PropertyPhoto;
@@ -11,6 +14,7 @@ import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
 import de.ait.homerent.utils.CurrentUserHelper;
+import de.ait.homerent.utils.FileStorageUtilService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -42,8 +47,10 @@ class PropertyServiceAdditionalTest {
     @Mock PropertyRepository propertyRepository;
     @Mock UserRepository userRepository;
     @Mock PropertyPhotoRepository propertyPhotoRepository;
-    @Mock PropertyFileStorageService propertyFileStorageService;
+    @Mock FileStorageUtilService fileStorageUtilService;
     @Mock CurrentUserHelper currentUserHelper;
+    @Mock IssueReportRepository issueReportRepository;
+    @Mock RentalContractService rentalContractService;
 
     @InjectMocks PropertyService propertyService;
 
@@ -138,14 +145,15 @@ class PropertyServiceAdditionalTest {
         PropertyPhoto ph2 = PropertyPhoto.builder().filePath("p2").build();
 
         Property p = property(1L, owner(10L));
-        p.setPhotos(List.of(ph1, ph2));
+        List<PropertyPhoto> photos = new ArrayList<>(List.of(ph1, ph2));
+        p.setPhotos(photos);
 
         when(propertyRepository.findById(1L)).thenReturn(Optional.of(p));
 
         propertyService.deleteById(1L);
 
-        verify(propertyFileStorageService).deleteFile("p1");
-        verify(propertyFileStorageService).deleteFile("p2");
+        verify(fileStorageUtilService).deleteFile("p1");
+        verify(fileStorageUtilService).deleteFile("p2");
         verify(propertyRepository).delete(p);
     }
 

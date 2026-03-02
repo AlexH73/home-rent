@@ -11,62 +11,55 @@
     <!-- ========================================================= -->
 
     <changeSet id="1.2-1-create-test-bookings" context="dev,test" author="Tetiana Anufriieva">
-        <comment>Create sample bookings with correct enum statuses</comment>
-
-        <!-- REQUESTED -->
+        <comment>Create sample bookings for testing</comment>
+        <!-- Property 1 -->
         <insert tableName="bookings">
             <column name="property_id"
                     valueComputed="(SELECT id FROM properties WHERE title='Cozy Apartment in City Center')"/>
-            <column name="tenant_id"
-                    valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
-            <column name="start_date" valueDate="2026-02-15T14:00:00"/>
-            <column name="end_date" valueDate="2026-02-20T12:00:00"/>
-            <column name="status" value="REQUESTED"/>
-            <column name="total_price" value="750000"/>
-        </insert>
-
-        <!-- APPROVED -->
-        <insert tableName="bookings">
-            <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Lake House')"/>
             <column name="tenant_id" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
-            <column name="start_date" valueDate="2026-03-05T14:00:00"/>
-            <column name="end_date" valueDate="2026-03-10T12:00:00"/>
-            <column name="status" value="APPROVED"/>
-            <column name="total_price" value="2000000"/>
-        </insert>
-
-        <!-- REJECTED -->
-        <insert tableName="bookings">
-            <column name="property_id"
-                    valueComputed="(SELECT id FROM properties WHERE title='Cozy Apartment in City Center')"/>
-            <column name="tenant_id"
-                    valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
-            <column name="start_date" valueDate="2026-04-01T14:00:00"/>
-            <column name="end_date" valueDate="2026-04-05T12:00:00"/>
-            <column name="status" value="REJECTED"/>
-            <column name="total_price" value="375000"/>
-        </insert>
-
-        <!-- FINISHED -->
-        <insert tableName="bookings">
-            <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Lake House')"/>
-            <column name="tenant_id" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
-            <column name="start_date" valueDate="2026-01-10T14:00:00"/>
-            <column name="end_date" valueDate="2026-01-15T12:00:00"/>
+            <column name="start_date" valueDate="2026-02-17T14:00:00"/>
+            <column name="end_date" valueDate="2026-02-27T11:00:00"/>
             <column name="status" value="FINISHED"/>
-            <column name="total_price" value="2000000"/>
+            <column name="total_price" value="1650000"/>
         </insert>
 
-        <!-- ACTIVE -->
         <insert tableName="bookings">
             <column name="property_id"
                     valueComputed="(SELECT id FROM properties WHERE title='Cozy Apartment in City Center')"/>
-            <column name="tenant_id"
-                    valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
-            <column name="start_date" valueDate="2026-02-01T14:00:00"/>
-            <column name="end_date" valueDate="2026-02-28T12:00:00"/>
+            <column name="tenant_id" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
+            <column name="start_date" valueDate="2026-02-28T14:00:00"/>
+            <column name="end_date" valueDate="2026-03-07T11:00:00"/>
+            <column name="status" value="REQUESTED"/>
+            <column name="total_price" value="1350000"/>
+        </insert>
+
+        <!-- Property 2 -->
+        <insert tableName="bookings">
+            <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Lake House')"/>
+            <column name="tenant_id" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
+            <column name="start_date" valueDate="2026-02-05T14:00:00"/>
+            <column name="end_date" valueDate="2026-02-10T11:00:00"/>
+            <column name="status" value="REJECTED"/>
+            <column name="total_price" value="2000000"/>
+        </insert>
+
+        <insert tableName="bookings">
+            <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Lake House')"/>
+            <column name="tenant_id" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
+            <column name="start_date" valueDate="2026-03-11T14:00:00"/>
+            <column name="end_date" valueDate="2026-03-15T11:00:00"/>
+            <column name="status" value="APPROVED"/>
+            <column name="total_price" value="1600000"/>
+        </insert>
+
+        <!-- Property 3 -->
+        <insert tableName="bookings">
+            <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Modern Studio')"/>
+            <column name="tenant_id" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
+            <column name="start_date" valueDate="2026-02-26T14:00:00"/>
+            <column name="end_date" valueDate="2026-03-07T11:00:00"/>
             <column name="status" value="ACTIVE"/>
-            <column name="total_price" value="4050000"/>
+            <column name="total_price" value="1800000"/>
         </insert>
     </changeSet>
 
@@ -77,32 +70,57 @@
 
     <changeSet id="1.2-2-create-test-issue-reports" context="dev,test" author="Tetiana Anufriieva">
         <comment>Create sample issue reports with correct enum statuses</comment>
-
         <insert tableName="issue_reports">
             <column name="booking_id"
-                    valueComputed="(SELECT id FROM bookings WHERE property_id=(SELECT id FROM properties WHERE title='Lake House') AND status='APPROVED')"/>
+                    valueComputed="(
+                SELECT id FROM bookings
+                WHERE property_id = (
+                    SELECT id FROM properties WHERE title='Cozy Apartment in City Center'
+                )
+                AND start_date='2026-02-17T14:00:00'
+                AND end_date='2026-02-27T11:00:00'
+                AND status='FINISHED'
+            )"/>
+            <column name="reported_by" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
+            <column name="description" value="Heating system not working properly"/>
+            <column name="photo_path" value="uploads/issues/1/heating-problem.jpg"/>
+            <column name="status" value="DONE"/>
+        </insert>
+        <insert tableName="issue_reports">
+            <column name="booking_id"
+                    valueComputed="(
+                SELECT id FROM bookings
+                WHERE property_id = (
+                    SELECT id FROM properties WHERE title='Modern Studio'
+                )
+                AND start_date='2026-02-26T14:00:00'
+                AND end_date='2026-03-07T11:00:00'
+                AND status='ACTIVE'
+            )"/>
+            <column name="reported_by"
+                    valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
+            <column name="description"
+                    value="Heating system not working properly"/>
+            <column name="photo_path"
+                    value="uploads/issues/3/heating-problem.jpg"/>
+            <column name="status"
+                    value="IN_PROGRESS"/>
+        </insert>
+        <insert tableName="issue_reports">
+            <column name="booking_id"
+                    valueComputed="(
+                SELECT id FROM bookings
+                WHERE property_id = (
+                    SELECT id FROM properties WHERE title='Lake House'
+                )
+                AND start_date='2026-03-11T14:00:00'
+                AND end_date='2026-03-15T11:00:00'
+                AND status='APPROVED'
+            )"/>
             <column name="reported_by" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
             <column name="description" value="Air conditioning not working"/>
-            <column name="photo_path" value="issues/ac_broken.jpg"/>
+            <column name="photo_path" value="uploads/issues/4/ac-problem.jpg"/>
             <column name="status" value="OPEN"/>
-        </insert>
-
-        <insert tableName="issue_reports">
-            <column name="booking_id"
-                    valueComputed="(SELECT id FROM bookings WHERE property_id=(SELECT id FROM properties WHERE title='Cozy Apartment in City Center') AND status='ACTIVE')"/>
-            <column name="reported_by" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
-            <column name="description" value="Leaking faucet in kitchen"/>
-            <column name="photo_path" value="issues/faucet.jpg"/>
-            <column name="status" value="IN_PROGRESS"/>
-        </insert>
-
-        <insert tableName="issue_reports">
-            <column name="booking_id"
-                    valueComputed="(SELECT id FROM bookings WHERE property_id=(SELECT id FROM properties WHERE title='Lake House') AND status='FINISHED')"/>
-            <column name="reported_by" valueComputed="(SELECT id FROM users WHERE username='tenant1')"/>
-            <column name="description" value="Heater replaced"/>
-            <column name="photo_path" value="issues/heater.jpg"/>
-            <column name="status" value="DONE"/>
         </insert>
     </changeSet>
 
@@ -111,32 +129,44 @@
     <!-- ========================================================= -->
 
     <changeSet id="1.2-3-create-test-property-photos" context="dev,test" author="Tetiana Anufriieva">
-        <comment>Add sample photos for properties</comment>
+        <comment>Create sample photos for test properties</comment>
 
+        <!-- Cozy Apartment in City Center -->
         <insert tableName="property_photos">
             <column name="property_id"
                     valueComputed="(SELECT id FROM properties WHERE title='Cozy Apartment in City Center')"/>
-            <column name="file_path" value="photos/property1_living.jpg"/>
-            <column name="file_name" value="living.jpg"/>
+            <column name="file_path" value="uploads/properties/1/cozy-apartment-1.jpg"/>
+            <column name="file_name" value="cozy-apartment-1.jpg"/>
         </insert>
-
         <insert tableName="property_photos">
             <column name="property_id"
                     valueComputed="(SELECT id FROM properties WHERE title='Cozy Apartment in City Center')"/>
-            <column name="file_path" value="photos/property1_bedroom.jpg"/>
-            <column name="file_name" value="bedroom.jpg"/>
+            <column name="file_path" value="uploads/properties/1/cozy-apartment-2.jpg"/>
+            <column name="file_name" value="cozy-apartment-2.jpg"/>
         </insert>
 
+        <!-- Lake House -->
         <insert tableName="property_photos">
             <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Lake House')"/>
-            <column name="file_path" value="photos/property2_living.jpg"/>
-            <column name="file_name" value="living.jpg"/>
+            <column name="file_path" value="uploads/properties/2/lake-house-1.jpg"/>
+            <column name="file_name" value="lake-house-1.jpg"/>
+        </insert>
+        <insert tableName="property_photos">
+            <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Lake House')"/>
+            <column name="file_path" value="uploads/properties/2/lake-house-2.jpg"/>
+            <column name="file_name" value="lake-house-2.jpg"/>
         </insert>
 
+        <!-- Modern Studio -->
         <insert tableName="property_photos">
-            <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Lake House')"/>
-            <column name="file_path" value="photos/property2_view.jpg"/>
-            <column name="file_name" value="view.jpg"/>
+            <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Modern Studio')"/>
+            <column name="file_path" value="uploads/properties/3/modern-studio-1.jpg"/>
+            <column name="file_name" value="modern-studio-1.jpg"/>
+        </insert>
+        <insert tableName="property_photos">
+            <column name="property_id" valueComputed="(SELECT id FROM properties WHERE title='Modern Studio')"/>
+            <column name="file_path" value="uploads/properties/3/modern-studio-2.jpg"/>
+            <column name="file_name" value="modern-studio-2.jpg"/>
         </insert>
     </changeSet>
 
@@ -147,23 +177,25 @@
 
     <changeSet id="1.2-4-create-test-rental-contracts" context="dev,test" author="Tetiana Anufriieva">
         <comment>Add sample rental contracts</comment>
-
         <insert tableName="rental_contracts">
             <column name="booking_id"
-                    valueComputed="(SELECT id FROM bookings WHERE property_id=(SELECT id FROM properties WHERE title='Lake House') AND status='APPROVED')"/>
-            <column name="file_path" value="contracts/booking_2.pdf"/>
+                    valueComputed="(SELECT id FROM bookings WHERE status='FINISHED')"/>
+            <column name="file_path"
+                    value="uploads/rental-contracts/1/cozy-apartment-contract.pdf"/>
         </insert>
 
         <insert tableName="rental_contracts">
             <column name="booking_id"
-                    valueComputed="(SELECT id FROM bookings WHERE property_id=(SELECT id FROM properties WHERE title='Lake House') AND status='FINISHED')"/>
-            <column name="file_path" value="contracts/booking_4.pdf"/>
+                    valueComputed="(SELECT id FROM bookings WHERE status='ACTIVE')"/>
+            <column name="file_path"
+                    value="uploads/rental-contracts/5/modern-studio-contract.pdf"/>
         </insert>
 
         <insert tableName="rental_contracts">
             <column name="booking_id"
-                    valueComputed="(SELECT id FROM bookings WHERE property_id=(SELECT id FROM properties WHERE title='Cozy Apartment in City Center') AND status='ACTIVE')"/>
-            <column name="file_path" value="contracts/booking_5.pdf"/>
+                    valueComputed="(SELECT id FROM bookings WHERE status='APPROVED')"/>
+            <column name="file_path"
+                    value="uploads/rental-contracts/4/lake-house-contract.pdf"/>
         </insert>
     </changeSet>
 
