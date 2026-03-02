@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ----------------------------------------------------------------------------
@@ -81,5 +82,18 @@ public class RentalContractService {
             log.error("Failed to send contract uploaded email for booking {}", booking.getId(), e);
 
         }
+    }
+
+    @Transactional
+    public void deleteByPropertyId(Long propertyId) {
+
+        List<RentalContract> contracts =
+                rentalContractRepository.findByBookingPropertyId(propertyId);
+
+        for (RentalContract contract : contracts) {
+            fileStorageService.deleteFile(contract.getFilePath());
+        }
+
+        rentalContractRepository.deleteAll(contracts);
     }
 }
