@@ -15,7 +15,7 @@
 
     <groupId>de.ait.homerent</groupId>
     <artifactId>homerent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>v1.0.0</version>
     <name>HomeRent</name>
     <description>Backend service for housing rental system</description>
 
