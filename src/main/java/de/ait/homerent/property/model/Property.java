@@ -70,7 +70,7 @@ public class Property {
             mappedBy = "property",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<PropertyPhoto> photos;
 

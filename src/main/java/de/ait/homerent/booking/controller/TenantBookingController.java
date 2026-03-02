@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -97,7 +98,10 @@ public class TenantBookingController {
         return bookingService.getBookingById(id, user);
     }
 
-    @PostMapping("/{id}/upload-contract")
+    @PostMapping(
+            value = "/{id}/upload-contract",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     @PreAuthorize("hasRole('TENANT') and @bookingSecurity.isOwner(#id, authentication)")
     @Operation(summary = "Upload contract", description = "Allows the tenant to upload a signed rental contract (PDF) for a specific booking")
     @ApiResponses({
@@ -111,7 +115,7 @@ public class TenantBookingController {
             @Parameter(description = "Booking ID", example = "1", required = true)
             @PathVariable Long id,
             @Parameter(description = "PDF file of the signed contract", required = true,
-                    content = @Content(mediaType = "multipart/form-data"))
+                    content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE))
             @RequestParam("file") MultipartFile file,
             Authentication authentication) {
         User user = getUser(authentication);

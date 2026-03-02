@@ -1,6 +1,7 @@
 package de.ait.homerent.issue.service;
 
 import de.ait.homerent.booking.model.Booking;
+import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.contract.service.FileStorageService;
 import de.ait.homerent.issue.dto.IssueCreateRequest;
@@ -8,6 +9,8 @@ import de.ait.homerent.issue.dto.IssueReportResponse;
 import de.ait.homerent.issue.model.IssueReport;
 import de.ait.homerent.issue.model.IssueStatus;
 import de.ait.homerent.issue.repository.IssueReportRepository;
+import de.ait.homerent.property.model.Property;
+import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +45,21 @@ public class IssueService {
         Booking booking = bookingRepository.findById(request.getBookingId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
 
+        // Check that the user is the renter of this booking
         if (!booking.getTenant().getId().equals(tenant.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only report issues for your own bookings");
+        }
+
+        // Checking the booking status
+        if (!(booking.getStatus() == BookingStatus.APPROVED || booking.getStatus() == BookingStatus.ACTIVE)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Cannot create issue: booking status must be APPROVED or ACTIVE");
+        }
+
+        // Checking the property status
+        if (booking.getProperty() == null || booking.getProperty().getStatus() != PropertyStatus.AVAILABLE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Cannot create issue: property must be AVAILABLE");
         }
 
         String photoPath = "no-photo";
