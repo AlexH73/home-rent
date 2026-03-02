@@ -1,94 +1,94 @@
-# API Documentation – Swagger and Postman Screenshots
+# Документация API – Скриншоты Swagger и Postman
 
 ## Swagger UI
 ![Swagger UI](./screenshots/swagger/swagger_01.png)
 
-### Overview
+### Общий вид
 ![Swagger Overview](./screenshots/swagger/swagger-overview.png)
 
-*The screenshot shows all endpoint groups: public, auth, tenant, owner, operator, admin.*
+*На скриншоте показаны все группы эндпоинтов: public, auth, tenant, owner, operator, admin.*
 
 ### Tenant API
 ![Swagger Tenant](./screenshots/swagger/swagger-tenant.png)
 
-*Example of an expanded endpoint for creating a booking. Description, parameters, and request model are visible.*
+*Пример развёрнутого эндпоинта для создания бронирования. Видно описание, параметры и модель запроса.*
 
 ### Owner API
 ![Swagger Owner](./screenshots/swagger/swagger-owner.png)
 
-*Endpoints for managing properties and confirming bookings.*
+*Эндпоинты управления объектами недвижимости и подтверждения бронирований.*
 
 ### Operator API
 ![Swagger Operator](./screenshots/swagger/swagger-operator.png)
 
-*View active rentals and issue requests.*
+*Просмотр активных аренд и заявок на поломки.*
 
 ### Admin API
 ![Swagger Admin](./screenshots/swagger/swagger-admin-users.png)
 ![Swagger Admin](./screenshots/swagger/swagger-admin-properties.png)
 
-*User management and management of all properties.*
+*Управление пользователями и всеми объектами.*
 
-## Postman Collection
+## Postman коллекция
 
-### Collection Structure
+### Структура коллекции
 ![Postman Collection](./screenshots/postman/postman-collection-overview.png)
 
-*The collection is organized into folders by role: Auth, Public, Tenant, Owner, Operator, Admin.*
+*Коллекция разбита на папки по ролям: Auth, Public, Tenant, Owner, Operator, Admin.*
 
 [Download Postman Collection](./attachments/HomeRent_API_postman_collection.json)
 
-### Registration Request Example
+### Пример запроса регистрации
 ![Postman Register](./screenshots/postman/postman-register.png)
 
-*POST request to /api/auth/register with body and received response.*
+*Запрос POST /api/auth/register с телом и полученным ответом.*
 
-### Login Request Example
+### Пример запроса авторизации
 ![Postman Login](./screenshots/postman/postman-login.png)
 
-*POST request to /api/auth/login with body and received response.*
+*Запрос POST /api/auth/login с телом и полученным ответом.*
 
-### Get list of available properties by parameters (Tenant)
+### Получение списка available недвижимостей по параметрам (Tenant)
 ![Postman Available Properties](./screenshots/postman/postman-available-properties.png)
 
-*GET /api/tenant/properties/available with parameters and response containing search results.*
+*GET /api/tenant/properties/available с параметрами и ответом с результатами поиска.*
 
-### Get property details (Tenant)
+### Получение деталей недвижимости (Tenant)
 ![Postman Property Details](./screenshots/postman/postman-property-details.png)
 
-*GET /api/tenant/properties/{id} with response including all property details.*
+*GET /api/tenant/properties/{id} с ответом, включающим все детали объекта недвижимости.*
 
-### Create booking (Tenant)
+### Создание бронирования (Tenant)
 ![Postman Create Booking](./screenshots/postman/postman-create-booking.png)
 
-*Headers, request body, and successful response.*
+*Заголовок, тело запроса и успешный ответ.*
 
-### View my bookings (Tenant)
+### Просмотр своих бронирований (Tenant)
 ![Postman My Bookings](./screenshots/postman/postman-my-bookings.png)
 
-*GET /api/tenant/bookings/my with response showing all bookings of the current tenant.*
+*GET /api/tenant/bookings/my с ответом, показывающим все бронирования текущего арендатора.*
 
-### Upload contract (Tenant)
+### Загрузка договора (Tenant)
 ![Postman Upload Contract](./screenshots/postman/postman-upload-contract.png)
 
-*POST /api/tenant/{id}/upload-contract Multipart request with PDF file and response.*
+*POST /api/tenant/{id}/upload-contract Multipart-запрос с файлом PDF и ответом.*
 
-### Submit issue request (Tenant)
+### Подача заявки на поломку (Tenant)
 ![Postman Create Issue Request](./screenshots/postman/postman-create-issue.png)
 
-*POST /api/tenant/issues with problem description and response.*
+*POST /api/tenant/issues с описанием проблемы и ответом.*
 
-### Approve booking (Owner)
+### Подтверждение бронирования (Owner)
 ![Postman Approve Booking](./screenshots/postman/postman-approve-booking.png)
 
-*Owner confirms booking via POST /api/owner/bookings/{id}/approve.*
+*Владелец подтверждает бронирование через POST /api/owner/bookings/{id}/approve.*
 
-### View active bookings (Operator)
+### Просмотр активных аренд (Operator)
 ![Postman Active Bookings](./screenshots/postman/postman-operator-active.png)
 
-*GET /api/operator/bookings/active with response.*
+*GET /api/operator/bookings/active с ответом.*
 
-### User management (Admin)
+### Управление пользователями (Admin)
 ![Postman Admin Users](./screenshots/postman/postman-admin-users.png)
 
-*GET /api/admin/users and example response.*
+*GET /api/admin/users и пример ответа.*
