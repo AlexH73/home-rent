@@ -7,6 +7,7 @@ import de.ait.homerent.contract.repository.RentalContractRepository;
 import de.ait.homerent.mail.EmailService;
 import de.ait.homerent.property.model.Property;
 import de.ait.homerent.user.model.User;
+import de.ait.homerent.utils.FileStorageUtilService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +33,7 @@ class RentalContractServiceTest {
 
     @Mock RentalContractRepository rentalContractRepository;
     @Mock BookingRepository bookingRepository;
-    @Mock FileStorageService fileStorageService;
+    @Mock FileStorageUtilService fileStorageService;
     @Mock EmailService emailService;
 
     @InjectMocks RentalContractService rentalContractService;
@@ -71,7 +72,7 @@ class RentalContractServiceTest {
         Booking booking = bookingWithTenantAndProperty();
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-        when(fileStorageService.storeRentalContract(eq(1L), any())).thenReturn("/tmp/contract.pdf");
+        when(fileStorageService.storeRentalContractFile(eq(1L), any())).thenReturn("/tmp/contract.pdf");
 
         when(rentalContractRepository.findByBookingId(1L)).thenReturn(Optional.empty());
         when(rentalContractRepository.save(any(RentalContract.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -104,7 +105,7 @@ class RentalContractServiceTest {
         existing.setFilePath("old");
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-        when(fileStorageService.storeRentalContract(eq(1L), any())).thenReturn("/tmp/new.pdf");
+        when(fileStorageService.storeRentalContractFile(eq(1L), any())).thenReturn("/tmp/new.pdf");
 
         when(rentalContractRepository.findByBookingId(1L)).thenReturn(Optional.of(existing));
         when(rentalContractRepository.save(any(RentalContract.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -127,7 +128,7 @@ class RentalContractServiceTest {
         Booking booking = bookingWithTenantAndProperty();
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-        when(fileStorageService.storeRentalContract(eq(1L), any())).thenReturn("/tmp/contract.pdf");
+        when(fileStorageService.storeRentalContractFile(eq(1L), any())).thenReturn("/tmp/contract.pdf");
 
         when(rentalContractRepository.findByBookingId(1L)).thenReturn(Optional.empty());
         when(rentalContractRepository.save(any(RentalContract.class))).thenAnswer(inv -> inv.getArgument(0));

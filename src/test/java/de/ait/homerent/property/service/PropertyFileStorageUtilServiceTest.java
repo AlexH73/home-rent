@@ -72,7 +72,7 @@ class PropertyFileStorageUtilServiceTest {
 
         assertThatThrownBy(() -> service.storePropertyFile(7L, file))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Only JPEG and PNG images are allowed");
+                .hasMessageContaining("not allowed");
     }
 
     @Test

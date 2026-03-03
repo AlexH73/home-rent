@@ -3,7 +3,7 @@ package de.ait.homerent.issue.service;
 import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
-import de.ait.homerent.contract.service.FileStorageService;
+import de.ait.homerent.utils.FileStorageUtilService;
 import de.ait.homerent.issue.dto.IssueCreateRequest;
 import de.ait.homerent.issue.dto.IssueReportResponse;
 import de.ait.homerent.issue.model.IssueReport;
@@ -43,7 +43,7 @@ class IssueServiceTest {
     BookingRepository bookingRepository;
 
     @Mock
-    FileStorageService fileStorageService;
+    FileStorageUtilService fileStorageService;
 
     @InjectMocks
     IssueService issueService;
@@ -125,7 +125,7 @@ class IssueServiceTest {
         assertThat(response.getDescription()).isEqualTo("broken");
         assertThat(response.getStatus()).isEqualTo(IssueStatus.OPEN);
 
-        verify(fileStorageService, never()).storeIssuePhoto(anyLong(), any());
+        verify(fileStorageService, never()).storeIssueFile(anyLong(), any());
         verify(issueReportRepository).save(any(IssueReport.class));
     }
 
@@ -156,13 +156,13 @@ class IssueServiceTest {
         req.setPhoto(photo);
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-        when(fileStorageService.storeIssuePhoto(1L, photo)).thenReturn("path/to/photo.jpg");
+        when(fileStorageService.storeIssueFile(1L, photo)).thenReturn("path/to/photo.jpg");
         when(issueReportRepository.save(any(IssueReport.class))).thenAnswer(inv -> inv.getArgument(0));
 
         IssueReportResponse response = issueService.createIssue(req, tenant);
 
         assertThat(response.getPhotoPath()).isEqualTo("path/to/photo.jpg");
-        verify(fileStorageService).storeIssuePhoto(1L, photo);
+        verify(fileStorageService).storeIssueFile(1L, photo);
         verify(issueReportRepository).save(any(IssueReport.class));
     }
 

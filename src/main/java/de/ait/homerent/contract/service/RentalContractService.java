@@ -6,6 +6,7 @@ import de.ait.homerent.contract.dto.ContractUploadedEmailRequest;
 import de.ait.homerent.contract.model.RentalContract;
 import de.ait.homerent.contract.repository.RentalContractRepository;
 import de.ait.homerent.mail.EmailService;
+import de.ait.homerent.utils.FileStorageUtilService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class RentalContractService {
 
     private final RentalContractRepository rentalContractRepository;
     private final BookingRepository bookingRepository;
-    private final FileStorageService fileStorageService;
+    private final FileStorageUtilService fileStorageService;
     private final EmailService emailService;
 
     @Transactional(readOnly = true)
@@ -44,8 +45,8 @@ public class RentalContractService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found: " + bookingId));
 
-        // saving the file to disk via FileStorageService
-        String filePath = fileStorageService.storeRentalContract(bookingId, file);
+        // saving the file to disk via FileStorageUtilService
+        String filePath = fileStorageService.storeRentalContractFile(bookingId, file);
 
         // saving the record in the database
         RentalContract contract = rentalContractRepository.findByBookingId(bookingId)

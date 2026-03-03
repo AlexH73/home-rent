@@ -1,6 +1,8 @@
 /target
 /uploads
+/uploads/**
 /uploads-test
+/uploads-test/**
 .env
 **/.env
 

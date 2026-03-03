@@ -104,7 +104,7 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is required");
         }
 
-        // File type/size is validated inside FileStorageService
+        // File type/size is validated inside FileStorageUtilService
         rentalContractService.uploadContract(bookingId, file);
     }
 
