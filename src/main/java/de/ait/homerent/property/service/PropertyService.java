@@ -233,7 +233,7 @@ public class PropertyService {
             for (PropertyPhoto photo : property.getPhotos()) {
                 fileStorageService.deleteFile(photo.getFilePath());
             }
-            property.getPhotos().clear();
+            //  property.getPhotos().clear();
         }
         //Delete photos of all issues of this property
         List<IssueReport> issues =

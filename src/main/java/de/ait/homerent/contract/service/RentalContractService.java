@@ -7,6 +7,7 @@ import de.ait.homerent.contract.model.RentalContract;
 import de.ait.homerent.contract.repository.RentalContractRepository;
 import de.ait.homerent.mail.EmailService;
 
+import de.ait.homerent.utils.FileStorageUtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class RentalContractService {
     private final RentalContractRepository rentalContractRepository;
     private final BookingRepository bookingRepository;
     private final FileStorageService fileStorageService;
+    private final FileStorageUtilService fileStorageUtilService;
     private final EmailService emailService;
 
     @Transactional(readOnly = true)
@@ -91,7 +93,7 @@ public class RentalContractService {
                 rentalContractRepository.findByBookingPropertyId(propertyId);
 
         for (RentalContract contract : contracts) {
-            fileStorageService.deleteFile(contract.getFilePath());
+            fileStorageUtilService.deleteFile(contract.getFilePath());
         }
 
         rentalContractRepository.deleteAll(contracts);
