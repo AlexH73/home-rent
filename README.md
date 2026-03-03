@@ -32,7 +32,7 @@ cp .env.example .env
 
 > ⚠️ Important Docker Compose note  
 > Docker Compose substitutes `${VAR}` only from your **shell environment** or the **root `.env` file**.  
-> `env_file:` passes variables into the container, but does **not** affect YAML interpolation.
+> `env file:` passes variables into the container, but does **not** affect YAML interpolation.
 
 Example `.env` keys:
 ```dotenv
