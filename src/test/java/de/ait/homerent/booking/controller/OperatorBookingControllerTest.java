@@ -1,10 +1,11 @@
 package de.ait.homerent.booking.controller;
 
+import de.ait.homerent.auth.service.CustomUserDetailsService;
 import de.ait.homerent.booking.dto.BookingResponse;
 import de.ait.homerent.booking.service.BookingService;
 import de.ait.homerent.config.SecurityConfig;
+import de.ait.homerent.utils.LocalDateTimeFormatter;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -37,17 +39,17 @@ class OperatorBookingControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+    @MockitoBean
     private BookingService bookingService;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockitoBean
+    private LocalDateTimeFormatter localDateTimeFormatter;
 
     @TestConfiguration
     static class TestUsers {
-
-        @Bean
-        public BookingService bookingService() {
-            return Mockito.mock(BookingService.class);
-        }
-
         @Bean
         public UserDetailsService userDetailsService() {
             return new InMemoryUserDetailsManager(
@@ -103,10 +105,3 @@ class OperatorBookingControllerTest {
         log.info("Test completed: getActiveBookings_unauthorized");
     }
 }
-
-
-
-
-
-
-

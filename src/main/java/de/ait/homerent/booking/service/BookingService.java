@@ -1,26 +1,36 @@
 package de.ait.homerent.booking.service;
 
 import de.ait.homerent.booking.dto.BookingCreateRequest;
+import de.ait.homerent.booking.dto.BookingEmailRequest;
 import de.ait.homerent.booking.dto.BookingResponse;
+import de.ait.homerent.booking.dto.RentalFinishedEmailRequest;
 import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.booking.model.BookingStatus;
 import de.ait.homerent.booking.repository.BookingRepository;
 import de.ait.homerent.contract.service.RentalContractService;
+import de.ait.homerent.mail.EmailService;
 import de.ait.homerent.property.model.Property;
+import de.ait.homerent.property.model.PropertyStatus;
 import de.ait.homerent.property.repository.PropertyRepository;
+import de.ait.homerent.user.model.RoleName;
 import de.ait.homerent.user.model.User;
 import de.ait.homerent.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +49,7 @@ public class BookingService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final RentalContractService rentalContractService;
+    private final EmailService emailService;
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getActiveBookings() {
@@ -79,6 +90,11 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only upload contracts for your own bookings");
         }
 
+        if (booking.getStatus() != BookingStatus.APPROVED && booking.getStatus() != BookingStatus.ACTIVE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Contract can be uploaded only for APPROVED or ACTIVE bookings");
+        }
+
         if (file == null || file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File must not be empty");
         }
@@ -88,6 +104,7 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is required");
         }
 
+        // File type/size is validated inside FileStorageService
         rentalContractService.uploadContract(bookingId, file);
     }
 
@@ -95,19 +112,47 @@ public class BookingService {
     public BookingResponse createBooking(BookingCreateRequest request, User tenant) {
 
         if (request.getStartDate().isAfter(request.getEndDate())) {
+            log.info("Invalid booking dates: start {} is after end {}", request.getStartDate(), request.getEndDate());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date must be before or equal to end date");
         }
 
         Property property = propertyRepository.findById(request.getPropertyId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Property not found"));
 
-        int totalPrice = calculateTotalPrice(request.getStartDate(), request.getEndDate(), property.getPricePerDay());
+        if (property.getStatus() != PropertyStatus.AVAILABLE) {
+            log.info("Attempt to book unavailable property ID {}. Current status: {}", property.getId(), property.getStatus());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Property is not available for booking");
+        }
+
+        validateAvailability(property.getId(), request.getStartDate(), request.getEndDate());
+
+        LocalDateTime normalizedStart = normalizeStart(request.getStartDate());
+        LocalDateTime normalizedEnd = normalizeEnd(request.getEndDate());
+
+        // Make sure booking period fits into property availability window
+        if (normalizedStart.isBefore(property.getAvailableFrom()) || normalizedEnd.isAfter(property.getAvailableTo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Requested dates are outside property availability period");
+        }
+
+        // Prevent double booking (REQUESTED/APPROVED/ACTIVE block)
+        boolean overlaps = bookingRepository.existsOverlappingBooking(
+                property.getId(),
+                normalizedStart,
+                normalizedEnd,
+                BLOCKING_STATUSES
+        );
+        if (overlaps) {
+            log.info("Booking conflict detected for property ID {} between {} and {}", property.getId(), normalizedStart, normalizedEnd);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Property is already booked for the selected dates");
+        }
+
+        int totalPrice = calculateTotalPrice(normalizedStart, normalizedEnd, property.getPricePerDay());
 
         Booking booking = Booking.builder()
                 .property(property)
                 .tenant(tenant)
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                .startDate(normalizedStart)
+                .endDate(normalizedEnd)
                 .status(BookingStatus.REQUESTED)
                 .totalPrice(totalPrice)
                 .build();
@@ -118,9 +163,19 @@ public class BookingService {
         return mapToResponse(savedBooking);
     }
 
+    private LocalDateTime normalizeStart(LocalDateTime start) {
+        LocalDate d = start.toLocalDate();
+        return d.atStartOfDay();
+    }
+
+    private LocalDateTime normalizeEnd(LocalDateTime end) {
+        LocalDate d = end.toLocalDate();
+        return d.atTime(LocalTime.MAX);
+    }
+
     private int calculateTotalPrice(LocalDateTime start, LocalDateTime end, int pricePerDay) {
-        long days = Duration.between(start.toLocalDate().atStartOfDay(), end.toLocalDate().atStartOfDay()).toDays() + 1;
-        return (int) (days * pricePerDay);
+        long daysInclusive = ChronoUnit.DAYS.between(start.toLocalDate(), end.toLocalDate()) + 1;
+        return Math.toIntExact(daysInclusive * (long) pricePerDay);
     }
 
     private BookingResponse mapToResponse(Booking booking) {
@@ -134,4 +189,176 @@ public class BookingService {
         response.setStatus(booking.getStatus());
         return response;
     }
+
+    // Get bookings pending confirmation
+    @Transactional
+    @PreAuthorize("hasRole('OWNER')")
+    public List<BookingResponse> getPendingBookings(String username) {
+        User owner = getCurrentOwner(username);
+
+        return bookingRepository
+                .findByPropertyOwnerIdAndStatus(owner.getId(), BookingStatus.REQUESTED)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    // Confirm the booking
+    @Transactional
+    @PreAuthorize("hasRole('OWNER')")
+    public BookingResponse approveBooking(String username, Long bookingId) {
+        User owner = getCurrentOwner(username);
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
+
+        if (!booking.getProperty().getOwner().getId().equals(owner.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can approve only your bookings");
+        }
+
+        if (booking.getStatus() != BookingStatus.REQUESTED) {
+            log.warn("Attempt to approve booking with id {} failed. Current status: {}", bookingId, booking.getStatus());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Booking cannot be approved because its status is " + booking.getStatus());
+        }
+
+        booking.setStatus(BookingStatus.APPROVED);
+
+        bookingRepository.save(booking);
+
+        // Email sending
+        BookingEmailRequest emailRequest = new BookingEmailRequest();
+        emailRequest.setEmail(booking.getTenant().getEmail());
+        emailRequest.setUsername(booking.getTenant().getUsername());
+        emailRequest.setPropertyAddress(booking.getProperty().getAddress());
+        emailRequest.setStartDate(booking.getStartDate().toLocalDate());
+        emailRequest.setEndDate(booking.getEndDate().toLocalDate());
+        emailRequest.setTotalPrice(booking.getTotalPrice());
+        emailRequest.setConfirmUrl("https://your-app.com/bookings/" + booking.getId() + "/confirm");
+
+        emailService.sendBookingApproved(emailRequest);
+
+        return mapToResponse(booking);
+    }
+
+    // Reject the booking
+    @Transactional
+    @PreAuthorize("hasRole('OWNER')")
+    public BookingResponse rejectBooking(String username, Long bookingId) {
+        User owner = getCurrentOwner(username);
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
+
+        if (!booking.getProperty().getOwner().getId().equals(owner.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can reject only your bookings");
+        }
+
+        if (booking.getStatus() != BookingStatus.REQUESTED) {
+            log.warn("Attempt to reject booking with id {} failed. Current status: {}", bookingId, booking.getStatus());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Booking cannot be rejected because its status is " + booking.getStatus());
+        }
+
+        booking.setStatus(BookingStatus.REJECTED);
+
+        Property property = booking.getProperty();
+        property.setStatus(PropertyStatus.AVAILABLE);
+        propertyRepository.save(property);
+
+        return mapToResponse(bookingRepository.save(booking));
+    }
+
+    // Helper method to retrieve the current owner
+    private User getCurrentOwner(String username) {
+        User owner = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        boolean isOwner = owner.getRoles().stream()
+                .anyMatch(role -> role.getName() == RoleName.ROLE_OWNER);
+
+        if (!isOwner) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not an OWNER");
+        }
+
+        return owner;
+    }
+
+    @Transactional
+    public void finishBooking(Booking booking) {
+        booking.setStatus(BookingStatus.FINISHED);
+        bookingRepository.save(booking);
+
+        Property property = booking.getProperty();
+        property.setStatus(PropertyStatus.AVAILABLE);
+        propertyRepository.save(property);
+
+        RentalFinishedEmailRequest emailRequest = new RentalFinishedEmailRequest();
+        emailRequest.setEmail(booking.getTenant().getEmail());
+        emailRequest.setUsername(booking.getTenant().getUsername());
+        emailRequest.setPropertyAddress(booking.getProperty().getAddress());
+        emailRequest.setStartDate(booking.getStartDate().toLocalDate());
+        emailRequest.setEndDate(booking.getEndDate().toLocalDate());
+        emailRequest.setTotalPrice(booking.getTotalPrice());
+
+        try {
+            emailService.sendRentalFinished(emailRequest);
+            log.info("Booking ID {} marked as FINISHED and email sent to {}", booking.getId(), booking.getTenant().getEmail());
+        } catch (Exception e) {
+            log.error("Failed to send FINISHED email for booking ID {}", booking.getId(), e);
+        }
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('OPERATOR')")
+    public BookingResponse activateBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
+
+        if (booking.getStatus() != BookingStatus.APPROVED) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Only APPROVED bookings can be activated. Current status: " + booking.getStatus());
+        }
+
+        if (!rentalContractService.hasContract(bookingId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Cannot activate booking without uploaded rental contract");
+        }
+
+        booking.setStatus(BookingStatus.ACTIVE);
+        Booking saved = bookingRepository.save(booking);
+
+        Property property = saved.getProperty();
+        propertyRepository.save(property);
+
+        return mapToResponse(saved);
+    }
+
+    private void validateAvailability(Long propertyId,
+                                      LocalDateTime startDate,
+                                      LocalDateTime endDate) {
+
+        boolean conflict =
+                bookingRepository.existsOverlappingBooking(
+                        propertyId,
+                        normalizeStart(startDate),
+                        normalizeEnd(endDate),
+                        BLOCKING_STATUSES
+                );
+
+        if (conflict) {
+            log.warn("Booking conflict detected for property ID {} between {} and {}", propertyId, startDate, endDate);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Property already booked for selected dates"
+            );
+        }
+    }
+
+    private static final EnumSet<BookingStatus> BLOCKING_STATUSES =
+            EnumSet.of(
+                    //BookingStatus.REQUESTED,
+                    BookingStatus.APPROVED,
+                    BookingStatus.ACTIVE
+            );
 }

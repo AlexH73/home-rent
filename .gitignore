@@ -1,4 +1,6 @@
 /target
+/uploads
+/uploads-test
 .env
 **/.env
 

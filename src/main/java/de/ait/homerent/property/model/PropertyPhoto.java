@@ -3,6 +3,7 @@ package de.ait.homerent.property.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString(exclude = "property")
 
 public class PropertyPhoto {
@@ -45,5 +47,9 @@ public class PropertyPhoto {
     @JoinColumn(name = "property_id", nullable = false)
     @JsonBackReference
     private Property property;
+
+    public String getUrl() {
+        return this.filePath;
+    }
 
 }

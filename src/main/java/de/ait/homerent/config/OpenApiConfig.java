@@ -1,11 +1,18 @@
 package de.ait.homerent.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 /**
  * ----------------------------------------------------------------------------
  * Author  : Alexander Hermann
@@ -14,6 +21,12 @@ import org.springframework.context.annotation.Configuration;
  * ----------------------------------------------------------------------------
  */
 @Configuration
+@SecurityScheme(
+        name = "basicAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "basic",
+        description = "Basic authentication using username and password"
+)
 @OpenAPIDefinition(
         info = @Info(
                 title = "HomeRent API",
@@ -64,4 +77,21 @@ import org.springframework.context.annotation.Configuration;
         }
 )
 public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new io.swagger.v3.oas.models.info.Info()
+                        .title("HomeRent API")
+                        .version("1.0.0")
+                        .description("HomeRent API Documentation"))
+                // Глобальное требование безопасности: все эндпоинты требуют basicAuth
+                .addSecurityItem(new SecurityRequirement().addList("basicAuth"))
+                .components(new io.swagger.v3.oas.models.Components()
+                        .addSecuritySchemes("basicAuth",
+                                new io.swagger.v3.oas.models.security.SecurityScheme()
+                                        .type(io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP)
+                                        .scheme("basic")
+                                        .description("Basic authentication using username and password")));
+    }
 }

@@ -61,7 +61,7 @@ public class EmailService {
         context.setVariable("endDate", request.getEndDate());
         context.setVariable("totalPrice", request.getTotalPrice());
 
-        sendEmail(request.getEmail(), "Rental Finished", "mail/rental-finished", context);
+        sendEmail(request.getEmail(), "Rental Finished", "mail/rental-finished-notice", context);
     }
 
     // ------------------------ Contract Uploaded ------------------------
@@ -71,7 +71,7 @@ public class EmailService {
         context.setVariable("propertyAddress", request.getPropertyAddress());
         context.setVariable("contractFileName", request.getContractFileName());
 
-        sendEmail(request.getEmail(), "Contract Uploaded", "mail/contract-uploaded", context);
+        sendEmail(request.getEmail(), "Contract Uploaded", "mail/contract-upload-confirmation", context);
     }
 
     // ------------------------ Helper method ------------------------

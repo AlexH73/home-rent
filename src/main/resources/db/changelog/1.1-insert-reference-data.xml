@@ -5,8 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
 
-    <changeSet id="1.1-1-insert-basic-roles" author="Tetiana Anufriieva">
-        <comment>Insert basic roles: TENANT, OWNER, OPERATOR, ADMIN</comment>
+    <changeSet id="1.1-1-create-basic-roles" author="Tetiana Anufriieva">
+        <comment>Create basic roles: TENANT, OWNER, OPERATOR, ADMIN</comment>
         <insert tableName="roles">
             <column name="name" value="ROLE_TENANT"/>
         </insert>
@@ -55,7 +55,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="1.1-4-create-test-tenant-user" author="Tetiana Anufriieva">
+    <changeSet id="1.1-4-create-test-tenant-user" context="dev,test" author="Tetiana Anufriieva">
         <comment>Create test tenant user</comment>
         <insert tableName="users">
             <column name="username" value="tenant1"/>
@@ -72,7 +72,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="1.1-5-create-test-operator-user" author="Tetiana Anufriieva">
+    <changeSet id="1.1-5-create-test-operator-user" context="dev,test" author="Tetiana Anufriieva">
         <comment>Create test operator user</comment>
         <insert tableName="users">
             <column name="username" value="operator1"/>
@@ -89,7 +89,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="1.1-6-create-test-properties" author="Tetiana Anufriieva">
+    <changeSet id="1.1-6-create-test-properties" context="dev,test" author="Tetiana Anufriieva">
         <comment>Create sample properties for testing</comment>
 
         <insert tableName="properties">
@@ -109,10 +109,20 @@
             <column name="address" value="Lesnaya St, 5"/>
             <column name="description" value="Country house with lake view"/>
             <column name="price_per_day" value="400000"/>
-            <column name="status" value="AVAILABLE"/>
+            <column name="status" value="BOOKED"/>
+            <column name="available_from" valueDate="2026-01-01T00:00:00"/>
+            <column name="available_to" valueDate="2026-12-31T23:59:59"/>
+        </insert>
+
+        <insert tableName="properties">
+            <column name="owner_id" valueComputed="(SELECT id FROM users WHERE username='owner1')"/>
+            <column name="title" value="Modern Studio"/>
+            <column name="address" value="Central Ave, 21"/>
+            <column name="description" value="Small modern studio apartment"/>
+            <column name="price_per_day" value="200000"/>
+            <column name="status" value="RENTED"/>
             <column name="available_from" valueDate="2026-01-01T00:00:00"/>
             <column name="available_to" valueDate="2026-12-31T23:59:59"/>
         </insert>
     </changeSet>
-
 </databaseChangeLog>

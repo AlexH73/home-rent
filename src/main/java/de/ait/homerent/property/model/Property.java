@@ -1,10 +1,12 @@
 package de.ait.homerent.property.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import de.ait.homerent.booking.model.Booking;
 import de.ait.homerent.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,6 +31,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString(exclude = {"photos", "owner"})
 
 public class Property {
@@ -63,9 +66,20 @@ public class Property {
     private PropertyStatus status;
 
     // One-to-Many relationship: Property -> PropertyPhoto
-    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "property",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<PropertyPhoto> photos;
+
+    @OneToMany(
+            mappedBy = "property",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Booking> bookings;
 
     // Creation Date
     @CreationTimestamp

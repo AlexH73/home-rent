@@ -7,6 +7,7 @@ import de.ait.homerent.contract.model.RentalContract;
 import de.ait.homerent.contract.repository.RentalContractRepository;
 import de.ait.homerent.mail.EmailService;
 
+import de.ait.homerent.utils.FileStorageUtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ----------------------------------------------------------------------------
@@ -31,7 +33,13 @@ public class RentalContractService {
     private final RentalContractRepository rentalContractRepository;
     private final BookingRepository bookingRepository;
     private final FileStorageService fileStorageService;
+    private final FileStorageUtilService fileStorageUtilService;
     private final EmailService emailService;
+
+    @Transactional(readOnly = true)
+    public boolean hasContract(Long bookingId) {
+        return rentalContractRepository.findByBookingId(bookingId).isPresent();
+    }
 
     @Transactional
     public RentalContract uploadContract(Long bookingId, MultipartFile file) {
@@ -70,11 +78,24 @@ public class RentalContractService {
             }
             emailRequest.setContractFileName(originalFileName);
 
-            emailService.sendContractUploaded(emailRequest); //
+            emailService.sendContractUploaded(emailRequest);
 
         } catch (Exception e) {
             log.error("Failed to send contract uploaded email for booking {}", booking.getId(), e);
 
         }
+    }
+
+    @Transactional
+    public void deleteByPropertyId(Long propertyId) {
+
+        List<RentalContract> contracts =
+                rentalContractRepository.findByBookingPropertyId(propertyId);
+
+        for (RentalContract contract : contracts) {
+            fileStorageUtilService.deleteFile(contract.getFilePath());
+        }
+
+        rentalContractRepository.deleteAll(contracts);
     }
 }

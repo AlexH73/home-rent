@@ -5,6 +5,8 @@ import de.ait.homerent.auth.dto.AuthResponse;
 import de.ait.homerent.auth.dto.LoginRequest;
 import de.ait.homerent.auth.dto.RegisterRequest;
 import de.ait.homerent.auth.service.AuthService;
+import de.ait.homerent.config.WebConfig;
+import de.ait.homerent.utils.LocalDateTimeFormatter;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,9 @@ class AuthControllerTest {
 
     @MockitoBean
     private AuthService authService;
+
+    @MockitoBean
+    private LocalDateTimeFormatter localDateTimeFormatter;
 
     @Autowired
     private ObjectMapper objectMapper;
